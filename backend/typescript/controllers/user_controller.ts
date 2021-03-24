@@ -1,68 +1,46 @@
 import { Request, Response } from 'express';
-import { dbController, queries, getRandomInt, mailer } from '../helpers';
+import { dbController, queries } from '../helpers';
 import { BasicCRUD } from './controllers_defs/CRUD';
-
-type ExistentCodes = {
-    code: string
-}
+import fse from 'fs-extra';
+import bcrypt from 'bcrypt';
 
 export class UserController extends BasicCRUD {
 
-    private generateCode(existentCodes: ExistentCodes[]): string {
-        const data = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
-        let code = '';
-        for (let i = 0; i < 4; i++) {
-            code += data[getRandomInt(data.length)];
-        }
-        for (let i = 0; i < existentCodes.length; i++) {
-            if (existentCodes[i].code === code) {
-                return this.generateCode(existentCodes);
-            }
-        }
-        return code;
-    }
-
-    private async invalidateCode (verification_id: string) {
+    public async create(req: Request, res: Response) {
+        const files = req.files as {[fieldname: string]: Express.Multer.File[]};
+        const {name, email, phone, password} = req.body;
         const client = await dbController.getClient();
         try {
-            await client.query(queries.invalidateCode, [verification_id]);
-            console.info(`Verification code with ID ${verification_id} expired.`);
-        } catch (err) {
-            console.error(err);
-        } finally {
-            client.release(true);
-        }
-    }
-
-    public async create(req: Request, res: Response) {
-        const {name, email, phone} = req.body;
-        const client = await dbController.getClient();
-        try{
-            let results = await client.query(queries.areCredentialsNew, [email, phone]);
-            if (results.rowCount > 1) {
-                res.status(400).json({
-                    title: 'error',
-                    content: 'Email or phone number already in use!', 
-                });
-            } else {
-                results = await client.query(queries.getExistentCodes, ['PENDING']);
-                const authCode = this.generateCode(results.rows);
-                results = await client.query(queries.insertNewCode, [email, authCode, 'PENDING'])
+            await client.query(queries.begin);
+            const salt = await bcrypt.genSalt();
+            const hash = await bcrypt.hash(password, salt);
+            let results = await client.query(queries.registerUser, [name, email, phone, hash]);
+            const user_id: string = results.rows[0].user_id;
+            if (!files.avatar) {
+                await client.query(queries.commit);
                 res.status(200).json({
                     title: 'success',
-                    content: 'part 2'
+                    content: 'Account registered!',
                 });
-                mailer.sendCode(name, email, authCode);
-                setTimeout((id: string) => {
-                    this.invalidateCode(id);
-                }, 300000, results.rows[0].verification_id);
+            } else {
+                const path = `media/avatars/${user_id}`;
+                const absolutePath = `${path}/${files.avatar[0].originalname}`;
+                await fse.ensureDir(path);
+                await fse.outputFile(absolutePath, files.avatar[0].buffer);
+                await client.query(queries.setAvatar, [absolutePath, user_id]);
+                await client.query(queries.commit);
+                res.status(200).json({
+                    title: 'success',
+                    content: 'Account registered!',
+                });
             }
-        } catch(err) {
+        } catch (err) {
+            console.error(err);
+            await client.query(queries.rollback);
             res.status(500).json({
                 title: 'error',
-                content: 'Could not complete registration. Try again later.',
+                content: 'Could not complete the registration.'
             })
-            console.error(err);
         } finally {
             client.release(true);
         }
