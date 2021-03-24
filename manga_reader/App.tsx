@@ -8,58 +8,26 @@
  * @format
  */
 
+import 'react-native-gesture-handler';
 import React, {useEffect} from 'react';
 import messaging from '@react-native-firebase/messaging';
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-  Alert,
-} from 'react-native';
-
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+import {SafeAreaProvider} from 'react-native-safe-area-context';
+import {Provider} from 'react-redux';
+import {PersistGate} from 'redux-persist/es/integration/react';
+import {persistedStore, store} from './store/store';
+import {NavigationContainer} from '@react-navigation/native';
+import {createStackNavigator} from '@react-navigation/stack';
+import Register_1 from './pages/Registration_1';
+import Register_2 from './pages/Registration_2';
+import {Alert} from 'react-native';
 import Axios from 'axios';
-import Share from 'react-native-share';
-
-const Section: React.FC<{
-  title: string;
-}> = ({children, title}) => {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
-};
+import Toast from 'react-native-toast-message';
+import {RootStackParamList} from './custom_types/navigation_types';
+import Registration3 from './pages/Registration_3';
 
 Axios.defaults.baseURL = 'http://192.168.0.101:8000';
+
+const Stack = createStackNavigator<RootStackParamList>();
 
 const postToken = async (token: string) => {
   setTimeout(() => {
@@ -76,12 +44,6 @@ const postToken = async (token: string) => {
 };
 
 const App = () => {
-  const isDarkMode = useColorScheme() === 'dark';
-
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
-
   useEffect(() => {
     const unsubscribe = messaging().onMessage(async remoteMessage => {
       Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
@@ -98,80 +60,42 @@ const App = () => {
         console.info(`TOKEN:${token}`);
         postToken(token);
       });
-    // If using other push notification providers (ie Amazon SNS, etc)
-    // you may need to get the APNs token instead for iOS:
-    // if(Platform.OS == 'ios') { messaging().getAPNSToken().then(token => { return saveTokenToDatabase(token); }); }
-
-    // Listen to whether the token changes
     return messaging().onTokenRefresh(token => {
       console.info(`TOKEN:${token}`);
     });
   }, []);
 
   return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit{' '}
-            <Text
-              style={styles.highlight}
-              onPress={() => {
-                Share.open({
-                  title: 'test',
-                  message: 'what',
-                })
-                  .then(res => {
-                    console.log(res);
-                  })
-                  .catch(err => {
-                    err && console.log(err);
-                  });
-              }}>
-              App.js
-            </Text>{' '}
-            to change this screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+    <>
+      <Provider store={store}>
+        <PersistGate loading={null} persistor={persistedStore}>
+          <SafeAreaProvider>
+            <NavigationContainer>
+              <Stack.Navigator>
+                <Stack.Screen
+                  options={{title: 'Registration'}}
+                  name={'Register_1'}
+                  component={Register_1}
+                />
+                <Stack.Screen
+                  options={{title: 'Registration'}}
+                  name={'Register_2'}
+                  component={Register_2}
+                  initialParams={{verification_id: ''}}
+                />
+                <Stack.Screen
+                  options={{title: 'Registration'}}
+                  name={'Register_3'}
+                  component={Registration3}
+                />
+              </Stack.Navigator>
+            </NavigationContainer>
+          </SafeAreaProvider>
+        </PersistGate>
+      </Provider>
+      <Toast ref={ref => Toast.setRef(ref)} />
+    </>
   );
 };
-
-const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-});
 
 export default App;
