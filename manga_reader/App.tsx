@@ -19,6 +19,8 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import Register_1 from './pages/Registration_1';
 import Register_2 from './pages/Registration_2';
+import Login from './pages/Login';
+import Registration3 from './pages/Registration_3';
 import {Alert} from 'react-native';
 import Axios from 'axios';
 import Toast from 'react-native-toast-message';
@@ -73,6 +75,11 @@ const App = () => {
             <NavigationContainer>
               <Stack.Navigator>
                 <Stack.Screen
+                  options={{title: 'Login' }}
+                  name={'Login'}
+                  component={Login}
+                />
+               <Stack.Screen
                   options={{title: 'Registration'}}
                   name={'Register_1'}
                   component={Register_1}

@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express';
 
-import { userController, codeController } from '../controllers';
+import { userController, codeController, userLogin } from '../controllers';
 
 export const router = express.Router({
     strict: true
@@ -21,4 +21,8 @@ router.put('/codes/code/', (req: Request, res: Response) => {
 router.post('/', (req: Request, res: Response) => {
     userController.create(req, res);
 });
+
+router.post('/userLogin', (req: Request, res: Response) => {
+    userLogin.userLogin(req, res);
+})
 
