@@ -28,7 +28,7 @@ export class CodeController extends CodeCRUD {
         try {
             let results = await client.query(queries.areCredentialsNew, [email, phone]);
             if (results.rowCount > 0) {
-                res.status(400).json({
+                res.status(401).json({
                     title: 'error',
                     content: 'Email or phone number already in use!',
                 });
@@ -36,7 +36,7 @@ export class CodeController extends CodeCRUD {
                 results = await client.query(queries.getExistentCodes, ['PENDING']);
                 const authCode = this.generateCode(results.rows);
                 results = await client.query(queries.insertNewCode, [email, authCode, 'PENDING'])
-                res.status(200).json({
+                res.status(201).json({
                     title: 'success',
                     content: results.rows[0].verification_id,
                 });
@@ -46,7 +46,7 @@ export class CodeController extends CodeCRUD {
                 }, 300000, results.rows[0].verification_id);
             }
         } catch (err) {
-            res.status(500).json({
+            res.status(503).json({
                 title: 'error',
                 content: 'Could not complete registration. Try again later.',
             })
@@ -80,19 +80,16 @@ export class CodeController extends CodeCRUD {
             let results = await client.query(queries.verifyCode, [verification_id, code, 'PENDING']);
             if (results.rowCount > 0) {
                 await client.query(queries.setCompleted, ['COMPLETED', verification_id]);
-                res.status(200).json({
-                    title: 'success',
-                    content: 'Verification completed.'
-                });
+                res.sendStatus(204);
             } else {
-                res.status(400).json({
+                res.status(404).json({
                     title: 'error',
                     content: 'Invalid code',
                 })
             }
         } catch(err) {
             console.error(err);
-            res.status(500).json({
+            res.status(503).json({
                 title: 'error',
                 content: 'Could not verify code',
             });

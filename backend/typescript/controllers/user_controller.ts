@@ -18,18 +18,16 @@ export class UserController extends BasicCRUD {
             const user_id: string = results.rows[0].user_id;
             if (!files.avatar) {
                 await client.query(queries.commit);
-                res.status(200).json({
+                res.status(201).json({
                     title: 'success',
                     content: 'Account registered!',
                 });
             } else {
-                const path = `media/avatars/${user_id}`;
-                const absolutePath = `${path}/${files.avatar[0].originalname}`;
-                await fse.ensureDir(path);
+                const absolutePath = `media/avatars/${user_id}/${files.avatar[0].originalname}`;
                 await fse.outputFile(absolutePath, files.avatar[0].buffer);
                 await client.query(queries.setAvatar, [absolutePath, user_id]);
                 await client.query(queries.commit);
-                res.status(200).json({
+                res.status(201).json({
                     title: 'success',
                     content: 'Account registered!',
                 });
@@ -37,7 +35,7 @@ export class UserController extends BasicCRUD {
         } catch (err) {
             console.error(err);
             await client.query(queries.rollback);
-            res.status(500).json({
+            res.status(503).json({
                 title: 'error',
                 content: 'Could not complete the registration.'
             })

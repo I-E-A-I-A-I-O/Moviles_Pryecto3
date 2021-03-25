@@ -7,7 +7,7 @@ import multer from 'multer';
 import helmet from 'helmet';
 import notificationRoutes from './routers/notifications';
 
-import {userRouter} from './routers';
+import {userRouter, codeRouter} from './routers';
 
 const serviceAccount: ServiceAccount = {
     projectId: process.env.project_id,
@@ -34,6 +34,7 @@ app.use(form.fields([
 
 app.use('/notifications', notificationRoutes);
 app.use('/users', userRouter);
+app.use('/verification-codes', codeRouter);
 
 app.listen(port, () => {
     console.info(`Server running at port ${port}`);

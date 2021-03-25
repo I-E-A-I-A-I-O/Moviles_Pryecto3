@@ -1,5 +1,5 @@
 import React, {useRef, useState} from 'react';
-import {View} from 'react-native';
+import {TextStyle, View} from 'react-native';
 import {Input, Text} from 'react-native-elements';
 import PhoneInput from 'react-native-phone-input';
 import Toast from 'react-native-toast-message';
@@ -46,16 +46,16 @@ const RegisterPage = (props: Props) => {
     let errorMessage = validateFields();
     if (!errorMessage) {
       let form = new FormData();
-      form.append('name', name);
-      form.append('email', email);
+      form.append('name', name.toLocaleLowerCase());
+      form.append('email', email.toLocaleLowerCase());
       form.append('phone', phoneNumber);
       try {
-        const response = await axios.post('/users/codes/', form);
+        const response = await axios.post('/verification-codes/code', form);
         props.navigation.navigate('Register_2', {
           verification_id: response.data.content,
-          name: name,
+          name: name.toLocaleLowerCase(),
           phone: phoneNumber,
-          email: email,
+          email: email.toLocaleLowerCase(),
         });
       } catch (err) {
         console.error(err);
@@ -78,14 +78,7 @@ const RegisterPage = (props: Props) => {
 
   return (
     <View>
-      <Text
-        h3
-        h3Style={{
-          alignSelf: 'center',
-          paddingBottom: 25,
-          paddingTop: 25,
-        }}
-        selectable={false}>
+      <Text h3 h3Style={textStyles[0]} selectable={false}>
         Create a new account
       </Text>
       <Input
@@ -101,16 +94,7 @@ const RegisterPage = (props: Props) => {
         keyboardType={'email-address'}
         onChangeText={text => setEmail(text)}
       />
-      <Text
-        style={{
-          fontWeight: 'bold',
-          fontSize: 15,
-          color: 'gray',
-          paddingLeft: 12,
-          paddingBottom: 5,
-        }}>
-        Phone number
-      </Text>
+      <Text style={textStyles[1]}>Phone number</Text>
       <PhoneInput
         initialCountry={'us'}
         textStyle={{
@@ -127,5 +111,20 @@ const RegisterPage = (props: Props) => {
     </View>
   );
 };
+
+const textStyles: TextStyle[] = [
+  {
+    alignSelf: 'center',
+    paddingBottom: 25,
+    paddingTop: 25,
+  },
+  {
+    fontWeight: 'bold',
+    fontSize: 15,
+    color: 'gray',
+    paddingLeft: 12,
+    paddingBottom: 5,
+  },
+];
 
 export default RegisterPage;

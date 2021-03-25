@@ -55,7 +55,7 @@ const Registration3 = (props: Props) => {
         });
       }
       try {
-        const response = await axios.post('/users/', form);
+        const response = await axios.post('/users/user', form);
         Toast.show({
           type: 'success',
           text1: response.data.content,

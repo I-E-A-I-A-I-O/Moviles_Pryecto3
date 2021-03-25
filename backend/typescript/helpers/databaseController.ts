@@ -13,6 +13,10 @@ export class DBController {
             max: 20,
             idleTimeoutMillis: 3000,
         });
+        this.pool.on('error', (err, client) => {
+            console.error(err);
+            client.release(true);
+        });
     }
 
     public getClient(): Promise<PoolClient> {

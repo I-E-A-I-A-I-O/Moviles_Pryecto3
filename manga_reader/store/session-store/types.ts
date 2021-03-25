@@ -5,6 +5,7 @@ export interface Session {
   id: string;
   name: string;
   token: string;
+  sessionActive: boolean;
 }
 
 export interface SessionState {
