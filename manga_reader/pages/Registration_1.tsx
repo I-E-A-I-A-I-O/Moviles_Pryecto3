@@ -1,11 +1,23 @@
 import React, {useRef, useState} from 'react';
 import {View} from 'react-native';
-import {Input, Button, Text} from 'react-native-elements';
+import {Input, Text} from 'react-native-elements';
 import PhoneInput from 'react-native-phone-input';
 import Toast from 'react-native-toast-message';
 import axios from 'axios';
+import SubmitButton from '../components/submitButton';
+import {StackNavigationProp} from '@react-navigation/stack';
+import {RootStackParamList} from '../custom_types/navigation_types';
 
-const RegisterPage = () => {
+type RegisterPart1ScreenNavigationProp = StackNavigationProp<
+  RootStackParamList,
+  'Register_1'
+>;
+
+type Props = {
+  navigation: RegisterPart1ScreenNavigationProp;
+};
+
+const RegisterPage = (props: Props) => {
   const phoneInput = useRef<PhoneInput>(null);
   const [phoneNumber, setPhoneNumber] = useState('13178675309');
   const [name, setName] = useState('');
@@ -38,12 +50,12 @@ const RegisterPage = () => {
       form.append('email', email);
       form.append('phone', phoneNumber);
       try {
-        const response = await axios.post('/users/', form);
-        Toast.show({
-          type: 'success',
-          text1: response.data.content,
-          autoHide: true,
-          position: 'bottom',
+        const response = await axios.post('/users/codes/', form);
+        props.navigation.navigate('Register_2', {
+          verification_id: response.data.content,
+          name: name,
+          phone: phoneNumber,
+          email: email,
         });
       } catch (err) {
         console.error(err);
@@ -111,7 +123,7 @@ const RegisterPage = () => {
         onChangePhoneNumber={text => setPhoneNumber(text)}
         ref={phoneInput}
       />
-      <Button title={'Continue'} onPress={completePart1} />
+      <SubmitButton title={'Continue'} onPress={completePart1} />
     </View>
   );
 };
