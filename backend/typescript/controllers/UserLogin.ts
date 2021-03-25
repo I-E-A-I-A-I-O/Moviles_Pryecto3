@@ -8,7 +8,7 @@ export class UserLogin{
     public async userLogin(req: Request, res: Response){
         const {email, password} = req.body;
 
-        if(email === "" || password ===""){
+        if(email.length === 0  || password.length === 0){
             res.status(400).json({title: 'Error', content: 'Error reading form.'});
         }else{
             this.verifyLogin(email, password).then(result => {
