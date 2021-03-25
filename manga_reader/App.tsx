@@ -18,6 +18,9 @@ import {persistedStore, store} from './store/store';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import Register_1 from './pages/Registration_1';
+import Register_2 from './pages/Registration_2';
+import Login from './pages/Login';
+import Registration3 from './pages/Registration_3';
 import {Alert} from 'react-native';
 import Axios from 'axios';
 import Toast from 'react-native-toast-message';
@@ -70,10 +73,26 @@ const App = () => {
             <NavigationContainer>
               <Stack.Navigator>
                 <Stack.Screen
-                  options={{title: 'Registration'}}
-                  name={'/register'}
+                  options={{title: '                                 Login' }}
+                  name={'/Login'}
+                  component={Login}
+                />
+               <Stack.Screen
+                  options={{title: '                        Registration' }}
+                  name={'Register_1'}
                   component={Register_1}
                 />
+                <Stack.Screen
+                  options={{title: '                        Registration'}}
+                  name={'Register_2'}
+                  component={Register_2}
+                  initialParams={{verification_id: ''}}
+                />
+                <Stack.Screen
+                  options={{title: '                        Registration'}}
+                  name={'Register_3'}
+                  component={Registration3}
+                />       
               </Stack.Navigator>
             </NavigationContainer>
           </SafeAreaProvider>
