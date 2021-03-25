@@ -10,4 +10,7 @@ export = {
     insertNewCode: 'INSERT INTO code_verification(email, code, status, last_update) VALUES($1, $2, $3, NOW()) RETURNING verification_id',
     /*Se borra el codigo de la base de datos, invalidandolo*/
     invalidateCode: 'DELETE FROM code_verification WHERE verification_id = $1',
+
+    /**/
+    getExistentEmail: 'SELECT user_id, email, password FROM users WHERE email = $1',
 }
