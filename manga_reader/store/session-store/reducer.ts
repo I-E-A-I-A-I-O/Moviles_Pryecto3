@@ -11,6 +11,7 @@ const initialState: SessionState = {
     id: '',
     name: '',
     token: '',
+    sessionActive: false,
   },
 };
 

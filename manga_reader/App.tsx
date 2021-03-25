@@ -25,6 +25,10 @@ import {Alert} from 'react-native';
 import Axios from 'axios';
 import Toast from 'react-native-toast-message';
 import {RootStackParamList} from './custom_types/navigation_types';
+import {enableScreens} from 'react-native-screens';
+import ModalNav from './navigators/ModalStackNavigator';
+
+enableScreens();
 
 Axios.defaults.baseURL = 'http://192.168.0.101:8000';
 
@@ -74,7 +78,7 @@ const App = () => {
             <NavigationContainer>
               <Stack.Navigator>
                 <Stack.Screen
-                  options={{title: 'Login'}}
+                  options={{headerShown: false}}
                   name={'Login'}
                   component={Login}
                 />
@@ -93,6 +97,11 @@ const App = () => {
                   options={{title: 'Registration'}}
                   name={'Register_3'}
                   component={Registration3}
+                />
+                <Stack.Screen
+                  name={'ModalStack'}
+                  component={ModalNav}
+                  options={{headerShown: false}}
                 />
               </Stack.Navigator>
             </NavigationContainer>

@@ -46,16 +46,16 @@ const RegisterPage = (props: Props) => {
     let errorMessage = validateFields();
     if (!errorMessage) {
       let form = new FormData();
-      form.append('name', name);
-      form.append('email', email);
+      form.append('name', name.toLocaleLowerCase());
+      form.append('email', email.toLocaleLowerCase());
       form.append('phone', phoneNumber);
       try {
         const response = await axios.post('/verification-codes/code', form);
         props.navigation.navigate('Register_2', {
           verification_id: response.data.content,
-          name: name,
+          name: name.toLocaleLowerCase(),
           phone: phoneNumber,
-          email: email,
+          email: email.toLocaleLowerCase(),
         });
       } catch (err) {
         console.error(err);

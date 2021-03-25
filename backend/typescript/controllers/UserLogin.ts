@@ -9,11 +9,11 @@ export class UserLogin {
         const { email, password } = req.body;
         const client = await dbController.getClient();
         try {
-            let results = await client.query(queries.getExistentEmail, [email]);
+            let results = await client.query(queries.getUserCredentials, [email]);
             if (results.rowCount > 0) {
                 const compare = await bcrypt.compare(password, results.rows[0].password);
                 if (!compare) {
-                    res.status(403).json({
+                    res.status(401).json({
                         title: 'error',
                         content: 'Incorrect password',
                     });
@@ -21,9 +21,13 @@ export class UserLogin {
                     const token = jwt.sign({
                         user_id: results.rows[0].user_id,
                     }, process.env.SECRET_JWT as jwt.Secret);
-                    res.status(203).json({
+                    res.status(200).json({
                         title: 'success',
-                        content: token,
+                        content: {
+                            user_id: results.rows[0].user_id,
+                            name: results.rows[0].name,
+                            token: token,
+                        },
                     });
                 }
             } else {

@@ -13,7 +13,7 @@ export = {
     /**Selecciona los credenciales de un usuario registrado
      * con el email indicado
     */
-    getExistentEmail: 'SELECT user_id, password FROM users WHERE email = $1',
+    getUserCredentials: 'SELECT user_id, name, password FROM users WHERE email = $1',
     /**Verifica que el codigo existe y tiene status "PENDING" */
     verifyCode: 'SELECT verification_id, email, code FROM code_verification WHERE verification_id = $1 AND code = $2 AND status = $3',
     /**Cambia el status de un codigo verificado exitosamente de
