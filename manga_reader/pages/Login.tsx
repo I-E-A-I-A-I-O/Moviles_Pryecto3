@@ -1,95 +1,87 @@
-import React, { useState } from 'react';
-import { ActivityIndicator, Alert, View } from 'react-native';
+import React, {useState} from 'react';
+import {Pressable, TextStyle} from 'react-native';
 import toast from 'react-native-toast-message';
-import { Text, Input, Button } from 'react-native-elements'
+import {Text, Input} from 'react-native-elements';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {RootStackParamList} from '../custom_types/navigation_types';
-import { SaveSessionData } from '../store/session-store/actions'
+import SubmitButton from '../components/submitButton';
+import axios from 'axios';
+import {ScrollView} from 'react-native-gesture-handler';
 
-type RegisterPart1ScreenNavigationProp = StackNavigationProp<RootStackParamList,'Register_1'>;
+type LoginPageScreenNavigationProp = StackNavigationProp<
+  RootStackParamList,
+  'Login'
+>;
 
 type Props = {
-  navigation: RegisterPart1ScreenNavigationProp;
+  navigation: LoginPageScreenNavigationProp;
 };
 
-function loginPage (props: Props){
+function LoginPage(props: Props) {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
-    const [loading, setLoading] = useState(false);
-    const [buttonTitle, setButtonTitle] = useState('Login');
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-
-        return (
-            <View style={{ flex: 1, top: '25%' }} >
-                <Text style={{ color: '#dbd8e3', textAlign: 'center', fontSize: 38, bottom: '8%', position: 'relative' }} >Clon LinkedIn</Text>
-                <Input
-                    onChange={(e) => {
-                        setEmail( e.nativeEvent.text );
-                    }}
-                    placeholder={'Your Email'} label={'Email'} selectionColor={'#e94560'}
-                    style={{ color: 'black' }} 
-                />
-                <Input
-                    onChange={(e) => {
-                        setPassword( e.nativeEvent.text );
-                    }}
-                    secureTextEntry={true} label={'Password'} selectionColor={'#e94560'}
-                    style={{ color: 'black' }} placeholder={'Your Password'}
-                />
-                <Button
-                    title={buttonTitle}
-                    disabled={loading}
-                    icon={<ActivityIndicator color={'#e94560'} animating={loading} />}
-                    onPress={() => {
-                        setLoading(true);
-                        setButtonTitle('');
-                        let data = {
-                            email: email,
-                            password: password
-                        };
-                        loginRequest(data).then(json => {
-                            setButtonTitle('Login');
-                            setLoading(false);
-                            if (json.title !== 'Success') {
-                                toast.show({ type: 'error', position: 'bottom', autoHide: true, text1: json.content });
-                            } else{
-                                props.
-                            }                          
-                        }).catch(err => {
-                            console.log(err);
-                            toast.show({ type: 'error', position: 'bottom', autoHide: true, text1: 'Network error. Try again later' });
-                        })
-                    }}
-                />
-                <Text
-                    style={ {
-                        color: '#3282b8',
-                        fontWeight: 'bold',
-                        fontSize: 15,
-                        left: '2%',
-                        position: 'relative',
-                        top: '3%'
-                    }}
-                    onPress={() => {props.navigation.navigate('Register_1')}}
-                >
-                    Create account
-                </Text>
-            </View>
-        )
+  const submitLogin = async () => {
+    let form = new FormData();
+    form.append('email', email);
+    form.append('password', password);
+    try {
+      await axios.post('/users/user/auth/verify', form);
+      console.log('NICE');
+    } catch (err) {
+      console.error(err);
+      toast.show({
+        type: 'error',
+        text1: err.response.data.content,
+        autoHide: true,
+        position: 'bottom',
+      });
     }
+  };
 
-
-async function loginRequest(data: any) {
-    let formData = new FormData();
-    formData.append('email', data.email);
-    formData.append('password', data.password);
-    let response = await fetch('http://localhost:8000/users/userLogin', {
-        method: 'POST',
-        body: formData
-    }).catch(err => {
-        console.log(err);
-    });
-    return response ? await response.json() : null;
+  return (
+    <ScrollView>
+      <Text style={textStyles[1]}>ConnectedIn</Text>
+      <Input
+        placeholder={'Email...'}
+        label={'Email'}
+        onChangeText={text => setEmail(text)}
+      />
+      <Input
+        onChangeText={text => setPassword(text)}
+        secureTextEntry={true}
+        label={'Password'}
+        placeholder={'Password...'}
+      />
+      <SubmitButton title={'Login'} onPress={submitLogin} />
+      <Pressable
+        android_ripple={{
+          color: 'gray',
+        }}
+        onPress={() => props.navigation.navigate('Register_1')}>
+        <Text style={textStyles[0]}>Not registered?</Text>
+      </Pressable>
+    </ScrollView>
+  );
 }
 
-export default loginPage;
+const textStyles: TextStyle[] = [
+  {
+    color: '#3282b8',
+    fontWeight: 'bold',
+    fontSize: 15,
+    textDecorationLine: 'underline',
+    paddingLeft: 10,
+    paddingTop: 15,
+  },
+  {
+    color: 'black',
+    alignSelf: 'center',
+    fontSize: 40,
+    paddingTop: 50,
+    paddingBottom: 50,
+    fontWeight: 'bold',
+  },
+];
+
+export default LoginPage;

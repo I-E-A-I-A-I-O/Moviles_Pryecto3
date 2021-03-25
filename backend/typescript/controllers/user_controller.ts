@@ -23,9 +23,7 @@ export class UserController extends BasicCRUD {
                     content: 'Account registered!',
                 });
             } else {
-                const path = `media/avatars/${user_id}`;
-                const absolutePath = `${path}/${files.avatar[0].originalname}`;
-                await fse.ensureDir(path);
+                const absolutePath = `media/avatars/${user_id}/${files.avatar[0].originalname}`;
                 await fse.outputFile(absolutePath, files.avatar[0].buffer);
                 await client.query(queries.setAvatar, [absolutePath, user_id]);
                 await client.query(queries.commit);

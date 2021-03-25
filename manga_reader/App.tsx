@@ -25,7 +25,6 @@ import {Alert} from 'react-native';
 import Axios from 'axios';
 import Toast from 'react-native-toast-message';
 import {RootStackParamList} from './custom_types/navigation_types';
-import Registration3 from './pages/Registration_3';
 
 Axios.defaults.baseURL = 'http://192.168.0.101:8000';
 
@@ -75,11 +74,11 @@ const App = () => {
             <NavigationContainer>
               <Stack.Navigator>
                 <Stack.Screen
-                  options={{title: 'Login' }}
+                  options={{title: 'Login'}}
                   name={'Login'}
                   component={Login}
                 />
-               <Stack.Screen
+                <Stack.Screen
                   options={{title: 'Registration'}}
                   name={'Register_1'}
                   component={Register_1}

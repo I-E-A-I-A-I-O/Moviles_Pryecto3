@@ -41,7 +41,7 @@ const Registration2 = (props: Props) => {
           autoHide: true,
           position: 'bottom',
         });
-        let response = await axios.put('/users/codes/code/', {
+        let response = await axios.put('/verification-codes/code', {
           verification_id: verificationId,
           name: props.route.params.name,
           email: props.route.params.email,
@@ -83,7 +83,7 @@ const Registration2 = (props: Props) => {
       });
     } else {
       try {
-        await axios.post('/users/codes/code/', {
+        await axios.put('/verification-codes/code/verify', {
           verification_id: verificationId,
           code: code,
         });
