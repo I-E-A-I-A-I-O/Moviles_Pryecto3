@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Platform, Pressable, TextStyle, View} from 'react-native';
+import {TextStyle, ViewStyle} from 'react-native';
 import {Text, Input} from 'react-native-elements';
 import SubmitButton from '../components/submitButton';
 import {RouteProp} from '@react-navigation/native';
@@ -109,8 +109,8 @@ const EditGeneralModal = (props: Props) => {
         value={age?.toString()}
         keyboardType={'numeric'}
         onChangeText={text => {
-          if (!Number.isNaN(Number.parseInt(text))) {
-            setAge(Number.parseInt(text));
+          if (!Number.isNaN(Number.parseInt(text, 10))) {
+            setAge(Number.parseInt(text, 10));
           } else if (text.length === 0) {
             setAge(undefined);
           }
@@ -127,9 +127,7 @@ const EditGeneralModal = (props: Props) => {
         date={date}
         minimumDate={new Date(1950, 1, 1)}
         maximumDate={new Date(2001, 1, 1)}
-        style={{
-          alignSelf: 'center',
-        }}
+        style={viewStyle}
       />
       <SubmitButton title={'Update'} onPress={submit} />
     </ScrollView>
@@ -141,6 +139,10 @@ const textStyle: TextStyle = {
   alignSelf: 'center',
   paddingTop: 50,
   paddingBottom: 50,
+};
+
+const viewStyle: ViewStyle = {
+  alignSelf: 'center',
 };
 
 export default EditGeneralModal;

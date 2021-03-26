@@ -1,6 +1,5 @@
 import React from 'react';
 import {
-  Alert,
   Pressable,
   RefreshControl,
   TextStyle,
@@ -162,10 +161,7 @@ class Profile extends React.Component<Props, State> {
           />
         }>
         {this.state.loading ? (
-          <View
-            style={{
-              alignSelf: 'center',
-            }}>
+          <View style={AvatarStyle}>
             <SkeletonPlaceholder>
               <SkeletonPlaceholder.Item
                 flexDirection={'column'}
@@ -231,7 +227,7 @@ class Profile extends React.Component<Props, State> {
                       type={'font-awesome-5'}
                       name={'pen'}
                       size={15}
-                      style={{paddingLeft: 15}}
+                      style={IconStyle}
                     />
                   </Pressable>
                 )}
@@ -247,9 +243,9 @@ class Profile extends React.Component<Props, State> {
               </Text>
               <Text>Country: {this.state.description.country}</Text>
               <Text>Address: {this.state.description.address}</Text>
-              <Text style={{alignSelf: 'center'}}>Description</Text>
+              <Text style={TextStyles[1]}>Description</Text>
               <Card.Divider />
-              <Text style={{alignSelf: 'center'}}>
+              <Text style={TextStyles[1]}>
                 {this.state.description.description}
               </Text>
             </Card>
@@ -271,6 +267,13 @@ const TextStyles: TextStyle[] = [
     fontWeight: 'bold',
     paddingTop: 25,
   },
+  {
+    alignSelf: 'center',
+  },
 ];
+
+const IconStyle: TextStyle | ViewStyle | undefined = {
+  paddingLeft: 15,
+};
 
 export default connector(Profile);
