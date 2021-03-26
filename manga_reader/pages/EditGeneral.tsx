@@ -5,7 +5,9 @@ import SubmitButton from '../components/submitButton';
 import {RouteProp} from '@react-navigation/native';
 import {ModalStackParamList} from '../custom_types/navigation_types';
 import {ScrollView} from 'react-native-gesture-handler';
-import DateTimePicker from '@react-native-community/datetimepicker';
+import DatePicker from 'react-native-date-picker';
+import Toast from 'react-native-toast-message';
+import axios from 'axios';
 
 type EditGeneralRouteProp = RouteProp<ModalStackParamList, 'EditGeneral'>;
 type Props = {
@@ -29,18 +31,45 @@ const EditGeneralModal = (props: Props) => {
   const [gender, setGender] = useState(
     props.route.params.currentDescription.gender,
   );
-  const [bdate, setBdate] = useState(
-    props.route.params.currentDescription.birth_date,
+  const [date, setDate] = useState(
+    new Date(props.route.params.currentDescription.birth_date ?? 0),
   );
-  const [date, setDate] = useState(new Date(1598051730000));
-  const [show, setShow] = useState(false);
 
-  const onChange = (event: Event, selectedDate: Date | undefined) => {
-    const currentDate = selectedDate || date;
-    setShow(Platform.OS === 'ios');
-    setDate(currentDate);
-    setBdate(new Date(date).toISOString());
+  const submit = async () => {
+    const reqBody = {
+      age: age,
+      address: address,
+      description: description,
+      country: country,
+      gender: gender,
+      b_date: new Date(date).toUTCString(),
+      last_name: lname,
+    };
+    try {
+      const response = await axios.patch(
+        `/users/user/${props.route.params.user_id}/general`,
+        reqBody,
+        {
+          headers: {authorization: props.route.params.token},
+        },
+      );
+      Toast.show({
+        type: 'success',
+        text1: response.data.content,
+        position: 'bottom',
+        autoHide: true,
+      });
+    } catch (err) {
+      console.error(err);
+      Toast.show({
+        type: 'error',
+        autoHide: true,
+        text1: err.response.data.content,
+        position: 'bottom',
+      });
+    }
   };
+
   return (
     <ScrollView>
       <Text style={textStyle}>Update general profile information</Text>
@@ -77,23 +106,32 @@ const EditGeneralModal = (props: Props) => {
       />
       <Input
         label={'Age'}
-        value={age}
+        value={age?.toString()}
         keyboardType={'numeric'}
-        onChangeText={text => setAge(text)}
+        onChangeText={text => {
+          if (!Number.isNaN(Number.parseInt(text))) {
+            setAge(Number.parseInt(text));
+          } else if (text.length === 0) {
+            setAge(undefined);
+          }
+        }}
       />
-      <Pressable onPress={() => setShow(!show)}>
-        <Input label={'Birth date'} value={bdate} disabled />
-      </Pressable>
-      {show && (
-        <DateTimePicker
-          testID="dateTimePicker"
-          value={date}
-          mode={'date'}
-          is24Hour={true}
-          display="default"
-          onChange={onChange}
-        />
-      )}
+      <Input
+        label={'Birth date'}
+        value={new Date(date).toLocaleDateString()}
+        disabled
+      />
+      <DatePicker
+        mode={'date'}
+        onDateChange={setDate}
+        date={date}
+        minimumDate={new Date(1950, 1, 1)}
+        maximumDate={new Date(2001, 1, 1)}
+        style={{
+          alignSelf: 'center',
+        }}
+      />
+      <SubmitButton title={'Update'} onPress={submit} />
     </ScrollView>
   );
 };

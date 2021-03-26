@@ -51,7 +51,7 @@ export class UserController extends BasicCRUD {
             const results = await client.query(queries.getUser.avatar, [id]);
             if (results.rowCount > 0) {
                 const path: string = results.rows[0].avatar;
-                const base64String = await fse.readFile(path, {encoding: 'base64'})
+                const base64String = await fse.readFile(path, { encoding: 'base64' })
                 const type = path.split(".")[1];
                 const mimeType = `image/${type}`;
                 const data = `data:${mimeType};base64,${base64String}`
@@ -68,27 +68,37 @@ export class UserController extends BasicCRUD {
     }
 
     private async readProfile(req: Request, res: Response) {
-        const {id} = req.params;
-        const {authorization} = req.headers;
+        const { id } = req.params;
+        const { authorization } = req.headers;
         if (authorization) {
             const payload = await jwt.getPayload(authorization);
             if (payload) {
                 const client = await dbController.getClient();
-                const abilites = await client.query(queries.getUser.abilites, [id]);
-                const awards = await client.query(queries.getUser.awards, [id]);
-                const experience = await client.query(queries.getUser.experience, [id]);
-                const projects = await client.query(queries.getUser.projects, [id]);
-                const recommendations = await client.query(queries.getUser.recommendations, [id]);
-                const description = await client.query(queries.getUser.description, [id]);
-                const resBody = {
-                    abilites: abilites.rows,
-                    awards: awards.rows,
-                    experience: experience.rows,
-                    projects: projects.rows,
-                    recommendations: recommendations.rows,
-                    description: description.rows[0] ?? undefined,
-                };
-                res.status(200).json(resBody);
+                try {
+                    const abilites = await client.query(queries.getUser.abilites, [id]);
+                    const awards = await client.query(queries.getUser.awards, [id]);
+                    const experience = await client.query(queries.getUser.experience, [id]);
+                    const projects = await client.query(queries.getUser.projects, [id]);
+                    const recommendations = await client.query(queries.getUser.recommendations, [id]);
+                    const description = await client.query(queries.getUser.description, [id]);
+                    const resBody = {
+                        abilites: abilites.rows,
+                        awards: awards.rows,
+                        experience: experience.rows,
+                        projects: projects.rows,
+                        recommendations: recommendations.rows,
+                        description: description.rows[0] ?? undefined,
+                    };
+                    res.status(200).json(resBody);
+                } catch (err) {
+                    console.error(err);
+                    res.status(503).json({
+                        title: 'error',
+                        content: 'Error retrieving iformation',
+                    });
+                } finally {
+                    client.release(true);
+                }
             } else {
                 res.status(403).json({
                     title: 'error',
@@ -104,7 +114,7 @@ export class UserController extends BasicCRUD {
     }
 
     public read(req: Request, res: Response, target: string) {
-        switch(target) {
+        switch (target) {
             case 'avatar': {
                 this.readAvatar(req, res);
                 break;
@@ -120,8 +130,87 @@ export class UserController extends BasicCRUD {
         }
     }
 
-    public update(req: Request, res: Response) {
+    private async updateGeneral(req: Request, res: Response, id: string) {
+        const {
+            last_name,
+            age,
+            gender,
+            description,
+            country,
+            address,
+            b_date,
+        } = req.body;
+        const client = await dbController.getClient();
+        try {
+            const results = await client.query(queries.setUser.description, [
+                description,
+                country,
+                age,
+                gender,
+                address,
+                last_name,
+                b_date,
+                id
+            ]);
+            if (results.rowCount > 0) {
+                res.status(201).json({
+                    title: 'success',
+                    content: 'Profile updated',
+                });
+            } else {
+                await client.query(queries.insertUser.description, [
+                    id,
+                    last_name,
+                    gender,
+                    address,
+                    country,
+                    age,
+                    description,
+                    b_date
+                ]);
+                res.status(200).json({
+                    title: 'success',
+                    content: 'Profile updated',
+                });
+            }
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({
+                title: 'error',
+                content: 'Could not update general information.',
+            });
+        } finally {
+            client.release(true);
+        }
+    }
 
+    public async update(req: Request, res: Response, target: string) {
+        const { authorization } = req.headers;
+        if (authorization) {
+            const payload = await jwt.getPayload(authorization);
+            if (payload) {
+                switch (target) {
+                    case 'general': {
+                        this.updateGeneral(req, res, payload.user_id);
+                        break;
+                    }
+                    default: {
+                        res.sendStatus(404);
+                        break;
+                    }
+                }
+            } else {
+                res.status(401).json({
+                    title: 'error',
+                    content: 'Invalid token'
+                })
+            }
+        } else {
+            res.status(401).json({
+                title: 'error',
+                content: 'missing token',
+            })
+        }
     }
 
     public delete(req: Request, res: Response) {

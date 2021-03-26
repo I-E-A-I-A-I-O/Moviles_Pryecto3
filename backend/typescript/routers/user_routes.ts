@@ -21,3 +21,7 @@ router.get('/user/:id/avatar', (req: Request, res: Response) => {
 router.get('/user/:id', (req: Request, res: Response) => {
     userController.read(req, res, 'profile');
 });
+
+router.patch('/user/:id/general', (req: Request, res: Response) => {
+    userController.update(req, res, 'general');
+});

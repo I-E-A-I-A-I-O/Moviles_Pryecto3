@@ -26,12 +26,13 @@ export type ModalStackParamList = {
   };
   EditGeneral: {
     user_id: string;
+    token: string;
     currentDescription: {
       description: string | undefined;
       country: string | undefined;
       address: string | undefined;
       gender: string | undefined;
-      age: string | undefined;
+      age: number | undefined;
       last_name: string | undefined;
       birth_date: string | undefined;
     };

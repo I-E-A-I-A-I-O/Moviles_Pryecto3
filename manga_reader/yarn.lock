@@ -1077,13 +1077,6 @@
     sudo-prompt "^9.0.0"
     wcwidth "^1.0.1"
 
-"@react-native-community/datetimepicker@^3.4.3":
-  version "3.4.3"
-  resolved "https://registry.yarnpkg.com/@react-native-community/datetimepicker/-/datetimepicker-3.4.3.tgz#e57cc254a53ea7c4229ad7c4cfc3368c109c1db3"
-  integrity sha512-FaryfNYxWvgL2YH+CPhbKl2viLwsYFSq+vrhQT8IHB+uOTPhRtRZ0sWSU1N3eWy8HFwqmTw2Ao5uVgn8cvsUew==
-  dependencies:
-    invariant "^2.2.4"
-
 "@react-native-community/eslint-config@^2.0.0":
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/@react-native-community/eslint-config/-/eslint-config-2.0.0.tgz#35dcc529a274803fc4e0a6b3d6c274551fb91774"
@@ -1107,6 +1100,11 @@
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@react-native-community/eslint-plugin/-/eslint-plugin-1.1.0.tgz#e42b1bef12d2415411519fd528e64b593b1363dc"
   integrity sha512-W/J0fNYVO01tioHjvYWQ9m6RgndVtbElzYozBq1ZPrHO/iCzlqoySHl4gO/fpCl9QEFjvJfjPgtPMTMlsoq5DQ==
+
+"@react-native-community/masked-view@^0.1.10":
+  version "0.1.10"
+  resolved "https://registry.yarnpkg.com/@react-native-community/masked-view/-/masked-view-0.1.10.tgz#5dda643e19e587793bc2034dd9bf7398ad43d401"
+  integrity sha512-rk4sWFsmtOw8oyx8SD3KSvawwaK7gRBSEIy2TAwURyGt+3TizssXP1r8nx3zY+R7v2vYYHXZ+k2/GULAT/bcaQ==
 
 "@react-native-firebase/app@^11.1.2":
   version "11.1.2"
@@ -5624,6 +5622,11 @@ react-native-codegen@^0.0.6:
     jscodeshift "^0.11.0"
     nullthrows "^1.1.1"
 
+react-native-date-picker@^3.2.10:
+  version "3.2.10"
+  resolved "https://registry.yarnpkg.com/react-native-date-picker/-/react-native-date-picker-3.2.10.tgz#5e690db8e628255d8390e33b1e6f8fa9477f6fb9"
+  integrity sha512-/fA+htnZcr3rBw3eaOR/DvMwGLDTg59MCiiluin5YcHBxNZQYs/uYp/l6Hf719qZXndPGcixS46YIgso4Jf4gg==
+
 react-native-elements@^3.3.2:
   version "3.3.2"
   resolved "https://registry.yarnpkg.com/react-native-elements/-/react-native-elements-3.3.2.tgz#42cc05c90a5c85c8aee95ce363bce0c5a39fe633"
@@ -5705,6 +5708,11 @@ react-native-size-matters@^0.3.1:
   version "0.3.1"
   resolved "https://registry.yarnpkg.com/react-native-size-matters/-/react-native-size-matters-0.3.1.tgz#24d0cfc335a2c730f6d58bd7b43ea5a41be4b49f"
   integrity sha512-mKOfBLIBFBcs9br1rlZDvxD5+mAl8Gfr5CounwJtxI6Z82rGrMO+Kgl9EIg3RMVf3G855a85YVqHJL2f5EDRlw==
+
+react-native-skeleton-placeholder@^3.0.4:
+  version "3.0.4"
+  resolved "https://registry.yarnpkg.com/react-native-skeleton-placeholder/-/react-native-skeleton-placeholder-3.0.4.tgz#13d25e8742a6261e772f23afaa18b864225da15b"
+  integrity sha512-NCIA6+whQF+jFdhLT2YdIkhNRsu4mGMHTRQP+kwcq5LVvB/UCDqUfrXlPjkFf9cvdx+Q+ca4JqlZvAp0Yv0sug==
 
 react-native-toast-message@^1.4.9:
   version "1.4.9"

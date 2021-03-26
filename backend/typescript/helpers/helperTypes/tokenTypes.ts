@@ -5,5 +5,5 @@ export abstract class TokenControllerObject {
 }
 
 export type TokenPayload = {
-    id: string,
+    user_id: string,
 }

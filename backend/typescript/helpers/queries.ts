@@ -18,11 +18,16 @@ export = {
     insertUser: {
         /**Inserta un nuevo usuario a la tabla y retorna la nueva ID*/
         new: 'INSERT INTO users(name, email, phone, password, creation_date) VALUES($1, $2, $3, $4, NOW()) RETURNING user_id',
+        /**Inserta nueva informacion a user_description vinculada al usuario de la ID indicada */
+        description: 'INSERT INTO user_description(user_id, last_name, gender, address, country, age, description, birth_date) VALUES($1, $2, $3, $4, $5, $6, $7, $8)',
     },
     /**Queries para editar informacion existente de usuarios */
     setUser: {
         /**Se actualiza el campo avatar del usuario con la ID indicada*/
         avatar: 'UPDATE users SET avatar = $1 WHERE user_id = $2',
+        /**Se actualiza la informacion de user_description pertenenciente al 
+         * usuario de la ID indicada */
+        description: 'UPDATE user_description SET description = $1, country = $2, age = $3, gender = $4, address = $5, last_name = $6, birth_date = $7 WHERE user_id = $8 RETURNING *',
     },
     /**Queries para el manejo de transacciones */
     transaction: {
