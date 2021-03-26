@@ -43,6 +43,7 @@ const RootTabNavigator = () => {
         initialParams={{
           user_id: undefined,
           deviceUser: true,
+          name: '',
         }}
       />
     </Tab.Navigator>

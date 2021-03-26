@@ -3,6 +3,7 @@ import {createStackNavigator} from '@react-navigation/stack';
 import {ModalStackParamList} from '../custom_types/navigation_types';
 import RootTabNav from './RootTabNavigator';
 import Profile from '../pages/Profile';
+import EditGeneralModal from '../pages/EditGeneral';
 
 const Stack = createStackNavigator<ModalStackParamList>();
 
@@ -20,7 +21,13 @@ const ModalStack = () => {
         initialParams={{
           deviceUser: false,
           user_id: undefined,
+          name: '',
         }}
+      />
+      <Stack.Screen
+        name={'EditGeneral'}
+        options={{title: 'Profile edition'}}
+        component={EditGeneralModal}
       />
     </Stack.Navigator>
   );

@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^1.14.1",
+    "@react-native-community/datetimepicker": "^3.4.3",
     "@react-native-firebase/app": "^11.1.2",
     "@react-native-firebase/messaging": "^11.1.2",
     "@react-native-masked-view/masked-view": "^0.2.3",
@@ -40,6 +41,7 @@
     "@babel/core": "^7.12.9",
     "@babel/runtime": "^7.12.5",
     "@react-native-community/eslint-config": "^2.0.0",
+    "@types/": "react-native-community/datetimepicker",
     "@types/jest": "^26.0.20",
     "@types/react-native": "^0.63.51",
     "@types/react-native-phone-input": "^0.2.1",

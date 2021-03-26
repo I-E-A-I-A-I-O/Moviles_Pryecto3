@@ -9,7 +9,7 @@ export class UserLogin {
         const { email, password } = req.body;
         const client = await dbController.getClient();
         try {
-            let results = await client.query(queries.getUserCredentials, [email]);
+            let results = await client.query(queries.getUser.credentials, [email]);
             if (results.rowCount > 0) {
                 const compare = await bcrypt.compare(password, results.rows[0].password);
                 if (!compare) {

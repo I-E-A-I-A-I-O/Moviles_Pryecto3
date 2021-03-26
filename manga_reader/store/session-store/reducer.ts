@@ -22,7 +22,7 @@ export function sessionReducer(
   switch (action.type) {
     case SAVE_SESSION_DATA:
       return {
-        session: state.session,
+        session: action.data,
       };
     case DELETE_SESSION_DATA: {
       AsyncStorage.removeItem('root');

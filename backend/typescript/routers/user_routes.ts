@@ -13,3 +13,11 @@ router.post('/user', (req: Request, res: Response) => {
 router.post('/user/auth/verify', (req: Request, res: Response) => {
     userLogin.userLogin(req, res);
 });
+
+router.get('/user/:id/avatar', (req: Request, res: Response) => {
+    userController.read(req, res, 'avatar');
+});
+
+router.get('/user/:id', (req: Request, res: Response) => {
+    userController.read(req, res, 'profile');
+});

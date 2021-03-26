@@ -22,6 +22,19 @@ export type ModalStackParamList = {
   Profile: {
     deviceUser: boolean;
     user_id: string | undefined;
+    name: string;
+  };
+  EditGeneral: {
+    user_id: string;
+    currentDescription: {
+      description: string | undefined;
+      country: string | undefined;
+      address: string | undefined;
+      gender: string | undefined;
+      age: string | undefined;
+      last_name: string | undefined;
+      birth_date: string | undefined;
+    };
   };
 };
 
@@ -30,5 +43,6 @@ export type RootTabNavigatorParamList = {
   Profile: {
     deviceUser: boolean;
     user_id: string | undefined;
+    name: string;
   };
 };

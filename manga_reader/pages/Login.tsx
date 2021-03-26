@@ -53,7 +53,7 @@ class LoginPage extends React.Component<Props, State> {
     if (this.props.sessionActive) {
       this.props.navigation.navigate('ModalStack', {
         screen: 'TabNavigator',
-        params: {screen: 'Dashboard'},
+        params: {screen: 'Feed'},
       });
     }
   }
@@ -72,7 +72,7 @@ class LoginPage extends React.Component<Props, State> {
       });
       this.props.navigation.navigate('ModalStack', {
         screen: 'TabNavigator',
-        params: {screen: 'Dashboard'},
+        params: {screen: 'Feed'},
       });
     } catch (err) {
       console.error(err);
