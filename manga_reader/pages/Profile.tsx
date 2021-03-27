@@ -4,8 +4,8 @@ import {Text} from 'react-native-elements';
 
 const Profile = () => {
   return (
-    <View>
-      <Text>asdasd</Text>
+    <View style={{alignItems: 'center', top: '50%'}}>
+      <Text style={{fontSize: 40}}> Perfil De Usuario </Text>
     </View>
   );
 };
