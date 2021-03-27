@@ -2,9 +2,9 @@ import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {RootTabNavigatorParamList} from '../custom_types/navigation_types';
 import Dashboard from '../pages/Dashboard';
-import Profile from '../pages/Profile'
-import Notifications from '../pages/pageNotifications'
-import Post from '../pages/pageToPost'
+import Profile from '../pages/Profile';
+import Notifications from '../pages/pageNotifications';
+import Post from '../pages/pageToPost';
 import {Icon} from 'react-native-elements';
 
 const Tab = createBottomTabNavigator<RootTabNavigatorParamList>();
@@ -25,7 +25,7 @@ const RootTabNavigator = () => {
               solid={focused.focused}
             />
           ),
-          title: 'Home'
+          title: 'Home',
         }}
       />
 
@@ -42,7 +42,7 @@ const RootTabNavigator = () => {
               solid={focused.focused}
             />
           ),
-          title: 'Profile'
+          title: 'Profile',
         }}
       />
       <Tab.Screen
@@ -58,12 +58,8 @@ const RootTabNavigator = () => {
               solid={focused.focused}
             />
           ),
-          title: 'Notifications'
+          title: 'Notifications',
         }}
-        initialParams={{
-          user_id: undefined,
-          deviceUser: true,
-          name: '',
       />
       <Tab.Screen
         name={'Post'}
@@ -78,7 +74,7 @@ const RootTabNavigator = () => {
               solid={focused.focused}
             />
           ),
-          title: 'Post'
+          title: 'Post',
         }}
       />
     </Tab.Navigator>
