@@ -17,6 +17,7 @@ type LoginPageScreenNavigationProp = StackNavigationProp<
   'Login'
 >;
 
+
 const mapDispatchToProps = {
   reduxSaveSession: (data: Session) => ({
     type: 'SAVE_SESSION_DATA',
@@ -118,6 +119,7 @@ class LoginPage extends React.Component<Props, State> {
           onPress={() => this.props.navigation.navigate('Register_1')}>
           <Text style={textStyles[0]}>Not registered?</Text>
         </Pressable>
+
       </ScrollView>
     );
   }
@@ -132,6 +134,7 @@ const textStyles: TextStyle[] = [
     paddingLeft: 10,
     paddingTop: 15,
   },
+
   {
     color: 'black',
     alignSelf: 'center',
