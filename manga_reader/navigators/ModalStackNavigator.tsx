@@ -4,6 +4,7 @@ import {ModalStackParamList} from '../custom_types/navigation_types';
 import RootTabNav from './RootTabNavigator';
 import Profile from '../pages/Profile';
 import EditGeneralModal from '../pages/EditGeneral';
+import Dashboard from '../pages/Dashboard';
 
 const Stack = createStackNavigator<ModalStackParamList>();
 
@@ -23,6 +24,7 @@ const ModalStack = () => {
           user_id: undefined,
           name: '',
         }}
+        options={{title:'Profile'}}
       />
       <Stack.Screen
         name={'EditGeneral'}

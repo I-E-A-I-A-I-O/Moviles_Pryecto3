@@ -19,7 +19,6 @@ import {
   ProfileSkeleton,
   UserAvatar,
 } from '../components';
-
 import type {RootReducerType as CombinedState} from '../store/rootReducer';
 import type {ProfileState} from '../custom_types/state_types';
 
