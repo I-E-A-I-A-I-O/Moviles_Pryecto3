@@ -117,37 +117,40 @@ const ListWODescription = (props: Props) => {
     />
   );
 
+  const _userAbility = (item: ListRenderItemInfo<any>) => (
+    <Text style={textStyle}>
+      {props.deviceUser && (
+        <Pressable
+          disabled={saving}
+          onPress={() => deleteAbility(item.item.ability_id)}
+          android_ripple={{
+            borderless: true,
+            color: 'gray',
+          }}>
+          <Icon
+            type={'font-awesome-5'}
+            name={'trash-alt'}
+            color={saving ? 'gray' : 'red'}
+          />
+        </Pressable>
+      )}
+      {'  '}
+      {item.item.name}
+      {'\n'}
+    </Text>
+  );
+
   return (
     <Card>
       <Card.Title>Abilities</Card.Title>
       <Card.Divider />
       <VirtualizedList
+        listKey={'abilities'}
         scrollEnabled={false}
         data={abilities}
         getItem={(data, index) => abilities[index]}
         getItemCount={() => abilities?.length}
-        renderItem={item => (
-          <Text style={textStyle}>
-            {props.deviceUser && (
-              <Pressable
-                disabled={saving}
-                onPress={() => deleteAbility(item.item.ability_id)}
-                android_ripple={{
-                  borderless: true,
-                  color: 'gray',
-                }}>
-                <Icon
-                  type={'font-awesome-5'}
-                  name={'trash-alt'}
-                  color={saving ? 'gray' : 'red'}
-                />
-              </Pressable>
-            )}
-            {'  '}
-            {item.item.name}
-            {'\n'}
-          </Text>
-        )}
+        renderItem={_userAbility}
         keyExtractor={item => item.ability_id}
         ListFooterComponent={
           <View>

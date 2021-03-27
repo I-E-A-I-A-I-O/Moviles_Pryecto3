@@ -187,7 +187,6 @@ export class UserController extends BasicCRUD {
     private async addAbility(req: Request, res: Response, id: string) {
         const client = await dbController.getClient();
         try {
-            console.log(req.body);
             const results = await client.query(queries.insertUser.ability, [id, req.body.ability]);
             res.status(201).json({
                 title: 'success',

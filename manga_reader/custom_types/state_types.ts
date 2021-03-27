@@ -13,7 +13,7 @@ export type ProfileState = {
   abilities: {ability_id: string; name: string}[];
   awards: {name: string; id: string}[];
   education: {title: string; id: string}[];
-  experience: {title: string; id: string}[];
+  experience: {name: string; id: string}[];
   projects: {name: string; id: string}[];
   recommended_by: {name: string; id: string}[];
   refreshing: boolean;

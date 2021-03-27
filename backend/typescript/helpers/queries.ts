@@ -67,7 +67,7 @@ export = {
         /**Selecciona los registros de experiencia laboral añadidos por el usuario de la ID
          * indicada
          */
-        experience: 'SELECT job_id, job_title FROM user_experience WHERE user_id = $1',
+        experience: 'SELECT job_id AS id, job_title AS name FROM user_experience WHERE user_id = $1',
         /**Selecciona los registros de proyectos añadidos por el usuario de la ID indicada */
         projects: 'SELECT project_id, project_name FROM user_projects WHERE user_id = $1',
         /**Selecciona las recomendaciones recibidas por el usuario de la ID indicada */
