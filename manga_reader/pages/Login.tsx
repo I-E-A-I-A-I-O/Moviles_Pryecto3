@@ -4,7 +4,7 @@ import toast from 'react-native-toast-message';
 import {Text, Input} from 'react-native-elements';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {RootStackParamList} from '../custom_types/navigation_types';
-import SubmitButton from '../components/submitButton';
+import {SubmitButton} from '../components';
 import axios from 'axios';
 import {ScrollView} from 'react-native-gesture-handler';
 import {connect, ConnectedProps} from 'react-redux';
@@ -54,7 +54,7 @@ class LoginPage extends React.Component<Props, State> {
     if (this.props.sessionActive) {
       this.props.navigation.navigate('ModalStack', {
         screen: 'TabNavigator',
-        params: {screen: 'Dashboard'},
+        params: {screen: 'Feed'},
       });
     }
   }
@@ -73,7 +73,7 @@ class LoginPage extends React.Component<Props, State> {
       });
       this.props.navigation.navigate('ModalStack', {
         screen: 'TabNavigator',
-        params: {screen: 'Dashboard'},
+        params: {screen: 'Feed'},
       });
     } catch (err) {
       console.error(err);

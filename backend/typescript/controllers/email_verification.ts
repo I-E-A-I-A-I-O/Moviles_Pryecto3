@@ -26,16 +26,16 @@ export class CodeController extends CodeCRUD {
         const { name, email, phone } = req.body;
         const client = await dbController.getClient();
         try {
-            let results = await client.query(queries.areCredentialsNew, [email, phone]);
+            let results = await client.query(queries.getUser.areCredentialsNew, [email, phone]);
             if (results.rowCount > 0) {
                 res.status(401).json({
                     title: 'error',
                     content: 'Email or phone number already in use!',
                 });
             } else {
-                results = await client.query(queries.getExistentCodes, ['PENDING']);
+                results = await client.query(queries.verification_codes.getExistentCodes, ['PENDING']);
                 const authCode = this.generateCode(results.rows);
-                results = await client.query(queries.insertNewCode, [email, authCode, 'PENDING'])
+                results = await client.query(queries.verification_codes.insertNewCode, [email, authCode, 'PENDING'])
                 res.status(201).json({
                     title: 'success',
                     content: results.rows[0].verification_id,
@@ -64,7 +64,7 @@ export class CodeController extends CodeCRUD {
     protected async delete(verification_id: string) {
         const client = await dbController.getClient();
         try {
-            await client.query(queries.invalidateCode, [verification_id]);
+            await client.query(queries.verification_codes.invalidateCode, [verification_id]);
             console.info(`Verification code with ID ${verification_id} expired at ${(new Date(Date.now())).toISOString()}.`);
         } catch (err) {
             console.error(err);
@@ -77,9 +77,9 @@ export class CodeController extends CodeCRUD {
         const {verification_id, code} = req.body;
         const client = await dbController.getClient();
         try {
-            let results = await client.query(queries.verifyCode, [verification_id, code, 'PENDING']);
+            let results = await client.query(queries.verification_codes.verifyCode, [verification_id, code, 'PENDING']);
             if (results.rowCount > 0) {
-                await client.query(queries.setCompleted, ['COMPLETED', verification_id]);
+                await client.query(queries.verification_codes.setCompleted, ['COMPLETED', verification_id]);
                 res.sendStatus(204);
             } else {
                 res.status(404).json({

@@ -21,7 +21,7 @@ const RootTabNavigator = () => {
               size={25}
               type={'font-awesome-5'}
               name={'home'}
-              color={focused.focused ? 'black' : 'black'}
+              color={'black'}
               solid={focused.focused}
             />
           ),
@@ -38,14 +38,13 @@ const RootTabNavigator = () => {
               size={25}
               type={'font-awesome'}
               name={'user'}
-              color={focused.focused ? 'black' : 'black'}
+              color={'black'}
               solid={focused.focused}
             />
           ),
           title: 'Profile'
         }}
       />
-
       <Tab.Screen
         name={'Notifications'}
         component={Notifications}
@@ -55,14 +54,17 @@ const RootTabNavigator = () => {
               size={25}
               type={'ion-icons'}
               name={'notifications'}
-              color={focused.focused ? 'black' : 'black'}
+              color={'black'}
               solid={focused.focused}
             />
           ),
           title: 'Notifications'
         }}
+        initialParams={{
+          user_id: undefined,
+          deviceUser: true,
+          name: '',
       />
-
       <Tab.Screen
         name={'Post'}
         component={Post}
@@ -72,14 +74,13 @@ const RootTabNavigator = () => {
               size={25}
               type={'material-icons'}
               name={'library-add'}
-              color={focused.focused ? 'black' : 'black'}
+              color={'black'}
               solid={focused.focused}
             />
           ),
           title: 'Post'
         }}
       />
-      
     </Tab.Navigator>
   );
 };

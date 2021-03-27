@@ -1,12 +1,11 @@
 import React, {useState} from 'react';
 import {ScrollView} from 'react-native';
 import {Text, Input} from 'react-native-elements';
-import SubmitButton from '../components/submitButton';
+import {SubmitButton, ImagePicker} from '../components';
 import {RouteProp} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {RootStackParamList} from '../custom_types/navigation_types';
 import {TextStyle} from 'react-native-phone-input';
-import ImagePicker from '../components/imagePicker';
 import Toast from 'react-native-toast-message';
 import axios from 'axios';
 

@@ -11,11 +11,11 @@ export class DBController {
                 rejectUnauthorized: false
             },
             max: 20,
-            idleTimeoutMillis: 3000,
+            min: 1,
+            connectionTimeoutMillis: 20000,
         });
         this.pool.on('error', (err, client) => {
             console.error(err);
-            client.release(true);
         });
     }
 
