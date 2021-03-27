@@ -11,7 +11,7 @@ const Tab = createBottomTabNavigator<RootTabNavigatorParamList>();
 
 const RootTabNavigator = () => {
   return (
-    <Tab.Navigator >
+    <Tab.Navigator>
       <Tab.Screen
         name={'Dashboard'}
         component={Dashboard}
@@ -28,8 +28,7 @@ const RootTabNavigator = () => {
           title: 'Home',
         }}
       />
-
-    <Tab.Screen
+      <Tab.Screen
         name={'Profile'}
         component={Profile}
         options={{
@@ -43,6 +42,11 @@ const RootTabNavigator = () => {
             />
           ),
           title: 'Profile',
+        }}
+        initialParams={{
+          deviceUser: true,
+          name: '',
+          user_id: undefined,
         }}
       />
       <Tab.Screen
