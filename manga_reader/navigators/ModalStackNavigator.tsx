@@ -3,6 +3,7 @@ import {createStackNavigator} from '@react-navigation/stack';
 import {ModalStackParamList} from '../custom_types/navigation_types';
 import RootTabNav from './RootTabNavigator';
 import Profile from '../pages/Profile';
+import Dashboard from '../pages/Dashboard';
 
 const Stack = createStackNavigator<ModalStackParamList>();
 
@@ -21,6 +22,7 @@ const ModalStack = () => {
           deviceUser: false,
           user_id: undefined,
         }}
+        options={{title:'Profile'}}
       />
     </Stack.Navigator>
   );
