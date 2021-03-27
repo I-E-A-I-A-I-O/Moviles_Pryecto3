@@ -82,7 +82,7 @@ export class UserController extends BasicCRUD {
                     const recommendations = await client.query(queries.getUser.recommendations, [id]);
                     const description = await client.query(queries.getUser.description, [id]);
                     const resBody = {
-                        abilites: abilites.rows,
+                        abilities: abilites.rows,
                         awards: awards.rows,
                         experience: experience.rows,
                         projects: projects.rows,
@@ -184,6 +184,42 @@ export class UserController extends BasicCRUD {
         }
     }
 
+    private async addAbility(req: Request, res: Response, id: string) {
+        const client = await dbController.getClient();
+        try {
+            console.log(req.body);
+            const results = await client.query(queries.insertUser.ability, [id, req.body.ability]);
+            res.status(201).json({
+                title: 'success',
+                content: results.rows[0],
+            });
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({
+                title: 'error',
+                content: 'Could not save the new ability',
+            });
+        } finally {
+            client.release(true);
+        }
+    }
+
+    private async removeAbility(req: Request, res: Response) {
+        const client = await dbController.getClient();
+        try {
+            await client.query(queries.removeUser.ability, [req.params.id]);
+            res.sendStatus(200);
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({
+                title: 'error',
+                content: 'Could delete the ability',
+            });
+        } finally {
+            client.release(true);
+        }
+    }
+
     public async update(req: Request, res: Response, target: string) {
         const { authorization } = req.headers;
         if (authorization) {
@@ -192,6 +228,14 @@ export class UserController extends BasicCRUD {
                 switch (target) {
                     case 'general': {
                         this.updateGeneral(req, res, payload.user_id);
+                        break;
+                    }
+                    case 'ability-add': {
+                        this.addAbility(req, res, payload.user_id);
+                        break;
+                    }
+                    case 'ability-remove': {
+                        this.removeAbility(req, res);
                         break;
                     }
                     default: {

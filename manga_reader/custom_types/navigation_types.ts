@@ -25,7 +25,6 @@ export type ModalStackParamList = {
     name: string;
   };
   EditGeneral: {
-    user_id: string;
     token: string;
     currentDescription: {
       description: string | undefined;

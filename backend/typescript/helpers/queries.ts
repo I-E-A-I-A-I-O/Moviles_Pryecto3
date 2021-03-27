@@ -20,6 +20,8 @@ export = {
         new: 'INSERT INTO users(name, email, phone, password, creation_date) VALUES($1, $2, $3, $4, NOW()) RETURNING user_id',
         /**Inserta nueva informacion a user_description vinculada al usuario de la ID indicada */
         description: 'INSERT INTO user_description(user_id, last_name, gender, address, country, age, description, birth_date) VALUES($1, $2, $3, $4, $5, $6, $7, $8)',
+        /**Añade una nueva habilidad a la lista perteneciente al usuario de la ID indicada */
+        ability: 'INSERT INTO user_abilities(user_id, name) VALUES($1, $2) RETURNING *',
     },
     /**Queries para editar informacion existente de usuarios */
     setUser: {
@@ -51,7 +53,7 @@ export = {
         /**Selecciona el avatar del usuario registrado con la ID indicada */
         avatar: 'SELECT avatar FROM users WHERE user_id = $1',
         /**Selecciona las abilidades añadidas por el usuario de la ID indicada */
-        abilites: 'SELECT name FROM user_abilities WHERE user_id = $1',
+        abilites: 'SELECT ability_id, name FROM user_abilities WHERE user_id = $1',
         /**Selecciona los premios añadidos por el usuario de la ID indicada  */
         awards: 'SELECT award_id, title FROM user_awards WHERE user_id = $1',
         /**Selecciona la descripcion general (fecha de nacimiento, edad, pais de residencia, etc...) 
@@ -80,4 +82,9 @@ export = {
          */
         isValid: 'SELECT token FROM invalid_jwt WHERE token = $1',
     },
+    /**Queries para borrar informacion relacionada a usuarios */
+    removeUser: {
+        /**Borra la abilidad registrada con la ID indicada */
+        ability: 'DELETE FROM user_abilities WHERE ability_id = $1',
+    }
 }

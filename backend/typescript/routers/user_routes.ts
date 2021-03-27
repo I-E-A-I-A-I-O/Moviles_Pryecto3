@@ -22,6 +22,14 @@ router.get('/user/:id', (req: Request, res: Response) => {
     userController.read(req, res, 'profile');
 });
 
-router.patch('/user/:id/general', (req: Request, res: Response) => {
+router.patch('/user/general', (req: Request, res: Response) => {
     userController.update(req, res, 'general');
+});
+
+router.post('/user/abilities/ability', (req: Request, res: Response) => {
+    userController.update(req, res, 'ability-add');
+});
+
+router.delete('/user/abilities/ability/:id', (req: Request, res: Response) => {
+    userController.update(req, res, 'ability-remove');
 });

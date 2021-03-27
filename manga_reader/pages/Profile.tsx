@@ -1,13 +1,6 @@
 import React from 'react';
-import {
-  Pressable,
-  RefreshControl,
-  TextStyle,
-  View,
-  ViewStyle,
-} from 'react-native';
-import {Text, Card, Icon} from 'react-native-elements';
-import UserAvatar from '../components/avatar';
+import {RefreshControl, TextStyle, View, ViewStyle} from 'react-native';
+import {Text} from 'react-native-elements';
 import {RouteProp, CompositeNavigationProp} from '@react-navigation/native';
 import {
   RootTabNavigatorParamList,
@@ -16,12 +9,18 @@ import {
 import {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {connect, ConnectedProps} from 'react-redux';
-import {ScrollView} from 'react-native-gesture-handler';
+import {FlatList} from 'react-native-gesture-handler';
 import axios from 'axios';
 import Toast from 'react-native-toast-message';
-import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
+import {
+  DescriptionComponent,
+  ListWODescription,
+  ProfileSkeleton,
+  UserAvatar,
+} from '../components';
 
 import type {RootReducerType as CombinedState} from '../store/rootReducer';
+import type {ProfileState} from '../custom_types/state_types';
 
 const mapStateToProps = (state: CombinedState) => ({
   state: state.session.session,
@@ -39,29 +38,8 @@ type Props = PropsFromRedux & {
   route: ProfilePageRouteProp;
   navigation: ProfilePageNavProp;
 };
-type State = {
-  name: string;
-  recent_posts: string[];
-  description: {
-    description: string | undefined;
-    country: string | undefined;
-    address: string | undefined;
-    gender: string | undefined;
-    age: number | undefined;
-    last_name: string | undefined;
-    birth_date: string | undefined;
-  };
-  abilities: string[];
-  awards: {name: string; id: string}[];
-  education: {title: string; id: string}[];
-  experience: {title: string; id: string}[];
-  projects: {name: string; id: string}[];
-  recommended_by: string[];
-  refreshing: boolean;
-  loading: boolean;
-};
 
-const initialState: State = {
+const initialState: ProfileState = {
   name: '',
   abilities: [],
   awards: [],
@@ -83,7 +61,7 @@ const initialState: State = {
   loading: true,
 };
 
-class Profile extends React.Component<Props, State> {
+class Profile extends React.Component<Props, ProfileState> {
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -153,105 +131,53 @@ class Profile extends React.Component<Props, State> {
 
   render() {
     return (
-      <ScrollView
+      <FlatList
+        data={[]}
+        renderItem={() => null}
         refreshControl={
           <RefreshControl
             refreshing={this.state.refreshing}
             onRefresh={this.onRefresh}
           />
-        }>
-        {this.state.loading ? (
-          <View style={AvatarStyle}>
-            <SkeletonPlaceholder>
-              <SkeletonPlaceholder.Item
-                flexDirection={'column'}
-                alignItems={'center'}
-                alignSelf={'center'}>
-                <SkeletonPlaceholder.Item
-                  width={150}
-                  height={150}
-                  borderRadius={100}
-                />
-                <SkeletonPlaceholder.Item
-                  width={220}
-                  height={30}
-                  borderRadius={4}
-                  marginTop={25}
-                />
-                <SkeletonPlaceholder.Item
-                  width={380}
-                  height={200}
-                  borderRadius={5}
-                  marginTop={25}
-                />
-                <SkeletonPlaceholder.Item
-                  width={380}
-                  height={200}
-                  borderRadius={5}
-                  marginTop={25}
-                />
-              </SkeletonPlaceholder.Item>
-            </SkeletonPlaceholder>
-          </View>
-        ) : (
+        }
+        ListHeaderComponent={
           <View>
-            <UserAvatar
-              user_id={
-                this.props.route.params.deviceUser
-                  ? this.props.state.id
-                  : this.props.route.params.user_id ?? ''
-              }
-              size={'xlarge'}
-              style={AvatarStyle}
-            />
-            <Text style={TextStyles}>
-              {this.state.name} {this.state.description.last_name}
-            </Text>
-            <Card>
-              <Card.Title>
-                General
-                {this.props.route.params.deviceUser && (
-                  <Pressable
-                    android_ripple={{
-                      borderless: true,
-                      color: 'gray',
-                    }}
-                    onPress={() =>
-                      this.props.navigation.navigate('EditGeneral', {
-                        user_id: this.props.state.id,
-                        currentDescription: this.state.description,
-                        token: this.props.state.token,
-                      })
-                    }>
-                    <Icon
-                      type={'font-awesome-5'}
-                      name={'pen'}
-                      size={15}
-                      style={IconStyle}
-                    />
-                  </Pressable>
-                )}
-              </Card.Title>
-              <Card.Divider />
-              <Text>Last name: {this.state.description.last_name}</Text>
-              <Text>
-                Gender: {this.state.description.gender ?? 'undefined'}
-              </Text>
-              <Text>Age: {this.state.description.age}</Text>
-              <Text>
-                Birth date: {this.state.description.birth_date?.split('T')[0]}
-              </Text>
-              <Text>Country: {this.state.description.country}</Text>
-              <Text>Address: {this.state.description.address}</Text>
-              <Text style={TextStyles[1]}>Description</Text>
-              <Card.Divider />
-              <Text style={TextStyles[1]}>
-                {this.state.description.description}
-              </Text>
-            </Card>
+            {this.state.loading ? (
+              <ProfileSkeleton />
+            ) : (
+              <View>
+                <UserAvatar
+                  user_id={
+                    this.props.route.params.deviceUser
+                      ? this.props.state.id
+                      : this.props.route.params.user_id ?? ''
+                  }
+                  size={'xlarge'}
+                  style={AvatarStyle}
+                />
+                <Text style={TextStyles}>
+                  {this.state.name} {this.state.description.last_name}
+                </Text>
+                <DescriptionComponent
+                  description={this.state.description}
+                  deviceUser={this.props.route.params.deviceUser}
+                  navigate={() =>
+                    this.props.navigation.navigate('EditGeneral', {
+                      currentDescription: this.state.description,
+                      token: this.props.state.token,
+                    })
+                  }
+                />
+                <ListWODescription
+                  abilities={this.state.abilities}
+                  deviceUser={this.props.route.params.deviceUser}
+                  token={this.props.state.token}
+                />
+              </View>
+            )}
           </View>
-        )}
-      </ScrollView>
+        }
+      />
     );
   }
 }
@@ -271,9 +197,5 @@ const TextStyles: TextStyle[] = [
     alignSelf: 'center',
   },
 ];
-
-const IconStyle: TextStyle | ViewStyle | undefined = {
-  paddingLeft: 15,
-};
 
 export default connector(Profile);

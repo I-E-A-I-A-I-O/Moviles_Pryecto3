@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {TextStyle, ViewStyle} from 'react-native';
 import {Text, Input} from 'react-native-elements';
-import SubmitButton from '../components/submitButton';
+import {SubmitButton} from '../components';
 import {RouteProp} from '@react-navigation/native';
 import {ModalStackParamList} from '../custom_types/navigation_types';
 import {ScrollView} from 'react-native-gesture-handler';
@@ -46,13 +46,9 @@ const EditGeneralModal = (props: Props) => {
       last_name: lname,
     };
     try {
-      const response = await axios.patch(
-        `/users/user/${props.route.params.user_id}/general`,
-        reqBody,
-        {
-          headers: {authorization: props.route.params.token},
-        },
-      );
+      const response = await axios.patch('/users/user/general', reqBody, {
+        headers: {authorization: props.route.params.token},
+      });
       Toast.show({
         type: 'success',
         text1: response.data.content,

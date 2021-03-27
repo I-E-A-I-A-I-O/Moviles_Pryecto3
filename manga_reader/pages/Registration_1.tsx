@@ -4,7 +4,7 @@ import {Input, Text} from 'react-native-elements';
 import PhoneInput from 'react-native-phone-input';
 import Toast from 'react-native-toast-message';
 import axios from 'axios';
-import SubmitButton from '../components/submitButton';
+import {SubmitButton} from '../components';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {RootStackParamList} from '../custom_types/navigation_types';
 

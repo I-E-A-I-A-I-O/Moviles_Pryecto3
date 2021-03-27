@@ -4,7 +4,7 @@ import toast from 'react-native-toast-message';
 import {Text, Input} from 'react-native-elements';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {RootStackParamList} from '../custom_types/navigation_types';
-import SubmitButton from '../components/submitButton';
+import {SubmitButton} from '../components';
 import axios from 'axios';
 import {ScrollView} from 'react-native-gesture-handler';
 import {connect, ConnectedProps} from 'react-redux';

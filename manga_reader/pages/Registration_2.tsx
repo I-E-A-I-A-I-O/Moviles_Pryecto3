@@ -7,7 +7,7 @@ import {RouteProp} from '@react-navigation/native';
 import {TextStyle} from 'react-native-phone-input';
 import Toast from 'react-native-toast-message';
 import axios from 'axios';
-import SubmitButton from '../components/submitButton';
+import {SubmitButton} from '../components';
 
 type RegisterPart2ScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
