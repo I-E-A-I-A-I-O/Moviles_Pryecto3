@@ -14,6 +14,7 @@ import axios from 'axios';
 import Toast from 'react-native-toast-message';
 import {
   DescriptionComponent,
+  ListWDescription,
   ListWODescription,
   ProfileSkeleton,
   UserAvatar,
@@ -170,6 +171,13 @@ class Profile extends React.Component<Props, ProfileState> {
                 />
                 <ListWODescription
                   abilities={this.state.abilities}
+                  deviceUser={this.props.route.params.deviceUser}
+                  token={this.props.state.token}
+                />
+                <ListWDescription
+                  title={'Job experience'}
+                  data={this.state.experience}
+                  onCreate={() => null}
                   deviceUser={this.props.route.params.deviceUser}
                   token={this.props.state.token}
                 />

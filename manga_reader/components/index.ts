@@ -4,6 +4,7 @@ import ListWODescription from './ListWithoutDescription';
 import DescriptionComponent from './descriptionComponent';
 import ProfileSkeleton from './profileSkeleton';
 import SubmitButton from './submitButton';
+import ListWDescription from './ListWithDescription';
 
 export {
   UserAvatar,
@@ -12,4 +13,5 @@ export {
   ListWODescription,
   ProfileSkeleton,
   SubmitButton,
+  ListWDescription,
 };
