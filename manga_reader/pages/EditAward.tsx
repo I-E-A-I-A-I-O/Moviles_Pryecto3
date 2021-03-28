@@ -9,29 +9,23 @@ import {StackNavigationProp} from '@react-navigation/stack';
 
 import type {ModalStackParamList} from '../custom_types/navigation_types';
 
-type EditExperienceRouteProp = RouteProp<
+type EditAwardRouteProp = RouteProp<ModalStackParamList, 'AwardEdition'>;
+type EditAwardNavProp = StackNavigationProp<
   ModalStackParamList,
-  'JobExperienceEdition'
->;
-type EditExperienceNavProp = StackNavigationProp<
-  ModalStackParamList,
-  'JobExperienceEdition'
+  'AwardEdition'
 >;
 
 type Props = {
-  route: EditExperienceRouteProp;
-  navigation: EditExperienceNavProp;
+  route: EditAwardRouteProp;
+  navigation: EditAwardNavProp;
 };
 
-const EditExperience = (props: Props) => {
-  const [startDate, setStartDate] = useState<string | undefined>(
-    props.route.params.currentData?.start,
+const EditAward = (props: Props) => {
+  const [date, setDate] = useState<string | undefined>(
+    props.route.params.currentData?.date,
   );
-  const [finishDate, setFinishDate] = useState<string | undefined>(
-    props.route.params.currentData?.end,
-  );
-  const [orgName, setOrgname] = useState<string>(
-    props.route.params.currentData?.organization ?? '',
+  const [by, setBy] = useState<string>(
+    props.route.params.currentData?.by ?? '',
   );
   const [title, setTitle] = useState<string>(
     props.route.params.currentData?.title ?? '',
@@ -42,15 +36,15 @@ const EditExperience = (props: Props) => {
 
   const validate = async () => {
     try {
-      if (!orgName || orgName.length < 1) {
+      if (!by || by.length < 1) {
         throw 'Organization name missing';
       }
       if (!title || title.length < 1) {
-        throw 'Job title missing';
+        throw 'Title missing';
       }
       if (
         !dateFunctions.isDateValid(
-          startDate ?? '',
+          date ?? '',
           new Date(Date.now()).getFullYear() - 50,
           new Date(Date.now()).getFullYear(),
         )
@@ -58,15 +52,11 @@ const EditExperience = (props: Props) => {
         throw 'Invalid date!';
       }
       if (
-        !dateFunctions.isDateValid(
-          finishDate ?? '',
-          dateFunctions.getNumbers(startDate ?? '')?.year,
-          new Date(Date.now()).getFullYear() + 50,
+        !dateFunctions.isBeforeThan(
+          date ?? '',
+          new Date(Date.now()).toISOString().split('T')[0],
         )
       ) {
-        throw 'Invalid date!';
-      }
-      if (!dateFunctions.isBeforeThan(startDate ?? '', finishDate ?? '')) {
         throw 'Invalid date!';
       }
       await saveChanges();
@@ -82,19 +72,18 @@ const EditExperience = (props: Props) => {
   const saveChanges = async () => {
     try {
       const reqBody = {
-        org_name: orgName,
+        by: by,
         title: title,
         description: description,
-        startDate: startDate,
-        finishDate: finishDate,
+        date: date,
       };
       const response = await axios.request({
         method: props.route.params.new ? 'POST' : 'PATCH',
         headers: {authorization: props.route.params.token},
         data: reqBody,
         url: props.route.params.new
-          ? '/users/user/jobs/job'
-          : `/users/user/jobs/job/${props.route.params.id}`,
+          ? '/users/user/awards/award'
+          : `/users/user/awards/award/${props.route.params.id}`,
       });
       Toast.show({
         type: 'success',
@@ -117,41 +106,34 @@ const EditExperience = (props: Props) => {
   return (
     <ScrollView>
       <Input
-        label={'Organization'}
-        value={orgName}
-        maxLength={30}
-        onChangeText={text => setOrgname(text)}
-      />
-      <Input
-        label={'Job title'}
+        label={'Title'}
         value={title}
-        maxLength={25}
+        maxLength={30}
         onChangeText={text => setTitle(text)}
       />
       <Input
-        label={'Job description'}
-        multiline
+        label={'Description'}
         value={description}
+        multiline
         maxLength={140}
         onChangeText={text => setDescription(text)}
       />
       <Input
-        label={'Start date'}
-        value={startDate}
-        placeholder={'YYYY-MM-DD'}
-        keyboardType={'phone-pad'}
-        onChangeText={setStartDate}
+        label={'Awarded by'}
+        value={by}
+        maxLength={25}
+        onChangeText={text => setBy(text)}
       />
       <Input
-        label={'Finish date'}
-        value={finishDate}
-        onChangeText={setFinishDate}
+        label={'Date'}
+        value={date}
         placeholder={'YYYY-MM-DD'}
         keyboardType={'phone-pad'}
+        onChangeText={setDate}
       />
       <SubmitButton title={'Save'} onPress={validate} />
     </ScrollView>
   );
 };
 
-export default EditExperience;
+export default EditAward;

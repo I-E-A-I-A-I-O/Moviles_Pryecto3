@@ -16,23 +16,23 @@ type Props = {
 
 const EditGeneralModal = (props: Props) => {
   const [lname, setLname] = useState(
-    props.route.params.currentDescription.last_name,
+    props.route.params.currentDescription?.last_name,
   );
-  const [age, setAge] = useState(props.route.params.currentDescription.age);
+  const [age, setAge] = useState(props.route.params.currentDescription?.age);
   const [address, setAddress] = useState(
-    props.route.params.currentDescription.address,
+    props.route.params.currentDescription?.address,
   );
   const [country, setCountry] = useState(
-    props.route.params.currentDescription.country,
+    props.route.params.currentDescription?.country,
   );
   const [description, setDescription] = useState(
-    props.route.params.currentDescription.description,
+    props.route.params.currentDescription?.description,
   );
   const [gender, setGender] = useState(
-    props.route.params.currentDescription.gender,
+    props.route.params.currentDescription?.gender,
   );
   const [date, setDate] = useState(
-    props.route.params.currentDescription.birth_date?.split('T')[0],
+    props.route.params.currentDescription?.birth_date?.split('T')[0],
   );
 
   const submit = async () => {

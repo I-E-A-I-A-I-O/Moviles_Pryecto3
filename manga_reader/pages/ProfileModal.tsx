@@ -1,23 +1,19 @@
 import React from 'react';
-import {Pressable, RefreshControl, View} from 'react-native';
-import {Icon, Input} from 'react-native-elements';
-import {RouteProp, CompositeNavigationProp} from '@react-navigation/native';
-import {
-  RootTabNavigatorParamList,
-  ModalStackParamList,
-} from '../custom_types/navigation_types';
-import {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
+import {RefreshControl, TextStyle, View, ViewStyle} from 'react-native';
+import {Text} from 'react-native-elements';
+import {RouteProp} from '@react-navigation/native';
+import {ModalStackParamList} from '../custom_types/navigation_types';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {connect, ConnectedProps} from 'react-redux';
 import {FlatList} from 'react-native-gesture-handler';
 import axios from 'axios';
 import Toast from 'react-native-toast-message';
 import {
-  AvatarImgPicker,
   DescriptionComponent,
   ListWDescription,
   ListWODescription,
   ProfileSkeleton,
+  UserAvatar,
 } from '../components';
 import type {RootReducerType as CombinedState} from '../store/rootReducer';
 import type {ProfileState} from '../custom_types/state_types';
@@ -29,11 +25,11 @@ const mapStateToProps = (state: CombinedState) => ({
 const connector = connect(mapStateToProps, {});
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
-type ProfilePageNavProp = CompositeNavigationProp<
-  BottomTabNavigationProp<RootTabNavigatorParamList, 'Profile'>,
-  StackNavigationProp<ModalStackParamList>
+type ProfilePageNavProp = StackNavigationProp<
+  ModalStackParamList,
+  'ProfileModal'
 >;
-type ProfilePageRouteProp = RouteProp<RootTabNavigatorParamList, 'Profile'>;
+type ProfilePageRouteProp = RouteProp<ModalStackParamList, 'ProfileModal'>;
 type Props = PropsFromRedux & {
   route: ProfilePageRouteProp;
   navigation: ProfilePageNavProp;
@@ -53,12 +49,12 @@ const initialState: ProfileState = {
   loading: true,
 };
 
-class Profile extends React.Component<Props, ProfileState> {
+class ProfileModal extends React.Component<Props, ProfileState> {
   constructor(props: Props) {
     super(props);
     this.state = {
       ...initialState,
-      name: this.props.state.name,
+      name: this.props.route.params.name,
     };
   }
 
@@ -67,11 +63,14 @@ class Profile extends React.Component<Props, ProfileState> {
       this.setState({...this.state, loading: true});
     }
     try {
-      const response = await axios.get(`/users/user/${this.props.state.id}`, {
-        headers: {
-          authorization: this.props.state.token,
+      const response = await axios.get(
+        `/users/user/${this.props.route.params.user_id}`,
+        {
+          headers: {
+            authorization: this.props.state.token,
+          },
         },
-      });
+      );
       this.setState({
         ...this.state,
         abilities: response.data.abilities,
@@ -112,30 +111,6 @@ class Profile extends React.Component<Props, ProfileState> {
     }
   };
 
-  saveName = async () => {
-    try {
-      const response = await axios.put(
-        '/users/user/name',
-        {name: this.state.name},
-        {
-          headers: {authorization: this.props.state.token},
-        },
-      );
-      Toast.show({
-        text1: response.data.content,
-        type: 'success',
-        position: 'bottom',
-      });
-      this.onRefresh();
-    } catch (err) {
-      Toast.show({
-        text1: err.response.data.content,
-        position: 'bottom',
-        type: 'error',
-      });
-    }
-  };
-
   render() {
     return (
       <FlatList
@@ -153,56 +128,18 @@ class Profile extends React.Component<Props, ProfileState> {
               <ProfileSkeleton />
             ) : (
               <View>
-                <AvatarImgPicker
-                  user_id={this.props.state.id}
-                  token={this.props.state.token}
+                <UserAvatar
+                  user_id={this.props.route.params.user_id ?? ''}
+                  size={'xlarge'}
+                  style={AvatarStyle}
                 />
-                <Input
-                  value={this.state.name}
-                  maxLength={19}
-                  onChangeText={text =>
-                    this.setState({...this.state, name: text})
-                  }
-                  rightIcon={
-                    <Pressable
-                      android_ripple={{
-                        borderless: true,
-                        color: 'gray',
-                      }}
-                      onPress={this.saveName}
-                      disabled={this.state.loading}>
-                      <Icon
-                        type={'font-awesome-5'}
-                        name={'save'}
-                        color={this.state.loading ? 'black' : 'lime'}
-                      />
-                    </Pressable>
-                  }
-                />
-                <Pressable
-                  android_ripple={{
-                    borderless: true,
-                    color: 'gray',
-                  }}
-                  onPress={() =>
-                    this.props.navigation.navigate('ProfileModal', {
-                      deviceUser: false,
-                      user_id: this.props.state.id,
-                      name: this.state.name,
-                    })
-                  }>
-                  <Icon type={'font-awesome-5'} name={'eye'} />
-                </Pressable>
-
+                <Text style={TextStyles}>
+                  {this.state.name} {this.state.description?.last_name}
+                </Text>
                 <DescriptionComponent
                   description={this.state.description}
                   deviceUser={this.props.route.params.deviceUser}
-                  navigate={() =>
-                    this.props.navigation.navigate('EditGeneral', {
-                      currentDescription: this.state.description,
-                      token: this.props.state.token,
-                    })
-                  }
+                  navigate={() => null}
                 />
                 <ListWODescription
                   abilities={this.state.abilities}
@@ -213,12 +150,7 @@ class Profile extends React.Component<Props, ProfileState> {
                   title={'Job experience'}
                   data={this.state.experience}
                   type={'job'}
-                  onCreate={() =>
-                    this.props.navigation.navigate('JobExperienceEdition', {
-                      new: true,
-                      token: this.props.state.token,
-                    })
-                  }
+                  onCreate={() => null}
                   onSeeMore={(id: string) =>
                     this.props.navigation.navigate('UserAttributeDescription', {
                       id: id,
@@ -234,12 +166,7 @@ class Profile extends React.Component<Props, ProfileState> {
                   title={'Awards'}
                   type={'award'}
                   data={this.state.awards}
-                  onCreate={() =>
-                    this.props.navigation.navigate('AwardEdition', {
-                      new: true,
-                      token: this.props.state.token,
-                    })
-                  }
+                  onCreate={() => null}
                   onSeeMore={(id: string) =>
                     this.props.navigation.navigate('UserAttributeDescription', {
                       id: id,
@@ -255,12 +182,7 @@ class Profile extends React.Component<Props, ProfileState> {
                   title={'Projects'}
                   type={'project'}
                   data={this.state.projects}
-                  onCreate={() =>
-                    this.props.navigation.navigate('ProjectEdition', {
-                      new: true,
-                      token: this.props.state.token,
-                    })
-                  }
+                  onCreate={() => null}
                   onSeeMore={(id: string) =>
                     this.props.navigation.navigate('UserAttributeDescription', {
                       id: id,
@@ -276,12 +198,7 @@ class Profile extends React.Component<Props, ProfileState> {
                   title={'Education'}
                   type={'education'}
                   data={this.state.education}
-                  onCreate={() =>
-                    this.props.navigation.navigate('EducationEdition', {
-                      new: true,
-                      token: this.props.state.token,
-                    })
-                  }
+                  onCreate={() => null}
                   onSeeMore={(id: string) =>
                     this.props.navigation.navigate('UserAttributeDescription', {
                       id: id,
@@ -302,4 +219,20 @@ class Profile extends React.Component<Props, ProfileState> {
   }
 }
 
-export default connector(Profile);
+const AvatarStyle: ViewStyle = {
+  alignSelf: 'center',
+};
+
+const TextStyles: TextStyle[] = [
+  {
+    alignSelf: 'center',
+    fontSize: 25,
+    fontWeight: 'bold',
+    paddingTop: 25,
+  },
+  {
+    alignSelf: 'center',
+  },
+];
+
+export default connector(ProfileModal);

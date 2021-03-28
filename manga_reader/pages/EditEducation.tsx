@@ -11,11 +11,11 @@ import type {ModalStackParamList} from '../custom_types/navigation_types';
 
 type EditExperienceRouteProp = RouteProp<
   ModalStackParamList,
-  'JobExperienceEdition'
+  'EducationEdition'
 >;
 type EditExperienceNavProp = StackNavigationProp<
   ModalStackParamList,
-  'JobExperienceEdition'
+  'EducationEdition'
 >;
 
 type Props = {
@@ -23,30 +23,27 @@ type Props = {
   navigation: EditExperienceNavProp;
 };
 
-const EditExperience = (props: Props) => {
+const EditEducation = (props: Props) => {
   const [startDate, setStartDate] = useState<string | undefined>(
     props.route.params.currentData?.start,
   );
   const [finishDate, setFinishDate] = useState<string | undefined>(
-    props.route.params.currentData?.end,
+    props.route.params.currentData?.graduation,
   );
-  const [orgName, setOrgname] = useState<string>(
-    props.route.params.currentData?.organization ?? '',
+  const [school, setSchool] = useState<string>(
+    props.route.params.currentData?.school ?? '',
   );
   const [title, setTitle] = useState<string>(
     props.route.params.currentData?.title ?? '',
   );
-  const [description, setDescription] = useState<string | undefined>(
-    props.route.params.currentData?.description ?? '',
-  );
 
   const validate = async () => {
     try {
-      if (!orgName || orgName.length < 1) {
-        throw 'Organization name missing';
+      if (!school || school.length < 1) {
+        throw 'School name missing';
       }
       if (!title || title.length < 1) {
-        throw 'Job title missing';
+        throw 'Education title missing';
       }
       if (
         !dateFunctions.isDateValid(
@@ -82,19 +79,18 @@ const EditExperience = (props: Props) => {
   const saveChanges = async () => {
     try {
       const reqBody = {
-        org_name: orgName,
+        school: school,
         title: title,
-        description: description,
-        startDate: startDate,
-        finishDate: finishDate,
+        start: startDate,
+        graduation: finishDate,
       };
       const response = await axios.request({
         method: props.route.params.new ? 'POST' : 'PATCH',
         headers: {authorization: props.route.params.token},
         data: reqBody,
         url: props.route.params.new
-          ? '/users/user/jobs/job'
-          : `/users/user/jobs/job/${props.route.params.id}`,
+          ? '/users/user/titles/title'
+          : `/users/user/titles/title/${props.route.params.id}`,
       });
       Toast.show({
         type: 'success',
@@ -117,23 +113,16 @@ const EditExperience = (props: Props) => {
   return (
     <ScrollView>
       <Input
-        label={'Organization'}
-        value={orgName}
+        label={'School name'}
+        value={school}
         maxLength={30}
-        onChangeText={text => setOrgname(text)}
+        onChangeText={text => setSchool(text)}
       />
       <Input
-        label={'Job title'}
+        label={'Education title'}
         value={title}
         maxLength={25}
         onChangeText={text => setTitle(text)}
-      />
-      <Input
-        label={'Job description'}
-        multiline
-        value={description}
-        maxLength={140}
-        onChangeText={text => setDescription(text)}
       />
       <Input
         label={'Start date'}
@@ -143,7 +132,7 @@ const EditExperience = (props: Props) => {
         onChangeText={setStartDate}
       />
       <Input
-        label={'Finish date'}
+        label={'Graduation date'}
         value={finishDate}
         onChangeText={setFinishDate}
         placeholder={'YYYY-MM-DD'}
@@ -154,4 +143,4 @@ const EditExperience = (props: Props) => {
   );
 };
 
-export default EditExperience;
+export default EditEducation;

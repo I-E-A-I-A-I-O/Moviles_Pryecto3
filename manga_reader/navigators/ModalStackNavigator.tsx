@@ -2,9 +2,13 @@ import React from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
 import {ModalStackParamList} from '../custom_types/navigation_types';
 import RootTabNav from './RootTabNavigator';
-import Profile from '../pages/Profile';
 import EditGeneralModal from '../pages/EditGeneral';
 import JobExperienceEdition from '../pages/EditExperience';
+import Description from '../pages/AttributeDescription';
+import EditAward from '../pages/EditAward';
+import EditProject from '../pages/EditProject';
+import EditEducation from '../pages/EditEducation';
+import ProfileModal from '../pages/ProfileModal';
 
 const Stack = createStackNavigator<ModalStackParamList>();
 
@@ -17,8 +21,8 @@ const ModalStack = () => {
         component={RootTabNav}
       />
       <Stack.Screen
-        name={'Profile'}
-        component={Profile}
+        name={'ProfileModal'}
+        component={ProfileModal}
         initialParams={{
           deviceUser: false,
           user_id: undefined,
@@ -35,6 +39,26 @@ const ModalStack = () => {
         name={'JobExperienceEdition'}
         options={{title: 'Job experience'}}
         component={JobExperienceEdition}
+      />
+      <Stack.Screen
+        name={'UserAttributeDescription'}
+        options={{title: 'Description'}}
+        component={Description}
+      />
+      <Stack.Screen
+        name={'AwardEdition'}
+        options={{title: 'Award'}}
+        component={EditAward}
+      />
+      <Stack.Screen
+        name={'ProjectEdition'}
+        options={{title: 'Project'}}
+        component={EditProject}
+      />
+      <Stack.Screen
+        name={'EducationEdition'}
+        options={{title: 'Education'}}
+        component={EditEducation}
       />
     </Stack.Navigator>
   );

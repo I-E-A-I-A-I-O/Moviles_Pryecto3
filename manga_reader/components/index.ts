@@ -6,6 +6,8 @@ import ProfileSkeleton from './profileSkeleton';
 import SubmitButton from './submitButton';
 import ListWDescription from './ListWithDescription';
 import {DateVerifier as DateFunctions} from './checkDate';
+import DescriptionSkeleton from './DescriptionSkeleton';
+import AvatarImgPicker from './avatarImgPicker';
 
 const dateFunctions = new DateFunctions();
 
@@ -18,4 +20,6 @@ export {
   SubmitButton,
   ListWDescription,
   dateFunctions,
+  DescriptionSkeleton,
+  AvatarImgPicker,
 };

@@ -41,3 +41,67 @@ router.post('/user/jobs/job', (req: Request, res: Response) => {
 router.delete('/user/jobs/job/:id', (req: Request, res: Response) => {
     userController.delete(req, res, 'experience-remove');
 });
+
+router.get('/user/jobs/job/:id', (req: Request, res: Response) => {
+    userController.read(req, res, 'job');
+});
+
+router.patch('/user/jobs/job/:id', (req: Request, res: Response) => {
+    userController.update(req, res, 'job-edit');
+});
+
+router.get('/user/awards/award/:id', (req: Request, res: Response) => {
+    userController.read(req, res, 'award');
+});
+
+router.post('/user/awards/award', (req: Request, res: Response) => {
+    userController.update(req, res, 'award-add');
+});
+
+router.patch('/user/awards/award/:id', (req: Request, res: Response) => {
+    userController.update(req, res, 'award-edit');
+});
+
+router.delete('/user/awards/award/:id', (req: Request, res: Response) => {
+    userController.delete(req, res, 'award-remove');
+});
+
+router.post('/user/projects/project', (req: Request, res: Response) => {
+    userController.update(req, res, 'project-add');
+});
+
+router.get('/user/projects/project/:id', (req: Request, res: Response) => {
+    userController.read(req, res, 'project');
+});
+
+router.patch('/user/projects/project/:id', (req: Request, res: Response) => {
+    userController.update(req, res, 'project-edit');
+});
+
+router.delete('/user/projects/project/:id', (req: Request, res: Response) => {
+    userController.delete(req, res, 'project-remove');
+});
+
+router.post('/user/titles/title', (req: Request, res: Response) => {
+    userController.update(req, res, 'title-add');
+});
+
+router.get('/user/titles/title/:id', (req: Request, res: Response) => {
+    userController.read(req, res, 'title');
+});
+
+router.patch('/user/titles/title/:id', (req: Request, res: Response) => {
+    userController.update(req, res, 'title-edit');
+});
+
+router.delete('/user/titles/title/:id', (req: Request, res: Response) => {
+    userController.delete(req, res, 'title-remove');
+});
+
+router.put('/user/avatar', (req: Request, res: Response) => {
+    userController.update(req, res, 'avatar');
+});
+
+router.put('/user/name', (req: Request, res: Response) => {
+    userController.update(req, res, 'name');
+});

@@ -26,6 +26,12 @@ export = {
          * de la ID indicada
          */
         experience: 'INSERT INTO user_experience(user_id, org_name, job_description, job_title, start_date, finish_date) VALUES($1, $2, $3, $4, $5, $6)',
+        /**Registra un nuevo premio vinculado al usuario de la ID indicada */
+        award: 'INSERT INTO user_awards(user_id, title, description, given_by, date) VALUES($1, $2, $3, $4, $5)',
+        /**Registra un nuevo proyecto vinculado al usuario de la ID indicada */
+        project: 'INSERT INTO user_projects(user_id, project_name, project_description, project_link) VALUES($1, $2, $3, $4)',
+        /**Añade un nuevo registro de educacion al usuario de la ID indicada */
+        education: 'INSERT INTO user_education(user_id, entity_name, title, start_date, finish_date) VALUES($1, $2, $3, $4, $5)',
     },
     /**Queries para editar informacion existente de usuarios */
     setUser: {
@@ -34,6 +40,16 @@ export = {
         /**Se actualiza la informacion de user_description pertenenciente al 
          * usuario de la ID indicada */
         description: 'UPDATE user_description SET description = $1, country = $2, age = $3, gender = $4, address = $5, last_name = $6, birth_date = $7 WHERE user_id = $8 RETURNING *',
+        /**Edita la descripcion de experiencia de trabajo registrada con la ID dada */
+        job: 'UPDATE user_experience SET org_name = $1, job_title = $2, job_description = $3, start_date = $4, finish_date = $5 WHERE job_id = $6',
+        /**Edita la descripcion de premio recibido por ID */
+        award: 'UPDATE user_awards SET title = $1, description = $2, given_by = $3, date = $4 WHERE award_id = $5',
+        /**Edita el proyecto con la ID indicada */
+        project: 'UPDATE user_projects SET project_name = $1, project_description = $2, project_link = $3 WHERE project_id = $4',
+        /**Edita el registro de educacion con la ID indicada */
+        education: 'UPDATE user_education SET entity_name = $1, title = $2, start_date = $3, finish_date = $4 WHERE education_id = $5',
+        /**Cambia el nombre de un usuario */
+        name: 'UPDATE users SET name = $1 WHERE user_id = $2',
     },
     /**Queries para el manejo de transacciones */
     transaction: {
@@ -59,7 +75,7 @@ export = {
         /**Selecciona las abilidades añadidas por el usuario de la ID indicada */
         abilites: 'SELECT ability_id, name FROM user_abilities WHERE user_id = $1',
         /**Selecciona los premios añadidos por el usuario de la ID indicada  */
-        awards: 'SELECT award_id, title FROM user_awards WHERE user_id = $1',
+        awards: 'SELECT award_id AS id, title AS name FROM user_awards WHERE user_id = $1',
         /**Selecciona la descripcion general (fecha de nacimiento, edad, pais de residencia, etc...) 
          * añadida por el usuario de la ID indicada
          */
@@ -67,15 +83,24 @@ export = {
         /**Selecciona los registros de educacion añadidos por el usuario de la ID
          * indicada
          */
-        titles: 'SELECT education_id, title FROM user_education WHERE user_id = $1',
+        titles: 'SELECT education_id AS id, title AS name FROM user_education WHERE user_id = $1',
         /**Selecciona los registros de experiencia laboral añadidos por el usuario de la ID
          * indicada
          */
         experience: 'SELECT job_id AS id, job_title AS name FROM user_experience WHERE user_id = $1',
         /**Selecciona los registros de proyectos añadidos por el usuario de la ID indicada */
-        projects: 'SELECT project_id, project_name FROM user_projects WHERE user_id = $1',
+        projects: 'SELECT project_id AS id, project_name AS name FROM user_projects WHERE user_id = $1',
         /**Selecciona las recomendaciones recibidas por el usuario de la ID indicada */
         recommendations: 'SELECT * FROM user_recommendations WHERE recommended_user = $1',
+        /**Seleccion una descripcion completa de experiencia de trabajo por ID */
+        job: 'SELECT org_name AS Organization, job_description AS Description, job_title AS Title, start_date AS Start, finish_date AS End FROM user_experience WHERE job_id = $1',
+        /**Seleccion una descripcion completa de premio recibido por ID  */
+        award: 'SELECT title, description, given_by AS by, date FROM user_awards WHERE award_id = $1',
+        /**Selecciona la descripcion completa de un proyecto por ID */
+        project: 'SELECT project_name AS name, project_description AS description, project_link AS link FROM user_projects WHERE project_id  = $1',
+        /**Selecciona la descripcion completa de titulo de educacion por ID */
+        title: 'SELECT entity_name AS School, title, start_date AS start, finish_date AS graduation FROM user_education WHERE education_id = $1',
+
     },
     /**Queries para el manejo de JSONWebTokens */
     jwt: {
@@ -92,5 +117,11 @@ export = {
         ability: 'DELETE FROM user_abilities WHERE ability_id = $1',
         /**Borra la descripcion de experience de trabajo registrada con la ID indicada */
         experience: 'DELETE FROM user_experience WHERE job_id = $1',
+        /**Borra un premio por ID */
+        award: 'DELETE FROM user_awards WHERE award_id = $1',
+        /**Borra un proyecto por ID */
+        project: 'DELETE FROM user_projects WHERE project_id = $1',
+        /**Borra un registro de educacion por ID */
+        education: 'DELETE FROM user_education WHERE education_id = $1',
     }
 }
