@@ -12,7 +12,7 @@ import {userRouter, codeRouter} from './routers';
 const serviceAccount: ServiceAccount = {
     projectId: process.env.project_id,
     clientEmail: process.env.client_email,
-    privateKey: process.env.private_key
+    privateKey: new String(process.env.private_key) as any
 }
 
 Admin.initializeApp({
