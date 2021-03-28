@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { dbController, queries, jwt } from '../helpers';
 import { BasicCRUD } from './controllers_defs/CRUD';
-import fse, { stat } from 'fs-extra';
+import fse from 'fs-extra';
 import bcrypt from 'bcrypt';
 
 export class UserController extends BasicCRUD {

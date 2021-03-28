@@ -18,6 +18,7 @@ export type ProfileState = {
   recommended_by: {name: string; id: string}[];
   refreshing: boolean;
   loading: boolean;
+  nameUpdating?: boolean;
 };
 
 export type JobDescription = {

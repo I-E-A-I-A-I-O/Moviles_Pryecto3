@@ -41,13 +41,19 @@ class AvatarImagePicker extends React.Component<Props, State> {
     includeBase64: true,
   };
 
-  componentDidMount() {
-    axios.get(`/users/user/${this.props.user_id}/avatar`).then(response => {
-      this.setState({
-        ...this.state,
-        imgUri: response.data,
-      });
-    });
+  async componentDidMount() {
+    try {
+      await axios
+        .get(`/users/user/${this.props.user_id}/avatar`)
+        .then(response => {
+          this.setState({
+            ...this.state,
+            imgUri: response.data,
+          });
+        });
+    } catch (err) {
+      console.log(err);
+    }
   }
 
   saveAvatar = async () => {

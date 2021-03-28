@@ -21,12 +21,20 @@ import {
 } from '../components';
 import type {RootReducerType as CombinedState} from '../store/rootReducer';
 import type {ProfileState} from '../custom_types/state_types';
+import type {Session} from '../store/session-store/types';
+
+const mapDispatchToProps = {
+  reduxSaveSession: (data: Session) => ({
+    type: 'SAVE_SESSION_DATA',
+    data: data,
+  }),
+};
 
 const mapStateToProps = (state: CombinedState) => ({
   state: state.session.session,
 });
 
-const connector = connect(mapStateToProps, {});
+const connector = connect(mapStateToProps, mapDispatchToProps);
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 type ProfilePageNavProp = CompositeNavigationProp<
@@ -51,6 +59,7 @@ const initialState: ProfileState = {
   recommended_by: [],
   refreshing: false,
   loading: true,
+  nameUpdating: false,
 };
 
 class Profile extends React.Component<Props, ProfileState> {
@@ -114,6 +123,10 @@ class Profile extends React.Component<Props, ProfileState> {
 
   saveName = async () => {
     try {
+      this.setState({
+        ...this.state,
+        nameUpdating: true,
+      });
       const response = await axios.put(
         '/users/user/name',
         {name: this.state.name},
@@ -121,6 +134,14 @@ class Profile extends React.Component<Props, ProfileState> {
           headers: {authorization: this.props.state.token},
         },
       );
+      this.setState({
+        ...this.state,
+        nameUpdating: false,
+      });
+      this.props.reduxSaveSession({
+        ...this.props.state,
+        name: this.state.name,
+      });
       Toast.show({
         text1: response.data.content,
         type: 'success',
@@ -170,11 +191,11 @@ class Profile extends React.Component<Props, ProfileState> {
                         color: 'gray',
                       }}
                       onPress={this.saveName}
-                      disabled={this.state.loading}>
+                      disabled={this.state.nameUpdating}>
                       <Icon
                         type={'font-awesome-5'}
                         name={'save'}
-                        color={this.state.loading ? 'black' : 'lime'}
+                        color={this.state.nameUpdating ? 'black' : 'lime'}
                       />
                     </Pressable>
                   }
