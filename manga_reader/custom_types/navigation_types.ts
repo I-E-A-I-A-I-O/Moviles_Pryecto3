@@ -39,14 +39,16 @@ export type ModalStackParamList = {
   JobExperienceEdition: {
     token: string;
     new: boolean;
-    currentData: {
-      id: string;
-      org_name: string;
-      job_description: string | undefined;
-      job_title: string;
-      start_date: string;
-      finish_date: string;
-    };
+    currentData:
+      | {
+          id: string;
+          org_name: string;
+          job_description: string | undefined;
+          job_title: string;
+          start_date: string;
+          finish_date: string;
+        }
+      | undefined;
   };
 };
 

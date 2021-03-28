@@ -5,9 +5,9 @@ import {SubmitButton} from '../components';
 import {RouteProp} from '@react-navigation/native';
 import {ModalStackParamList} from '../custom_types/navigation_types';
 import {ScrollView} from 'react-native-gesture-handler';
-import DatePicker from 'react-native-date-picker';
 import Toast from 'react-native-toast-message';
 import axios from 'axios';
+import {dateFunctions} from '../components';
 
 type EditGeneralRouteProp = RouteProp<ModalStackParamList, 'EditGeneral'>;
 type Props = {
@@ -32,7 +32,7 @@ const EditGeneralModal = (props: Props) => {
     props.route.params.currentDescription.gender,
   );
   const [date, setDate] = useState(
-    new Date(props.route.params.currentDescription.birth_date ?? 0),
+    props.route.params.currentDescription.birth_date?.split('T')[0],
   );
 
   const submit = async () => {
@@ -42,7 +42,7 @@ const EditGeneralModal = (props: Props) => {
       description: description,
       country: country,
       gender: gender,
-      b_date: new Date(date).toUTCString(),
+      b_date: date,
       last_name: lname,
     };
     try {
@@ -66,23 +66,50 @@ const EditGeneralModal = (props: Props) => {
     }
   };
 
+  const validate = async () => {
+    try {
+      if (age && !(age >= 18 && age < 90)) {
+        throw 'Invalid age';
+      }
+      if (!dateFunctions.isDateValid(date ?? '')) {
+        throw 'Invalid date!';
+      }
+      if (age) {
+        const year = dateFunctions.getNumbers(date ?? '')?.year;
+        if (year !== new Date(Date.now()).getFullYear() - (age + 1)) {
+          throw 'Invalid date!';
+        }
+      }
+      await submit();
+    } catch (err) {
+      Toast.show({
+        type: 'error',
+        text1: err,
+        position: 'bottom',
+      });
+    }
+  };
+
   return (
     <ScrollView>
       <Text style={textStyle}>Update general profile information</Text>
       <Input
         label={'Last name'}
         value={lname}
+        maxLength={25}
         textContentType={'familyName'}
         onChangeText={text => setLname(text)}
       />
       <Input
         label={'Gender'}
         value={gender}
+        maxLength={15}
         onChangeText={text => setGender(text)}
       />
       <Input
         label={'Country'}
         value={country}
+        maxLength={25}
         textContentType={'countryName'}
         onChangeText={text => setCountry(text)}
       />
@@ -90,12 +117,14 @@ const EditGeneralModal = (props: Props) => {
         label={'Description'}
         value={description}
         multiline
+        maxLength={140}
         onChangeText={text => setDescription(text)}
       />
       <Input
         label={'Address'}
         value={address}
         autoCompleteType={'street-address'}
+        maxLength={140}
         textContentType={'fullStreetAddress'}
         multiline
         onChangeText={text => setAddress(text)}
@@ -114,18 +143,11 @@ const EditGeneralModal = (props: Props) => {
       />
       <Input
         label={'Birth date'}
-        value={new Date(date).toLocaleDateString()}
-        disabled
+        value={date}
+        keyboardType={'phone-pad'}
+        onChangeText={setDate}
       />
-      <DatePicker
-        mode={'date'}
-        onDateChange={setDate}
-        date={date}
-        minimumDate={new Date(1950, 1, 1)}
-        maximumDate={new Date(2001, 1, 1)}
-        style={viewStyle}
-      />
-      <SubmitButton title={'Update'} onPress={submit} />
+      <SubmitButton title={'Update'} onPress={validate} />
     </ScrollView>
   );
 };
@@ -135,10 +157,6 @@ const textStyle: TextStyle = {
   alignSelf: 'center',
   paddingTop: 50,
   paddingBottom: 50,
-};
-
-const viewStyle: ViewStyle = {
-  alignSelf: 'center',
 };
 
 export default EditGeneralModal;

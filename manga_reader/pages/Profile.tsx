@@ -176,7 +176,13 @@ class Profile extends React.Component<Props, ProfileState> {
                 <ListWDescription
                   title={'Job experience'}
                   data={this.state.experience}
-                  onCreate={() => null}
+                  onCreate={() =>
+                    this.props.navigation.navigate('JobExperienceEdition', {
+                      currentData: undefined,
+                      new: true,
+                      token: this.props.state.token,
+                    })
+                  }
                   deviceUser={this.props.route.params.deviceUser}
                   token={this.props.state.token}
                 />

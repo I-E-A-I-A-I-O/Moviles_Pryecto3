@@ -219,6 +219,39 @@ export class UserController extends BasicCRUD {
         }
     }
 
+    public async addExperience(req: Request, res: Response, id: string) {
+        const client = await dbController.getClient();
+        const {
+            org_name,
+            title,
+            description,
+            startDate,
+            finishDate
+        } = req.body;
+        try {
+            await client.query(queries.insertUser.experience, [
+                id,
+                org_name,
+                description,
+                title,
+                startDate,
+                finishDate,
+            ]);
+            res.status(201).json({
+                title: 'success',
+                content: 'Profile updated.',
+            });
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({
+                title: 'error',
+                content: 'Error updating the profile',
+            });
+        } finally {
+            client.release(true);
+        }
+    }
+
     public async update(req: Request, res: Response, target: string) {
         const { authorization } = req.headers;
         if (authorization) {
@@ -233,8 +266,8 @@ export class UserController extends BasicCRUD {
                         this.addAbility(req, res, payload.user_id);
                         break;
                     }
-                    case 'ability-remove': {
-                        this.removeAbility(req, res);
+                    case 'experience-add': {
+                        this.addExperience(req, res, payload.user_id);
                         break;
                     }
                     default: {
@@ -256,7 +289,53 @@ export class UserController extends BasicCRUD {
         }
     }
 
-    public delete(req: Request, res: Response) {
+    private async removeExperience(req: Request, res: Response) {
+        const {id} = req.params;
+        const client = await dbController.getClient();
+        try {
+            await client.query(queries.removeUser.experience, [id]);
+            res.sendStatus(200);
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({
+                title: 'error',
+                content: 'Error updating the profile',
+            });
+        } finally {
+            client.release(true);
+        }
+    }
 
+    public async delete(req: Request, res: Response, target: string) {
+        const { authorization } = req.headers;
+        if (authorization) {
+            const payload = await jwt.getPayload(authorization);
+            if (payload) {
+                switch (target) {
+                    case 'ability-remove': {
+                        this.removeAbility(req, res);
+                        break;
+                    }
+                    case 'experience-remove': {
+                        this.removeExperience(req, res);
+                        break;
+                    }
+                    default: {
+                        res.sendStatus(404);
+                        break;
+                    }
+                }
+            } else {
+                res.status(401).json({
+                    title: 'error',
+                    content: 'Invalid token'
+                })
+            }
+        } else {
+            res.status(401).json({
+                title: 'error',
+                content: 'missing token',
+            })
+        }
     }
 }

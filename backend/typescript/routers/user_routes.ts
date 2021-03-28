@@ -31,5 +31,13 @@ router.post('/user/abilities/ability', (req: Request, res: Response) => {
 });
 
 router.delete('/user/abilities/ability/:id', (req: Request, res: Response) => {
-    userController.update(req, res, 'ability-remove');
+    userController.delete(req, res, 'ability-remove');
+});
+
+router.post('/user/jobs/job', (req: Request, res: Response) => {
+    userController.update(req, res, 'experience-add');
+});
+
+router.delete('/user/jobs/job/:id', (req: Request, res: Response) => {
+    userController.delete(req, res, 'experience-remove');
 });

@@ -22,6 +22,10 @@ export = {
         description: 'INSERT INTO user_description(user_id, last_name, gender, address, country, age, description, birth_date) VALUES($1, $2, $3, $4, $5, $6, $7, $8)',
         /**Añade una nueva habilidad a la lista perteneciente al usuario de la ID indicada */
         ability: 'INSERT INTO user_abilities(user_id, name) VALUES($1, $2) RETURNING *',
+        /**Añade una nueva descripcion de experiencia de trabajo a la lista del usuario
+         * de la ID indicada
+         */
+        experience: 'INSERT INTO user_experience(user_id, org_name, job_description, job_title, start_date, finish_date) VALUES($1, $2, $3, $4, $5, $6)',
     },
     /**Queries para editar informacion existente de usuarios */
     setUser: {
@@ -86,5 +90,7 @@ export = {
     removeUser: {
         /**Borra la abilidad registrada con la ID indicada */
         ability: 'DELETE FROM user_abilities WHERE ability_id = $1',
+        /**Borra la descripcion de experience de trabajo registrada con la ID indicada */
+        experience: 'DELETE FROM user_experience WHERE job_id = $1',
     }
 }
