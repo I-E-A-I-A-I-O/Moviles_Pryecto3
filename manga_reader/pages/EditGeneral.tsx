@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {TextStyle, ViewStyle} from 'react-native';
+import {TextStyle} from 'react-native';
 import {Text, Input} from 'react-native-elements';
 import {SubmitButton} from '../components';
 import {RouteProp} from '@react-navigation/native';
