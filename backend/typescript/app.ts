@@ -12,12 +12,12 @@ import {userRouter, codeRouter} from './routers';
 const serviceAccount: ServiceAccount = {
     projectId: process.env.project_id,
     clientEmail: process.env.client_email,
-    privateKey: new String(process.env.private_key) as any
-}
+    privateKey: process.env.private_key?.replace(/\\n/g, '\n'),
+};
 
 Admin.initializeApp({
     credential: Admin.credential.cert(serviceAccount)
-})
+});
 
 const app = express();
 const form = multer();
