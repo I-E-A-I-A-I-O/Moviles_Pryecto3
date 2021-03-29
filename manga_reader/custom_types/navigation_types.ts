@@ -90,11 +90,6 @@ export type ModalStackParamList = {
 
 export type RootTabNavigatorParamList = {
   Dashboard: undefined;
-  Profile: {
-    deviceUser: boolean;
-    user_id: string | undefined;
-    name: string;
-  };
   Notifications: undefined;
   Post: undefined;
 };
