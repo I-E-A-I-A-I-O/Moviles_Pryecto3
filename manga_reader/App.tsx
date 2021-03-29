@@ -21,7 +21,6 @@ import Register_1 from './pages/Registration_1';
 import Register_2 from './pages/Registration_2';
 import Login from './pages/Login';
 import Registration3 from './pages/Registration_3';
-import {Alert} from 'react-native';
 import Axios from 'axios';
 import Toast from 'react-native-toast-message';
 import {RootStackParamList} from './custom_types/navigation_types';
@@ -81,7 +80,7 @@ const App = () => {
                   options={{headerShown: false}}
                   name={'Login'}
                   component={Login}
-                />   
+                />
                 <Stack.Screen
                   options={{title: 'Registration'}}
                   name={'Register_1'}

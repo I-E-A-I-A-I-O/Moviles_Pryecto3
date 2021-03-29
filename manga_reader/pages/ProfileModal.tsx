@@ -184,7 +184,7 @@ class ProfileModal extends React.Component<Props, ProfileState> {
               <ProfileSkeleton />
             ) : (
               <View>
-                {this.props.route.params.deviceUser ? (
+                {!this.props.route.params.deviceUser ? (
                   <View>
                     <UserAvatar
                       user_id={this.props.route.params.user_id ?? ''}
@@ -242,7 +242,12 @@ class ProfileModal extends React.Component<Props, ProfileState> {
                 <DescriptionComponent
                   description={this.state.description}
                   deviceUser={this.props.route.params.deviceUser}
-                  navigate={() => null}
+                  navigate={() =>
+                    this.props.navigation.navigate('EditGeneral', {
+                      token: this.props.state.token,
+                      currentDescription: this.state.description,
+                    })
+                  }
                 />
                 <ListWODescription
                   abilities={this.state.abilities}
@@ -253,7 +258,12 @@ class ProfileModal extends React.Component<Props, ProfileState> {
                   title={'Job experience'}
                   data={this.state.experience}
                   type={'job'}
-                  onCreate={() => null}
+                  onCreate={() =>
+                    this.props.navigation.navigate('JobExperienceEdition', {
+                      new: true,
+                      token: this.props.state.token,
+                    })
+                  }
                   onSeeMore={(id: string) =>
                     this.props.navigation.navigate('UserAttributeDescription', {
                       id: id,
@@ -269,7 +279,12 @@ class ProfileModal extends React.Component<Props, ProfileState> {
                   title={'Awards'}
                   type={'award'}
                   data={this.state.awards}
-                  onCreate={() => null}
+                  onCreate={() =>
+                    this.props.navigation.navigate('AwardEdition', {
+                      new: true,
+                      token: this.props.state.token,
+                    })
+                  }
                   onSeeMore={(id: string) =>
                     this.props.navigation.navigate('UserAttributeDescription', {
                       id: id,
@@ -285,7 +300,12 @@ class ProfileModal extends React.Component<Props, ProfileState> {
                   title={'Projects'}
                   type={'project'}
                   data={this.state.projects}
-                  onCreate={() => null}
+                  onCreate={() =>
+                    this.props.navigation.navigate('ProjectEdition', {
+                      new: true,
+                      token: this.props.state.token,
+                    })
+                  }
                   onSeeMore={(id: string) =>
                     this.props.navigation.navigate('UserAttributeDescription', {
                       id: id,
@@ -301,7 +321,12 @@ class ProfileModal extends React.Component<Props, ProfileState> {
                   title={'Education'}
                   type={'education'}
                   data={this.state.education}
-                  onCreate={() => null}
+                  onCreate={() =>
+                    this.props.navigation.navigate('EducationEdition', {
+                      new: true,
+                      token: this.props.state.token,
+                    })
+                  }
                   onSeeMore={(id: string) =>
                     this.props.navigation.navigate('UserAttributeDescription', {
                       id: id,

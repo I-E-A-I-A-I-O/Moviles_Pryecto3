@@ -9,13 +9,24 @@ import {
   ModalStackParamList,
 } from '../custom_types/navigation_types';
 import {CompositeNavigationProp} from '@react-navigation/native';
+import {connect, ConnectedProps} from 'react-redux';
+
+import type {RootReducerType as CombinedState} from '../store/rootReducer';
 
 type DashboardScreenNavigationProp = CompositeNavigationProp<
   BottomTabNavigationProp<RootTabNavigatorParamList, 'Dashboard'>,
   StackNavigationProp<ModalStackParamList>
 >;
 
-type Props = {
+const mapStateToProps = (state: CombinedState) => ({
+  state: state.session.session,
+});
+
+const connector = connect(mapStateToProps, {});
+
+type PropsFromRedux = ConnectedProps<typeof connector>;
+
+type Props = PropsFromRedux & {
   navigation: DashboardScreenNavigationProp;
 };
 
@@ -31,8 +42,8 @@ const Dashboard = (props: Props) => {
           onPress={() =>
             props.navigation.navigate('ProfileModal', {
               deviceUser: true,
-              name: '',
-              user_id: '',
+              name: props.state.name,
+              user_id: props.state.id,
             })
           }>
           <Icon
@@ -72,4 +83,4 @@ const textStyle: TextStyle[] = [
   },
 ];
 
-export default Dashboard;
+export default connector(Dashboard);

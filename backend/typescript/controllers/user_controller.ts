@@ -316,7 +316,7 @@ export class UserController extends BasicCRUD {
                     }
                     case 'ability-add': {
                         query = queries.insertUser.ability;
-                        params.push(req.body.ability);
+                        params.push(payload.user_id, req.body.ability);
                         break;
                     }
                     case 'experience-add': {
