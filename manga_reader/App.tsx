@@ -30,7 +30,7 @@ import ModalNav from './navigators/ModalStackNavigator';
 
 enableScreens();
 
-Axios.defaults.baseURL = 'https://mobile-comic-reader.herokuapp.com';
+Axios.defaults.baseURL = 'http://192.168.0.101:8000';
 
 const Stack = createStackNavigator<RootStackParamList>();
 
