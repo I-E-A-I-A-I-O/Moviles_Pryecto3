@@ -22,15 +22,19 @@ class UserAvatar extends React.Component<Props, State> {
     };
   }
 
-  componentDidMount() {
-    axios
-      .get(`http://192.168.0.101:8000/users/user/${this.props.user_id}/avatar`)
-      .then(response => {
-        this.setState({
-          ...this.state,
-          imgUri: response.data,
+  async componentDidMount() {
+    try {
+      await axios
+        .get(`/users/user/${this.props.user_id}/avatar`)
+        .then(response => {
+          this.setState({
+            ...this.state,
+            imgUri: response.data,
+          });
         });
-      });
+    } catch (err) {
+      console.log(err);
+    }
   }
 
   render() {

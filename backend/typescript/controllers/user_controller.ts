@@ -77,6 +77,7 @@ export class UserController extends BasicCRUD {
                 try {
                     const abilites = await client.query(queries.getUser.abilites, [id]);
                     const awards = await client.query(queries.getUser.awards, [id]);
+                    const titles = await client.query(queries.getUser.titles, [id]);
                     const experience = await client.query(queries.getUser.experience, [id]);
                     const projects = await client.query(queries.getUser.projects, [id]);
                     const recommendations = await client.query(queries.getUser.recommendations, [id]);
@@ -88,6 +89,7 @@ export class UserController extends BasicCRUD {
                         projects: projects.rows,
                         recommendations: recommendations.rows,
                         description: description.rows[0] ?? undefined,
+                        education: titles.rows,
                     };
                     res.status(200).json(resBody);
                 } catch (err) {
@@ -113,6 +115,89 @@ export class UserController extends BasicCRUD {
         }
     }
 
+    public async readJob(req: Request, res: Response) {
+        const {id} = req.params;
+        const client = await dbController.getClient();
+        try {
+            const response = await client.query(queries.getUser.job, [id]);
+            res.status(200).json({
+                title: 'Success',
+                content: {
+                    ...response.rows[0],
+                    start: response.rows[0].start.toISOString().split('T')[0],
+                    end: response.rows[0].end.toISOString().split('T')[0],
+                },
+            });
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({
+                title: 'error',
+                content: 'Error retrieving data',
+            });
+        }
+    }
+
+    public async readAward(req: Request, res: Response) {
+        const {id} = req.params;
+        const client = await dbController.getClient();
+        try {
+            const response = await client.query(queries.getUser.award, [id]);
+            res.status(200).json({
+                title: 'Success',
+                content: {
+                    ...response.rows[0],
+                    date: response.rows[0].date.toISOString().split('T')[0],
+                },
+            });
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({
+                title: 'error',
+                content: 'Error retrieving data',
+            });
+        }
+    }
+
+    public async readProject(req: Request, res: Response) {
+        const {id} = req.params;
+        const client = await dbController.getClient();
+        try {
+            const response = await client.query(queries.getUser.project, [id]);
+            res.status(200).json({
+                title: 'Success',
+                content: response.rows[0]
+            });
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({
+                title: 'error',
+                content: 'Error retrieving data',
+            });
+        }
+    }
+
+    public async readTitle(req: Request, res: Response) {
+        const {id} = req.params;
+        const client = await dbController.getClient();
+        try {
+            const response = await client.query(queries.getUser.title, [id]);
+            res.status(200).json({
+                title: 'Success',
+                content: {
+                    ...response.rows[0],
+                    start: response.rows[0].start.toISOString().split('T')[0],
+                    graduation: response.rows[0].graduation.toISOString().split('T')[0],
+                }
+            });
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({
+                title: 'error',
+                content: 'Error retrieving data',
+            });
+        }
+    }
+
     public read(req: Request, res: Response, target: string) {
         switch (target) {
             case 'avatar': {
@@ -121,6 +206,22 @@ export class UserController extends BasicCRUD {
             }
             case 'profile': {
                 this.readProfile(req, res);
+                break;
+            }
+            case 'job': {
+                this.readJob(req, res);
+                break;
+            }
+            case 'award': {
+                this.readAward(req, res);
+                break;
+            }
+            case 'project': {
+                this.readProject(req, res);
+                break;
+            }
+            case 'title': {
+                this.readTitle(req, res);
                 break;
             }
             default: {
@@ -219,6 +320,293 @@ export class UserController extends BasicCRUD {
         }
     }
 
+    public async addExperience(req: Request, res: Response, id: string) {
+        const client = await dbController.getClient();
+        const {
+            org_name,
+            title,
+            description,
+            startDate,
+            finishDate
+        } = req.body;
+        try {
+            await client.query(queries.insertUser.experience, [
+                id,
+                org_name,
+                description,
+                title,
+                startDate,
+                finishDate,
+            ]);
+            res.status(201).json({
+                title: 'success',
+                content: 'Profile updated.',
+            });
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({
+                title: 'error',
+                content: 'Error updating the profile',
+            });
+        } finally {
+            client.release(true);
+        }
+    }
+
+    private async updateJob(req: Request, res: Response) {
+        const {id} = req.params;
+        const {
+            org_name,
+            title,
+            description,
+            startDate,
+            finishDate,
+        } = req.body;
+        const client = await dbController.getClient();
+        try {
+            await client.query(queries.setUser.job, [org_name, title, description, startDate, finishDate, id]);
+            res.status(200).json({
+                title: 'success',
+                content: 'Profile updated!',
+            });
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({
+                title: 'error',
+                content: 'Error updating profile',
+            });
+        } finally {
+            client.release(true);
+        }
+    }
+
+    private async addAward(req: Request, res: Response, id: string) {
+        const client = await dbController.getClient();
+        const {
+            title,
+            description,
+            by,
+            date,
+        } = req.body;
+        try {
+            await client.query(queries.insertUser.award, [
+                id,
+                title,
+                description,
+                by,
+                date
+            ]);
+            res.status(201).json({
+                title: 'success',
+                content: 'Profile updated.',
+            });
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({
+                title: 'error',
+                content: 'Error updating the profile',
+            });
+        } finally {
+            client.release(true);
+        }
+    }
+
+    private async awardEdit(req: Request, res: Response) {
+        const {id} = req.params;
+        const client = await dbController.getClient();
+        const {
+            title,
+            description,
+            by,
+            date,
+        } = req.body;
+        try {
+            await client.query(queries.setUser.award, [
+                title,
+                description,
+                by,
+                date,
+                id
+            ]);
+            res.status(201).json({
+                title: 'success',
+                content: 'Profile updated.',
+            });
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({
+                title: 'error',
+                content: 'Error updating the profile',
+            });
+        } finally {
+            client.release(true);
+        }
+    }
+
+    private async addProject(req: Request, res: Response, id: string) {
+        const client = await dbController.getClient();
+        const {
+            title,
+            description,
+            link,
+        } = req.body;
+        try {
+            await client.query(queries.insertUser.project, [
+                id,
+                title,
+                description,
+                link
+            ]);
+            res.status(201).json({
+                title: 'success',
+                content: 'Profile updated.',
+            });
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({
+                title: 'error',
+                content: 'Error updating the profile',
+            });
+        } finally {
+            client.release(true);
+        }
+    }
+
+    private async projectEdit(req: Request, res: Response) {
+        const {id} = req.params;
+        const client = await dbController.getClient();
+        const {
+            title,
+            description,
+            link
+        } = req.body;
+        try {
+            await client.query(queries.setUser.project, [
+                title,
+                description,
+                link,
+                id
+            ]);
+            res.status(201).json({
+                title: 'success',
+                content: 'Profile updated.',
+            });
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({
+                title: 'error',
+                content: 'Error updating the profile',
+            });
+        } finally {
+            client.release(true);
+        }
+    }
+
+    private async addTitle(req: Request, res: Response, id: string) {
+        const client = await dbController.getClient();
+        const {
+            school,
+            title,
+            start,
+            graduation
+        } = req.body;
+        try {
+            await client.query(queries.insertUser.education, [
+                id,
+                school,
+                title,
+                start,
+                graduation,
+            ]);
+            res.status(201).json({
+                title: 'success',
+                content: 'Profile updated.',
+            });
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({
+                title: 'error',
+                content: 'Error updating the profile',
+            });
+        } finally {
+            client.release(true);
+        }
+    }
+
+    private async titleEdit(req: Request, res: Response) {
+        const {id} = req.params;
+        const client = await dbController.getClient();
+        const {
+            school,
+            title,
+            start,
+            graduation
+        } = req.body;
+        try {
+            await client.query(queries.setUser.education, [
+                school,
+                title,
+                start,
+                graduation,
+                id,
+            ]);
+            res.status(201).json({
+                title: 'success',
+                content: 'Profile updated.',
+            });
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({
+                title: 'error',
+                content: 'Error updating the profile',
+            });
+        } finally {
+            client.release(true);
+        }
+    }
+
+    private async updateAvatar(req: Request, res: Response, id: string) {
+        try {
+            const files = req.files as { [fieldname: string]: Express.Multer.File[] };
+            const absolutePath = `media/avatars/${id}/${files.avatar[0].originalname}`;
+            await fse.outputFile(absolutePath, files.avatar[0].buffer);
+            res.status(200).json({
+                title: 'success',
+                content: 'Avatar updated!',
+            });
+        } catch (err) {
+            res.status(500).json({
+                title: 'error',
+                content: 'Could not update the avatar.',
+            });
+        }
+    }
+
+    public async updateName(req: Request, res: Response, id: string) {
+        const client = await dbController.getClient();
+        const {
+            name
+        } = req.body;
+        try {
+            await client.query(queries.setUser.name, [
+                name,
+                id
+            ]);
+            res.status(201).json({
+                title: 'success',
+                content: 'Profile updated.',
+            });
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({
+                title: 'error',
+                content: 'Error updating the profile',
+            });
+        } finally {
+            client.release(true);
+        }
+    }
+
     public async update(req: Request, res: Response, target: string) {
         const { authorization } = req.headers;
         if (authorization) {
@@ -233,8 +621,44 @@ export class UserController extends BasicCRUD {
                         this.addAbility(req, res, payload.user_id);
                         break;
                     }
-                    case 'ability-remove': {
-                        this.removeAbility(req, res);
+                    case 'experience-add': {
+                        this.addExperience(req, res, payload.user_id);
+                        break;
+                    }
+                    case 'job-edit': {
+                        this.updateJob(req, res);
+                        break;
+                    }
+                    case 'award-add': {
+                        this.addAward(req, res, payload.user_id);
+                        break;
+                    }
+                    case 'award-edit': {
+                        this.awardEdit(req, res);
+                        break;
+                    }
+                    case 'project-add': {
+                        this.addProject(req, res, payload.user_id);
+                        break;
+                    }
+                    case 'project-edit': {
+                        this.projectEdit(req, res);
+                        break;
+                    }
+                    case 'title-add': {
+                        this.addTitle(req, res, payload.user_id);
+                        break;
+                    }
+                    case 'title-edit': {
+                        this.titleEdit(req, res);
+                        break;
+                    }
+                    case 'avatar': {
+                        this.updateAvatar(req, res, payload.user_id);
+                        break;
+                    }
+                    case 'name': {
+                        this.updateName(req, res, payload.user_id);
                         break;
                     }
                     default: {
@@ -256,7 +680,116 @@ export class UserController extends BasicCRUD {
         }
     }
 
-    public delete(req: Request, res: Response) {
+    private async removeExperience(req: Request, res: Response) {
+        const {id} = req.params;
+        const client = await dbController.getClient();
+        try {
+            await client.query(queries.removeUser.experience, [id]);
+            res.sendStatus(200);
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({
+                title: 'error',
+                content: 'Error updating the profile',
+            });
+        } finally {
+            client.release(true);
+        }
+    }
 
+    private async removeAward(req: Request, res: Response) {
+        const {id} = req.params;
+        const client = await dbController.getClient();
+        try {
+            await client.query(queries.removeUser.award, [id]);
+            res.sendStatus(200);
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({
+                title: 'error',
+                content: 'Error updating the profile',
+            });
+        } finally {
+            client.release(true);
+        }
+    }
+
+    private async removeProject(req: Request, res: Response) {
+        const {id} = req.params;
+        const client = await dbController.getClient();
+        try {
+            await client.query(queries.removeUser.project, [id]);
+            res.sendStatus(200);
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({
+                title: 'error',
+                content: 'Error updating the profile',
+            });
+        } finally {
+            client.release(true);
+        }
+    }
+
+    private async removeTitle(req: Request, res: Response) {
+        const {id} = req.params;
+        const client = await dbController.getClient();
+        try {
+            await client.query(queries.removeUser.education, [id]);
+            res.sendStatus(200);
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({
+                title: 'error',
+                content: 'Error updating the profile',
+            });
+        } finally {
+            client.release(true);
+        }
+    }
+
+    public async delete(req: Request, res: Response, target: string) {
+        const { authorization } = req.headers;
+        if (authorization) {
+            const payload = await jwt.getPayload(authorization);
+            if (payload) {
+                switch (target) {
+                    case 'ability-remove': {
+                        this.removeAbility(req, res);
+                        break;
+                    }
+                    case 'experience-remove': {
+                        this.removeExperience(req, res);
+                        break;
+                    }
+                    case 'award-remove': {
+                        this.removeAward(req, res);
+                        break;
+                    }
+                    case 'project-remove': {
+                        this.removeProject(req, res);
+                        break;
+                    }
+                    case 'title-remove': {
+                        this.removeTitle(req, res);
+                        break;
+                    }
+                    default: {
+                        res.sendStatus(404);
+                        break;
+                    }
+                }
+            } else {
+                res.status(401).json({
+                    title: 'error',
+                    content: 'Invalid token'
+                })
+            }
+        } else {
+            res.status(401).json({
+                title: 'error',
+                content: 'missing token',
+            })
+        }
     }
 }

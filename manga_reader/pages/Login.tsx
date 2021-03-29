@@ -17,7 +17,6 @@ type LoginPageScreenNavigationProp = StackNavigationProp<
   'Login'
 >;
 
-
 const mapDispatchToProps = {
   reduxSaveSession: (data: Session) => ({
     type: 'SAVE_SESSION_DATA',
@@ -54,7 +53,7 @@ class LoginPage extends React.Component<Props, State> {
     if (this.props.sessionActive) {
       this.props.navigation.navigate('ModalStack', {
         screen: 'TabNavigator',
-        params: {screen: 'Feed'},
+        params: {screen: 'Dashboard'},
       });
     }
   }
@@ -73,7 +72,7 @@ class LoginPage extends React.Component<Props, State> {
       });
       this.props.navigation.navigate('ModalStack', {
         screen: 'TabNavigator',
-        params: {screen: 'Feed'},
+        params: {screen: 'Dashboard'},
       });
     } catch (err) {
       console.error(err);
@@ -119,7 +118,6 @@ class LoginPage extends React.Component<Props, State> {
           onPress={() => this.props.navigation.navigate('Register_1')}>
           <Text style={textStyles[0]}>Not registered?</Text>
         </Pressable>
-
       </ScrollView>
     );
   }

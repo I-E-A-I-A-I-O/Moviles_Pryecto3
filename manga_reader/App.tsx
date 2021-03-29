@@ -30,7 +30,7 @@ import ModalNav from './navigators/ModalStackNavigator';
 
 enableScreens();
 
-Axios.defaults.baseURL = 'http://192.168.0.101:8000';
+Axios.defaults.baseURL = 'https://mobile-comic-reader.herokuapp.com';
 
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -51,7 +51,7 @@ const postToken = async (token: string) => {
 const App = () => {
   useEffect(() => {
     const unsubscribe = messaging().onMessage(async remoteMessage => {
-      Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
+      //Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
     });
 
     return unsubscribe;

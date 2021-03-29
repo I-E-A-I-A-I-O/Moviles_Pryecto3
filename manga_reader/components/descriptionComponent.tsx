@@ -3,7 +3,7 @@ import {Pressable, Text, TextStyle} from 'react-native';
 import {Card, Icon} from 'react-native-elements';
 
 type Props = {
-  description: {
+  description?: {
     description: string | undefined;
     country: string | undefined;
     address: string | undefined;
@@ -33,15 +33,15 @@ const DescriptionComponent = (props: Props) => {
         )}
       </Card.Title>
       <Card.Divider />
-      <Text>Last name: {props.description.last_name}</Text>
-      <Text>Gender: {props.description.gender ?? 'undefined'}</Text>
-      <Text>Age: {props.description.age}</Text>
-      <Text>Birth date: {props.description.birth_date?.split('T')[0]}</Text>
-      <Text>Country: {props.description.country}</Text>
-      <Text>Address: {props.description.address}</Text>
+      <Text>Last name: {props.description?.last_name}</Text>
+      <Text>Gender: {props.description?.gender ?? 'undefined'}</Text>
+      <Text>Age: {props.description?.age}</Text>
+      <Text>Birth date: {props.description?.birth_date?.split('T')[0]}</Text>
+      <Text>Country: {props.description?.country}</Text>
+      <Text>Address: {props.description?.address}</Text>
       <Text style={TextStyles[1]}>Description</Text>
       <Card.Divider />
-      <Text style={TextStyles[1]}>{props.description.description}</Text>
+      <Text style={TextStyles[1]}>{props.description?.description}</Text>
     </Card>
   );
 };
