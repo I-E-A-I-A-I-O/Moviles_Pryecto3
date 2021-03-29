@@ -2,7 +2,6 @@ import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {RootTabNavigatorParamList} from '../custom_types/navigation_types';
 import Dashboard from '../pages/Dashboard';
-import Profile from '../pages/Profile';
 import Notifications from '../pages/pageNotifications';
 import Post from '../pages/pageToPost';
 import {Icon} from 'react-native-elements';
@@ -26,27 +25,6 @@ const RootTabNavigator = () => {
             />
           ),
           title: 'Home',
-        }}
-      />
-      <Tab.Screen
-        name={'Profile'}
-        component={Profile}
-        options={{
-          tabBarIcon: focused => (
-            <Icon
-              size={25}
-              type={'font-awesome'}
-              name={'user'}
-              color={'black'}
-              solid={focused.focused}
-            />
-          ),
-          title: 'Profile',
-        }}
-        initialParams={{
-          deviceUser: true,
-          name: '',
-          user_id: undefined,
         }}
       />
       <Tab.Screen
