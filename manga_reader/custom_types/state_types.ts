@@ -54,3 +54,13 @@ export type DescriptionResponse =
   | ProjectDescription
   | EducationDescription
   | JobDescription;
+
+export type SearchBarFilters = {
+  searchOptions: DropdownOption[];
+  scope: DropdownOption[];
+};
+
+export type DropdownOption = {
+  label: string;
+  value: string;
+};

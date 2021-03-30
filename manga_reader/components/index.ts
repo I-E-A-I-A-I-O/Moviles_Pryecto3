@@ -8,6 +8,7 @@ import ListWDescription from './ListWithDescription';
 import {DateVerifier as DateFunctions} from './checkDate';
 import DescriptionSkeleton from './DescriptionSkeleton';
 import AvatarImgPicker from './avatarImgPicker';
+import ModalDropdown from './ModalDropdown';
 
 const dateFunctions = new DateFunctions();
 
@@ -22,4 +23,5 @@ export {
   dateFunctions,
   DescriptionSkeleton,
   AvatarImgPicker,
+  ModalDropdown,
 };
