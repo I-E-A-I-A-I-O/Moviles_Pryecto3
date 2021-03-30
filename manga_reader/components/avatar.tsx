@@ -5,8 +5,8 @@ import {Avatar} from 'react-native-elements';
 
 type Props = {
   user_id: string;
-  style: ViewStyle | undefined;
-  size: 'small' | 'large' | 'medium' | 'xlarge';
+  style?: ViewStyle;
+  size?: 'small' | 'large' | 'medium' | 'xlarge';
 };
 
 type State = {
@@ -44,7 +44,7 @@ class UserAvatar extends React.Component<Props, State> {
           uri: this.state.imgUri,
         }}
         rounded
-        size={this.props.size}
+        size={this.props.size ?? 'medium'}
         containerStyle={this.props.style}
       />
     );

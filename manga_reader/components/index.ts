@@ -9,6 +9,7 @@ import {DateVerifier as DateFunctions} from './checkDate';
 import DescriptionSkeleton from './DescriptionSkeleton';
 import AvatarImgPicker from './avatarImgPicker';
 import ModalDropdown from './ModalDropdown';
+import UserBadge from './userBadge';
 
 const dateFunctions = new DateFunctions();
 
@@ -24,4 +25,5 @@ export {
   DescriptionSkeleton,
   AvatarImgPicker,
   ModalDropdown,
+  UserBadge,
 };

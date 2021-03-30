@@ -1,7 +1,13 @@
 import React from 'react';
-import {TextStyle, Pressable, View, ViewStyle} from 'react-native';
+import {
+  TextStyle,
+  Pressable,
+  View,
+  ViewStyle,
+  VirtualizedList,
+  ListRenderItemInfo,
+} from 'react-native';
 import {Input, Icon, Card} from 'react-native-elements';
-import {ScrollView} from 'react-native-gesture-handler';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
 import {
@@ -10,10 +16,12 @@ import {
 } from '../custom_types/navigation_types';
 import {CompositeNavigationProp} from '@react-navigation/native';
 import {connect, ConnectedProps} from 'react-redux';
-import {ModalDropdown, UserAvatar} from '../components';
+import {ModalDropdown, UserAvatar, UserBadge} from '../components';
 
 import type {RootReducerType as CombinedState} from '../store/rootReducer';
 import type {SearchBarFilters} from '../custom_types/state_types';
+import axios from 'axios';
+import Toast from 'react-native-toast-message';
 
 type DashboardScreenNavigationProp = CompositeNavigationProp<
   BottomTabNavigationProp<RootTabNavigatorParamList, 'Dashboard'>,
@@ -34,7 +42,7 @@ type Props = PropsFromRedux & {
 
 const options: SearchBarFilters = {
   searchOptions: [
-    {label: 'People', value: 'persons'},
+    {label: 'People', value: 'people'},
     {label: 'Jobs', value: 'jobs'},
     {label: 'Posts', value: 'posts'},
     {label: 'Organizations', value: 'organizations'},
@@ -45,62 +53,146 @@ const options: SearchBarFilters = {
   ],
 };
 
+type ListData = {
+  id: string;
+  name?: string;
+  description?: string;
+};
+
 type State = {
   searchOption: string;
   scope: string;
+  data: ListData[];
+  search: string;
 };
 
 class Dashboard extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    this.state = {scope: 'global', searchOption: 'persons'};
+    this.state = {
+      scope: 'global',
+      searchOption: 'people',
+      data: [],
+      search: '',
+    };
   }
+
+  private search = async () => {
+    try {
+      const response = await axios.get(
+        `/list/${this.state.searchOption}/${this.state.scope}/${this.state.search}`,
+        {
+          headers: {authorization: this.props.state.token},
+        },
+      );
+      this.setState({
+        ...this.state,
+        data: response.data.content,
+      });
+    } catch (err) {
+      console.error(err);
+      Toast.show({
+        type: 'error',
+        text1: err.response.data.content,
+        position: 'bottom',
+      });
+    }
+  };
+
+  componentDidMount() {
+    this.search();
+  }
+
+  private renderItem = (item: ListRenderItemInfo<ListData>) => {
+    switch (this.state.searchOption) {
+      case 'people': {
+        return (
+          <UserBadge
+            id={item.item.id}
+            name={item.item.name ?? ''}
+            description={item.item.description}
+            onPress={() =>
+              this.props.navigation.navigate('ProfileModal', {
+                deviceUser: false,
+                name: item.item.name ?? '',
+                user_id: item.item.id,
+              })
+            }
+          />
+        );
+      }
+      default: {
+        return <View collapsable />;
+      }
+    }
+  };
 
   render() {
     return (
-      <ScrollView>
-        <Input
-          placeholder={'Search something'}
-          style={textStyle[0]}
-          leftIcon={
-            <Pressable
-              android_ripple={{
-                color: 'gray',
-                borderless: true,
-              }}
-              onPress={() =>
-                this.props.navigation.navigate('ProfileModal', {
-                  deviceUser: true,
-                  name: this.props.state.name,
-                  user_id: this.props.state.id,
-                })
-              }>
-              <UserAvatar
-                size={'medium'}
-                user_id={this.props.state.id}
-                style={undefined}
+      <VirtualizedList
+        data={this.state.data}
+        getItem={(data, index) => this.state.data[index]}
+        getItemCount={() => this.state.data.length}
+        renderItem={this.renderItem}
+        ListHeaderComponent={
+          <View>
+            <Input
+              placeholder={'Search something'}
+              style={textStyle[0]}
+              onChangeText={text =>
+                this.setState({...this.state, search: text})
+              }
+              leftIcon={
+                <Pressable
+                  android_ripple={{
+                    color: 'gray',
+                    borderless: true,
+                  }}
+                  onPress={() =>
+                    this.props.navigation.navigate('ProfileModal', {
+                      deviceUser: true,
+                      name: this.props.state.name,
+                      user_id: this.props.state.id,
+                    })
+                  }>
+                  <UserAvatar
+                    size={'medium'}
+                    user_id={this.props.state.id}
+                    style={undefined}
+                  />
+                </Pressable>
+              }
+              rightIcon={
+                <Pressable
+                  android_ripple={{
+                    color: 'gray',
+                    borderless: true,
+                  }}
+                  onPress={this.search}>
+                  <Icon type={'font-awesome-5'} name={'search'} />
+                </Pressable>
+              }
+            />
+            <View style={buttonStyle[1]}>
+              <ModalDropdown
+                data={options.searchOptions}
+                style={buttonStyle[0]}
+                description={'Search type'}
+                onInput={value =>
+                  this.setState({...this.state, searchOption: value})
+                }
               />
-            </Pressable>
-          }
-        />
-        <View style={buttonStyle[1]}>
-          <ModalDropdown
-            data={options.searchOptions}
-            style={buttonStyle[0]}
-            description={'Search type'}
-            onInput={value =>
-              this.setState({...this.state, searchOption: value})
-            }
-          />
-          <ModalDropdown
-            data={options.scope}
-            style={buttonStyle[0]}
-            description={'Search scope'}
-            onInput={value => this.setState({...this.state, scope: value})}
-          />
-        </View>
-        <Card.Divider />
-      </ScrollView>
+              <ModalDropdown
+                data={options.scope}
+                style={buttonStyle[0]}
+                description={'Search scope'}
+                onInput={value => this.setState({...this.state, scope: value})}
+              />
+            </View>
+            <Card.Divider />
+          </View>
+        }
+      />
     );
   }
 }
