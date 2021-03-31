@@ -7,7 +7,7 @@ import multer from 'multer';
 import helmet from 'helmet';
 import notificationRoutes from './routers/notifications';
 
-import {userRouter, codeRouter, searchBarRouter} from './routers';
+import {userRouter, codeRouter, searchBarRouter, connectsRouter} from './routers';
 
 const serviceAccount: ServiceAccount = {
   projectId: process.env.project_id,
@@ -37,6 +37,7 @@ app.use('/notifications', notificationRoutes);
 app.use('/users', userRouter);
 app.use('/verification-codes', codeRouter);
 app.use('/list', searchBarRouter);
+app.use('/connects', connectsRouter);
 
 app.listen(port, () => {
   console.info(`Server running at port ${port}`);

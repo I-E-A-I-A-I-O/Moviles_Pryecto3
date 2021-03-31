@@ -166,4 +166,18 @@ export = {
     /**Borra un token comparando por valor de token */
     deleteWithToken: 'DELETE FROM notification_tokens WHERE token = $1',
   },
+  /**Queries para el manejo de conexion de usuarios */
+  connects: {
+    /**Verifica si dos usuarios estan conectados */
+    connected: '',
+    /**Crea un request de conexion entre usuarios */
+    request: '',
+    /**Elimina la conexion entre dos usuarios */
+    disconnect: '',
+    /**Crea una nueva conexion entre usuarios */
+    connect: '',
+    /**Elimina el request de conexion entre usuarios */
+    deleteRequest: '',
+    /**Verifica si hay un request de conexiones entre dos usuarios */
+    requestPending: '',
 };
