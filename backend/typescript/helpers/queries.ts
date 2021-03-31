@@ -154,4 +154,16 @@ export = {
     users:
       "SELECT u.user_id AS id, u.name, ud.last_name AS description FROM users u LEFT JOIN user_description ud ON u.user_id = ud.user_id WHERE u.name ILIKE $1 || '%'",
   },
+  /**Queries relacionados a las notificaciones */
+  notifications: {
+    /**Inserta un nuevo token de notificacion vinculado a cierto usuario */
+    register: 'INSERT INTO notification_tokens(user_id, token) VALUES($1, $2)',
+    /**Actualiza el token vinculado a cierto usuario */
+    updateToken:
+      'UPDATE notification_tokens SET token = $1 WHERE user_id = $2 RETURNING *',
+    /**Borra un token comparando por ID de usuario */
+    deleteWithID: 'DELETE FROM notification_tokens WHERE user_id = $1',
+    /**Borra un token comparando por valor de token */
+    deleteWithToken: 'DELETE FROM notification_tokens WHERE token = $1',
+  },
 };
