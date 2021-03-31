@@ -21,6 +21,7 @@ import {
   ListWODescription,
   ProfileSkeleton,
   UserAvatar,
+  ConnectButton,
 } from '../components';
 import type {RootReducerType as CombinedState} from '../store/rootReducer';
 import type {ProfileState} from '../custom_types/state_types';
@@ -194,6 +195,13 @@ class ProfileModal extends React.Component<Props, ProfileState> {
                     <Text style={TextStyles}>
                       {this.state.name} {this.state.description?.last_name}
                     </Text>
+                    <ConnectButton
+                      session_user_id={this.props.state.id}
+                      token={this.props.state.token}
+                      user_id={
+                        this.props.route.params.user_id ?? this.props.state.id
+                      }
+                    />
                   </View>
                 ) : (
                   <View>

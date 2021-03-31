@@ -33,20 +33,6 @@ Axios.defaults.baseURL = 'http://192.168.0.101:8000';
 
 const Stack = createStackNavigator<RootStackParamList>();
 
-const postToken = async (token: string) => {
-  setTimeout(() => {
-    Axios.post('/notifications/', {
-      token: token,
-    })
-      .then(res => {
-        console.log(JSON.stringify(res));
-      })
-      .catch(err => {
-        console.error(err);
-      });
-  }, 5000);
-};
-
 const App = () => {
   useEffect(() => {
     const unsubscribe = messaging().onMessage(async remoteMessage => {
@@ -62,7 +48,6 @@ const App = () => {
       .getToken()
       .then(token => {
         console.info(`TOKEN:${token}`);
-        postToken(token);
       });
     return messaging().onTokenRefresh(token => {
       console.info(`TOKEN:${token}`);
