@@ -26,6 +26,7 @@ const mapDispatchToProps = {
 
 const mapStateToProps = (state: CombinedState) => ({
   sessionActive: state.session.session.sessionActive,
+  token: state.session.session.token,
 });
 
 const connector = connect(mapStateToProps, mapDispatchToProps);
@@ -49,16 +50,7 @@ class LoginPage extends React.Component<Props, State> {
     };
   }
 
-  componentDidMount() {
-    if (this.props.sessionActive) {
-      this.props.navigation.navigate('ModalStack', {
-        screen: 'TabNavigator',
-        params: {screen: 'Dashboard'},
-      });
-    }
-  }
-
-  submitLogin = async () => {
+  private submitLogin = async () => {
     let form = new FormData();
     form.append('email', this.state.email.toLowerCase());
     form.append('password', this.state.password);
@@ -69,10 +61,6 @@ class LoginPage extends React.Component<Props, State> {
         name: response.data.content.name,
         sessionActive: true,
         token: response.data.content.token,
-      });
-      this.props.navigation.navigate('ModalStack', {
-        screen: 'TabNavigator',
-        params: {screen: 'Dashboard'},
       });
     } catch (err) {
       console.error(err);
