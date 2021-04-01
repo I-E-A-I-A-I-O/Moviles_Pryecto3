@@ -1,5 +1,5 @@
 import React from 'react';
-import {View} from 'react-native';
+import {View, ViewStyle} from 'react-native';
 import {Button} from 'react-native-elements';
 import axios from 'axios';
 import Toast from 'react-native-toast-message';
@@ -28,7 +28,7 @@ class ConnectButton extends React.Component<Props, State> {
     this.state = {status: 'Connect', loading: false};
   }
 
-  private async disconnect() {
+  private disconnect = async () => {
     if (this.state.id) {
       try {
         this.setState({
@@ -52,9 +52,9 @@ class ConnectButton extends React.Component<Props, State> {
         });
       }
     }
-  }
+  };
 
-  private async request() {
+  private request = async () => {
     try {
       this.setState({
         ...this.state,
@@ -80,9 +80,9 @@ class ConnectButton extends React.Component<Props, State> {
         loading: false,
       });
     }
-  }
+  };
 
-  private async cancel() {
+  private cancel = async () => {
     if (this.state.id) {
       try {
         this.setState({
@@ -106,9 +106,9 @@ class ConnectButton extends React.Component<Props, State> {
         });
       }
     }
-  }
+  };
 
-  private async accept() {
+  private accept = async () => {
     if (this.state.id) {
       try {
         this.setState({
@@ -137,9 +137,9 @@ class ConnectButton extends React.Component<Props, State> {
         });
       }
     }
-  }
+  };
 
-  private async onButtonPress() {
+  private onButtonPress = () => {
     switch (this.state.status) {
       case 'Connect': {
         this.request();
@@ -158,9 +158,9 @@ class ConnectButton extends React.Component<Props, State> {
         break;
       }
     }
-  }
+  };
 
-  private async getConnectionStatus() {
+  private getConnectionStatus = async () => {
     if (this.props.user_id === this.props.session_user_id) {
       this.setState({
         ...this.state,
@@ -195,7 +195,7 @@ class ConnectButton extends React.Component<Props, State> {
         });
       }
     }
-  }
+  };
 
   componentDidMount() {
     this.getConnectionStatus();
@@ -203,10 +203,12 @@ class ConnectButton extends React.Component<Props, State> {
 
   render() {
     return (
-      <View>
+      <View style={rootViewStyle}>
         {this.state.status !== 'Same user' && (
           <View>
             <Button
+              style={buttonPositionStyles}
+              buttonStyle={buttonVisualStyles[0]}
               onPress={this.onButtonPress}
               disabled={this.state.loading}
               title={this.state.status}
@@ -224,5 +226,22 @@ class ConnectButton extends React.Component<Props, State> {
     );
   }
 }
+
+const rootViewStyle: ViewStyle = {
+  flexDirection: 'row',
+  justifyContent: 'center',
+  marginTop: 15,
+  marginBottom: 15,
+};
+
+const buttonPositionStyles: ViewStyle = {
+  width: '25%',
+};
+
+const buttonVisualStyles: ViewStyle[] = [
+  {
+    borderRadius: 25,
+  },
+];
 
 export default ConnectButton;

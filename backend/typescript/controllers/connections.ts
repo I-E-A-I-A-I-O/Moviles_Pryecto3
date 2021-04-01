@@ -40,7 +40,7 @@ export class ConnectionController {
               });
             } else {
               res.status(200).json({
-                status: 'Request',
+                status: 'Connect',
                 id: undefined,
               });
             }
