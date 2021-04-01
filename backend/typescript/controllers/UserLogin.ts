@@ -23,6 +23,7 @@ export class UserLogin {
           const token = jwt.sign(
             {
               user_id: results.rows[0].user_id,
+              name: results.rows[0].name,
             },
             process.env.SECRET_JWT as jwt.Secret
           );

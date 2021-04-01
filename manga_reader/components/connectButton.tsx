@@ -8,7 +8,6 @@ type Props = {
   user_id: string;
   token: string;
   session_user_id: string;
-  declineButton?: boolean;
 };
 
 type State = {
@@ -36,7 +35,7 @@ class ConnectButton extends React.Component<Props, State> {
           ...this.state,
           loading: true,
         });
-        await axios.delete(`/connects/connection/${this.state.id}`, {
+        await axios.delete(`/connects/connection/${this.props.user_id}`, {
           headers: {authorization: this.props.token},
         });
         this.setState({
@@ -120,6 +119,7 @@ class ConnectButton extends React.Component<Props, State> {
           '/connects/connections',
           {
             request_id: this.state.id,
+            user_id: this.props.user_id,
           },
           {headers: this.props.token},
         );
@@ -153,10 +153,6 @@ class ConnectButton extends React.Component<Props, State> {
         this.cancel();
         break;
       }
-      case 'Decline': {
-        this.cancel();
-        break;
-      }
       case 'Accept': {
         this.accept();
         break;
@@ -182,12 +178,7 @@ class ConnectButton extends React.Component<Props, State> {
         );
         this.setState({
           ...this.state,
-          status:
-            response.data.content.status === 'Accept'
-              ? this.props.declineButton
-                ? 'Decline'
-                : response.data.content
-              : response.data.content,
+          status: response.data.content.status,
           id: response.data.content.id,
         });
       } catch (err) {
@@ -214,9 +205,20 @@ class ConnectButton extends React.Component<Props, State> {
     return (
       <View>
         {this.state.status !== 'Same user' && (
-          <Button onPress={this.onButtonPress} disabled={this.state.loading}>
-            {this.state.status}
-          </Button>
+          <View>
+            <Button
+              onPress={this.onButtonPress}
+              disabled={this.state.loading}
+              title={this.state.status}
+            />
+            {this.state.status === 'Accept' && (
+              <Button
+                title={'Decline'}
+                onPress={this.cancel}
+                disabled={this.state.loading}
+              />
+            )}
+          </View>
         )}
       </View>
     );
