@@ -81,7 +81,8 @@ export class ConnectionController {
         notificationController.sendNotification(
           targetToken.rows[0].token,
           'Connection request',
-          `You received a new connection request. ${payload.name} Wants to connect with you!`
+          `You received a new connection request. ${payload.name} Wants to connect with you!`,
+          `http://192.168.0.101/users/user/${payload.user_id}/avatar`
         );
         res.status(200).json({
           id: response.rows[0].id,

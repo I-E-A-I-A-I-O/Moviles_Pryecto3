@@ -34,19 +34,27 @@ export class NotificationController {
     }
   }
 
-  public async sendNotification(target: string, title: string, body?: string) {
-    await admin.messaging().sendToDevice(
-      [target],
-      {
+  public async sendNotification(
+    target: string,
+    title: string,
+    body?: string,
+    image?: string
+  ) {
+    await admin
+      .messaging()
+      .send({
+        token: target,
         notification: {
-          title: title,
           body: body,
-          sound: 'default',
+          title: title,
+          imageUrl: image,
         },
-      },
-      {
-        priority: 'high',
-      }
-    );
+      })
+      .then(value => {
+        console.info(value);
+      })
+      .catch(err => {
+        console.error(err);
+      });
   }
 }

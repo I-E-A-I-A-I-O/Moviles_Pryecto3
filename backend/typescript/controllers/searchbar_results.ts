@@ -8,46 +8,50 @@ export class SearchBarResults {
     const payload = req.headers.authorization
       ? await jwt.getPayload(req.headers.authorization)
       : null;
-    const {scope, search} = req.params;
-    switch (type) {
-      case 'people': {
-        if (scope === 'global') {
-          query = queries.search.users;
-          params.push(search);
-          break;
-        } else {
-          if (!payload) {
-            res.status(400).json({
-              title: 'error',
-              content: 'Token missing',
-            });
-            return;
+    if (!payload) {
+      res.status(400).json({
+        title: 'error',
+        content: 'Token missing',
+      });
+      return;
+    } else {
+      const {scope, search} = req.params;
+      switch (type) {
+        case 'people': {
+          if (scope === 'global') {
+            query = queries.search.users;
+            params.push(search);
+            break;
+          } else if (scope === 'connections') {
+            query = queries.search.connectedUsers;
+            params.push(search, payload.user_id);
+            break;
           } else {
-            res.sendStatus(500);
+            res.sendStatus(404);
             return;
           }
         }
+        default: {
+          res.sendStatus(404);
+          return;
+        }
       }
-      default: {
-        res.sendStatus(404);
-        return;
+      const client = await dbController.getClient();
+      try {
+        const response = await client.query(query, params);
+        console.log(JSON.stringify(response));
+        res.status(200).json({
+          title: 'success',
+          content: response.rows,
+        });
+      } catch (err) {
+        console.error(err);
+        res.status(500).json({
+          content: [],
+        });
+      } finally {
+        client.release(true);
       }
-    }
-    const client = await dbController.getClient();
-    try {
-      const response = await client.query(query, params);
-      console.log(JSON.stringify(response));
-      res.status(200).json({
-        title: 'success',
-        content: response.rows,
-      });
-    } catch (err) {
-      console.error(err);
-      res.status(500).json({
-        content: [],
-      });
-    } finally {
-      client.release(true);
     }
   }
 }

@@ -131,6 +131,18 @@ class Dashboard extends React.Component<Props, State> {
     }
   };
 
+  private closeSession = async () => {
+    try {
+      await axios.delete('/users/user/auth', {
+        headers: {authorization: this.props.state.token},
+      });
+    } catch (err) {
+      console.error(err);
+    } finally {
+      this.props.reduxLogout();
+    }
+  };
+
   render() {
     return (
       <VirtualizedList
@@ -159,7 +171,7 @@ class Dashboard extends React.Component<Props, State> {
                       user_id: this.props.state.id,
                     })
                   }
-                  onLongPress={this.props.reduxLogout}>
+                  onLongPress={this.closeSession}>
                   <UserAvatar
                     size={'medium'}
                     user_id={this.props.state.id}

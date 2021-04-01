@@ -19,6 +19,7 @@ import Axios from 'axios';
 import Toast from 'react-native-toast-message';
 import {enableScreens} from 'react-native-screens';
 import RootStackNav from './navigators/RootStackNavigator';
+import {Notifications} from 'react-native-notifications';
 
 enableScreens();
 
@@ -27,7 +28,11 @@ Axios.defaults.baseURL = 'http://192.168.0.101:8000';
 const App = () => {
   useEffect(() => {
     const unsubscribe = messaging().onMessage(async remoteMessage => {
-      //Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
+      // @ts-ignore
+      Notifications.postLocalNotification({
+        title: remoteMessage.notification?.title ?? '',
+        body: remoteMessage.notification?.body ?? '',
+      });
     });
 
     return unsubscribe;

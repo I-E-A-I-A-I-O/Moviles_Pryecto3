@@ -335,6 +335,15 @@ export = {
      */
     users:
       "SELECT u.user_id AS id, u.name, ud.last_name AS description FROM users u LEFT JOIN user_description ud ON u.user_id = ud.user_id WHERE u.name ILIKE $1 || '%'",
+    /**
+     * Retorna una lista de usuarios cuyo nombre sea similar a la busqueda realizada
+     * y pertenezca a la lista de usuarios conectados al request owner.
+     * Parametros:
+     * 1. String proveniente de la barra de busqueda
+     * 2. ID del usuario que esta realizando el request
+     */
+    connectedUsers:
+      "SELECT u.name, u.user_id AS id, ud.last_name AS description FROM users u INNER JOIN connects c ON c.connected_id = u.user_id LEFT JOIN user_description ud ON ud.user_id = u.user_id WHERE u.name ILIKE $1 || '%' AND c.connector_id = $2;",
   },
   /**Queries relacionados a los tokens de notificaciones */
   notification_tokens: {
