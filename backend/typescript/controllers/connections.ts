@@ -41,6 +41,7 @@ export class ConnectionController {
             } else {
               res.status(200).json({
                 status: 'Request',
+                id: undefined,
               });
             }
           }
@@ -83,7 +84,7 @@ export class ConnectionController {
           `You received a new connection request. ${payload.name} Wants to connect with you!`
         );
         res.status(200).json({
-          content: {id: response.rows[0].id},
+          id: response.rows[0].id,
         });
       } catch (err) {
         await client.query(queries.transaction.rollback);
@@ -160,7 +161,7 @@ export class ConnectionController {
         await client.query(queries.connects.deleteRequest, [request_id]);
         await client.query(queries.transaction.commit);
         res.status(200).json({
-          content: response.rows[0].id,
+          id: response.rows[0].id,
         });
       } catch (err) {
         await client.query(queries.transaction.rollback);

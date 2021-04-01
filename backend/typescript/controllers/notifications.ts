@@ -16,11 +16,11 @@ export class NotificationController {
         const client = await dbController.getClient();
         try {
           const results = await client.query(
-            queries.notifications.updateToken,
+            queries.notification_tokens.updateToken,
             [token, payload.user_id]
           );
           if (results.rowCount < 1) {
-            await client.query(queries.notifications.register, [
+            await client.query(queries.notification_tokens.register, [
               payload.user_id,
               token,
             ]);

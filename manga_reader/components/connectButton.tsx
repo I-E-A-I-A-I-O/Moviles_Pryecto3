@@ -70,7 +70,7 @@ class ConnectButton extends React.Component<Props, State> {
       this.setState({
         ...this.state,
         status: 'Pending',
-        id: response.data.content.id,
+        id: response.data.id,
       });
     } catch (err) {
       console.error(err);
@@ -126,7 +126,7 @@ class ConnectButton extends React.Component<Props, State> {
         this.setState({
           ...this.state,
           status: 'Disconnect',
-          id: response.data.content.id,
+          id: response.data.id,
         });
       } catch (err) {
         console.log(err);
@@ -178,14 +178,14 @@ class ConnectButton extends React.Component<Props, State> {
         );
         this.setState({
           ...this.state,
-          status: response.data.content.status,
-          id: response.data.content.id,
+          status: response.data.status,
+          id: response.data.id,
         });
       } catch (err) {
         console.error(err);
         Toast.show({
           type: 'error',
-          text1: err.response.data.content,
+          text1: err.response.data,
           position: 'bottom',
         });
       } finally {
