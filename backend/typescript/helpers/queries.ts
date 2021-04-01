@@ -416,7 +416,7 @@ export = {
      * No importa el orden en que se pasen las ID
      */
     disconnect:
-      'DELETE FROM connections WHERE connector_id = $1 AND connected_id = $2',
+      'DELETE FROM connects WHERE connector_id = $1 AND connected_id = $2',
     /**Crea una nueva conexion entre usuarios.
      * Parametros:
      * 1. ID del usuario A
@@ -425,7 +425,7 @@ export = {
      * No importa el orden que se pasen las ID
      */
     connect:
-      'INSERT INTO connections(connector_id, connected_id) VALUES($1, $2) RETURNING connection_id AS id',
+      'INSERT INTO connects(connector_id, connected_id) VALUES($1, $2) RETURNING connection_id AS id',
     /**Elimina el request de conexion entre usuarios.
      * Parametros:
      * 1. ID del connection request

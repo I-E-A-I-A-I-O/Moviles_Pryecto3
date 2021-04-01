@@ -20,12 +20,17 @@ type State = {
     | 'Decline';
   loading: boolean;
   id?: string;
+  buttonStyle: ViewStyle;
 };
 
 class ConnectButton extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    this.state = {status: 'Connect', loading: false};
+    this.state = {
+      status: 'Connect',
+      loading: false,
+      buttonStyle: buttonVisualStyles[0],
+    };
   }
 
   private disconnect = async () => {
@@ -42,6 +47,7 @@ class ConnectButton extends React.Component<Props, State> {
           ...this.state,
           status: 'Connect',
           id: undefined,
+          buttonStyle: buttonVisualStyles[0],
         });
       } catch (err) {
         console.error(err);
@@ -71,6 +77,7 @@ class ConnectButton extends React.Component<Props, State> {
         ...this.state,
         status: 'Pending',
         id: response.data.id,
+        buttonStyle: buttonVisualStyles[3],
       });
     } catch (err) {
       console.error(err);
@@ -96,6 +103,7 @@ class ConnectButton extends React.Component<Props, State> {
           ...this.state,
           id: undefined,
           status: 'Connect',
+          buttonStyle: buttonVisualStyles[0],
         });
       } catch (err) {
         console.error(err);
@@ -121,12 +129,13 @@ class ConnectButton extends React.Component<Props, State> {
             request_id: this.state.id,
             user_id: this.props.user_id,
           },
-          {headers: this.props.token},
+          {headers: {authorization: this.props.token}},
         );
         this.setState({
           ...this.state,
           status: 'Disconnect',
           id: response.data.id,
+          buttonStyle: buttonVisualStyles[1],
         });
       } catch (err) {
         console.log(err);
@@ -176,10 +185,34 @@ class ConnectButton extends React.Component<Props, State> {
           `/connects/status/${this.props.user_id}`,
           {headers: {authorization: this.props.token}},
         );
+        let style: ViewStyle;
+        switch (response.data.status) {
+          case 'Accept': {
+            style = buttonVisualStyles[2];
+            break;
+          }
+          case 'Disconnect': {
+            style = buttonVisualStyles[1];
+            break;
+          }
+          case 'Pending': {
+            style = buttonVisualStyles[3];
+            break;
+          }
+          case 'Connect': {
+            style = buttonVisualStyles[0];
+            break;
+          }
+          default: {
+            style = buttonVisualStyles[0];
+            break;
+          }
+        }
         this.setState({
           ...this.state,
           status: response.data.status,
           id: response.data.id,
+          buttonStyle: style,
         });
       } catch (err) {
         console.error(err);
@@ -205,22 +238,23 @@ class ConnectButton extends React.Component<Props, State> {
     return (
       <View style={rootViewStyle}>
         {this.state.status !== 'Same user' && (
-          <View>
+          <>
             <Button
               style={buttonPositionStyles}
-              buttonStyle={buttonVisualStyles[0]}
+              buttonStyle={this.state.buttonStyle}
               onPress={this.onButtonPress}
               disabled={this.state.loading}
               title={this.state.status}
             />
             {this.state.status === 'Accept' && (
               <Button
+                buttonStyle={buttonVisualStyles[1]}
                 title={'Decline'}
                 onPress={this.cancel}
                 disabled={this.state.loading}
               />
             )}
-          </View>
+          </>
         )}
       </View>
     );
@@ -241,6 +275,19 @@ const buttonPositionStyles: ViewStyle = {
 const buttonVisualStyles: ViewStyle[] = [
   {
     borderRadius: 25,
+  },
+  {
+    borderRadius: 25,
+    backgroundColor: 'red',
+    marginLeft: 25,
+  },
+  {
+    borderRadius: 25,
+    backgroundColor: 'lime',
+  },
+  {
+    borderRadius: 25,
+    backgroundColor: 'gray',
   },
 ];
 

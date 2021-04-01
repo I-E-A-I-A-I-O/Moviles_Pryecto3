@@ -8,7 +8,6 @@ import {SubmitButton} from '../components';
 import axios from 'axios';
 import {ScrollView} from 'react-native-gesture-handler';
 import {connect, ConnectedProps} from 'react-redux';
-import messaging from '@react-native-firebase/messaging';
 
 import type {Session} from '../store/session-store/types';
 import type {RootReducerType as CombinedState} from '../store/rootReducer';
@@ -51,38 +50,6 @@ class LoginPage extends React.Component<Props, State> {
     };
   }
 
-  private postToken = () => {
-    messaging()
-      .getToken()
-      .then(token => {
-        console.info(`TOKEN:${token}`);
-        axios
-          .post(
-            '/notifications/users',
-            {
-              token: token,
-            },
-            {headers: {authorization: this.props.token}},
-          )
-          .then(res => {
-            console.log(JSON.stringify(res));
-          })
-          .catch(err => {
-            console.error(err);
-          });
-      });
-  };
-
-  componentDidMount() {
-    if (this.props.sessionActive) {
-      this.postToken();
-      this.props.navigation.navigate('ModalStack', {
-        screen: 'TabNavigator',
-        params: {screen: 'Dashboard'},
-      });
-    }
-  }
-
   private submitLogin = async () => {
     let form = new FormData();
     form.append('email', this.state.email.toLowerCase());
@@ -94,11 +61,6 @@ class LoginPage extends React.Component<Props, State> {
         name: response.data.content.name,
         sessionActive: true,
         token: response.data.content.token,
-      });
-      this.postToken();
-      this.props.navigation.navigate('ModalStack', {
-        screen: 'TabNavigator',
-        params: {screen: 'Dashboard'},
       });
     } catch (err) {
       console.error(err);

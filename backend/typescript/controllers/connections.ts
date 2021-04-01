@@ -127,7 +127,7 @@ export class ConnectionController {
     const payload = await jwt.getPayload(authorization ?? '');
     if (payload) {
       const client = await dbController.getClient();
-      const {id} = req.headers;
+      const {id} = req.params;
       try {
         await client.query(queries.connects.deleteRequest, [id]);
         res.sendStatus(200);

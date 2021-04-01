@@ -34,11 +34,20 @@ export class SearchBarResults {
       }
     }
     const client = await dbController.getClient();
-    const response = await client.query(query, params);
-    console.log(JSON.stringify(response));
-    res.status(200).json({
-      title: 'success',
-      content: response.rows,
-    });
+    try {
+      const response = await client.query(query, params);
+      console.log(JSON.stringify(response));
+      res.status(200).json({
+        title: 'success',
+        content: response.rows,
+      });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({
+        content: [],
+      });
+    } finally {
+      client.release(true);
+    }
   }
 }

@@ -32,7 +32,11 @@ const mapStateToProps = (state: CombinedState) => ({
   state: state.session.session,
 });
 
-const connector = connect(mapStateToProps, {});
+const mapDispatchToProps = {
+  reduxLogout: () => ({type: 'DELETE_SESSION_DATA'}),
+};
+
+const connector = connect(mapStateToProps, mapDispatchToProps);
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
@@ -122,7 +126,7 @@ class Dashboard extends React.Component<Props, State> {
         );
       }
       default: {
-        return <View collapsable />;
+        return <></>;
       }
     }
   };
@@ -154,7 +158,8 @@ class Dashboard extends React.Component<Props, State> {
                       name: this.props.state.name,
                       user_id: this.props.state.id,
                     })
-                  }>
+                  }
+                  onLongPress={this.props.reduxLogout}>
                   <UserAvatar
                     size={'medium'}
                     user_id={this.props.state.id}
