@@ -1,6 +1,6 @@
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
-import React, {useMemo, useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import {RootStackParamList} from '../custom_types/navigation_types';
 import Login from '../pages/Login';
 import Register_1 from '../pages/Registration_1';
@@ -9,15 +9,22 @@ import Registration3 from '../pages/Registration_3';
 import ModalNav from '../navigators/ModalStackNavigator';
 import {connect, ConnectedProps} from 'react-redux';
 import messaging from '@react-native-firebase/messaging';
+import axios from 'axios';
+import {Notifications} from 'react-native-notifications';
 
 import type {RootReducerType} from '../store/rootReducer';
-import axios from 'axios';
 
 const mapStateToProps = (state: RootReducerType) => ({
-  sessionActive: state.session.session.sessionActive,
-  token: state.session.session.token,
+  sessionActive: state.session.sessionActive,
+  token: state.session.token,
 });
-const connector = connect(mapStateToProps, {});
+const mapDispatchToProps = {
+  setNotisState: (state: boolean) => ({
+    type: 'CHANGE_NOTIFICATION_STATUS',
+    data: state,
+  }),
+};
+const connector = connect(mapStateToProps, mapDispatchToProps);
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 type Props = PropsFromRedux;
@@ -61,6 +68,19 @@ const RootStackNav = (props: Props) => {
 
     postToken();
   }, [props.sessionActive, props.token]);
+
+  useEffect(() => {
+    const unsubscribe = messaging().onMessage(async remoteMessage => {
+      // @ts-ignore
+      Notifications.postLocalNotification({
+        title: remoteMessage.notification?.title ?? '',
+        body: remoteMessage.notification?.body ?? '',
+      });
+      props.setNotisState(true);
+    });
+
+    return unsubscribe;
+  }, [props]);
 
   return (
     <NavigationContainer>

@@ -11,6 +11,7 @@ import AvatarImgPicker from './avatarImgPicker';
 import ModalDropdown from './ModalDropdown';
 import UserBadge from './userBadge';
 import ConnectButton from './connectButton';
+import NotificationsSkeleton from './NotificationsSkeleton';
 
 const dateFunctions = new DateFunctions();
 
@@ -28,4 +29,5 @@ export {
   ModalDropdown,
   UserBadge,
   ConnectButton,
+  NotificationsSkeleton,
 };

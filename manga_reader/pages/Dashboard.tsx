@@ -29,7 +29,7 @@ type DashboardScreenNavigationProp = CompositeNavigationProp<
 >;
 
 const mapStateToProps = (state: CombinedState) => ({
-  state: state.session.session,
+  state: state.session,
 });
 
 const mapDispatchToProps = {
@@ -59,8 +59,6 @@ const options: SearchBarFilters = {
 
 type ListData = {
   id: string;
-  name?: string;
-  description?: string;
 };
 
 type State = {
@@ -113,12 +111,9 @@ class Dashboard extends React.Component<Props, State> {
         return (
           <UserBadge
             id={item.item.id}
-            name={item.item.name ?? ''}
-            description={item.item.description}
             onPress={() =>
               this.props.navigation.navigate('ProfileModal', {
                 deviceUser: false,
-                name: item.item.name ?? '',
                 user_id: item.item.id,
               })
             }
@@ -167,7 +162,6 @@ class Dashboard extends React.Component<Props, State> {
                   onPress={() =>
                     this.props.navigation.navigate('ProfileModal', {
                       deviceUser: true,
-                      name: this.props.state.name,
                       user_id: this.props.state.id,
                     })
                   }

@@ -1,10 +1,9 @@
 import {StackNavigationProp} from '@react-navigation/stack';
 import React, {useState} from 'react';
-import {View, Pressable} from 'react-native';
+import {View, Pressable, TextStyle} from 'react-native';
 import {Input, Text} from 'react-native-elements';
 import {RootStackParamList} from '../custom_types/navigation_types';
 import {RouteProp} from '@react-navigation/native';
-import {TextStyle} from 'react-native-phone-input';
 import Toast from 'react-native-toast-message';
 import axios from 'axios';
 import {SubmitButton} from '../components';

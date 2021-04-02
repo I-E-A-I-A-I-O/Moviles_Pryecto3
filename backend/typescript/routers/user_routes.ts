@@ -109,3 +109,7 @@ router.put('/user/avatar', (req: Request, res: Response) => {
 router.put('/user/name', (req: Request, res: Response) => {
   userController.update(req, res, 'name');
 });
+
+router.get('/user/:id/name', (req: Request, res: Response) => {
+  userController.readName(req, res);
+});

@@ -26,7 +26,6 @@ const ModalStack = () => {
         initialParams={{
           deviceUser: false,
           user_id: undefined,
-          name: '',
         }}
         options={{title: 'Profile'}}
       />
