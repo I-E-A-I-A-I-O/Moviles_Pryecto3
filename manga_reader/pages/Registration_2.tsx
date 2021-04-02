@@ -1,13 +1,12 @@
 import {StackNavigationProp} from '@react-navigation/stack';
 import React, {useState} from 'react';
-import {View, Pressable} from 'react-native';
+import {View, Pressable, TextStyle} from 'react-native';
 import {Input, Text} from 'react-native-elements';
 import {RootStackParamList} from '../custom_types/navigation_types';
 import {RouteProp} from '@react-navigation/native';
-import {TextStyle} from 'react-native-phone-input';
 import Toast from 'react-native-toast-message';
 import axios from 'axios';
-import SubmitButton from '../components/submitButton';
+import {SubmitButton} from '../components';
 
 type RegisterPart2ScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -41,7 +40,7 @@ const Registration2 = (props: Props) => {
           autoHide: true,
           position: 'bottom',
         });
-        let response = await axios.put('/users/codes/code/', {
+        let response = await axios.put('/verification-codes/code', {
           verification_id: verificationId,
           name: props.route.params.name,
           email: props.route.params.email,
@@ -83,7 +82,7 @@ const Registration2 = (props: Props) => {
       });
     } else {
       try {
-        await axios.post('/users/codes/code/', {
+        await axios.put('/verification-codes/code/verify', {
           verification_id: verificationId,
           code: code,
         });

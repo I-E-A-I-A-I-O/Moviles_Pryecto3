@@ -12,6 +12,8 @@ target 'manga_reader' do
     :hermes_enabled => false
   )
 
+  pod 'RNDateTimePicker', :path => '../node_modules/@react-native-community/datetimepicker'
+
   target 'manga_readerTests' do
     inherit! :complete
     # Pods for testing

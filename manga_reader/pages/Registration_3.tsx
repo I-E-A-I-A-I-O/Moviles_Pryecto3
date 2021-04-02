@@ -1,12 +1,10 @@
 import React, {useState} from 'react';
-import {ScrollView} from 'react-native';
+import {ScrollView, TextStyle} from 'react-native';
 import {Text, Input} from 'react-native-elements';
-import SubmitButton from '../components/submitButton';
+import {SubmitButton, ImagePicker} from '../components';
 import {RouteProp} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {RootStackParamList} from '../custom_types/navigation_types';
-import {TextStyle} from 'react-native-phone-input';
-import ImagePicker from '../components/imagePicker';
 import Toast from 'react-native-toast-message';
 import axios from 'axios';
 
@@ -55,7 +53,7 @@ const Registration3 = (props: Props) => {
         });
       }
       try {
-        const response = await axios.post('/users/', form);
+        const response = await axios.post('/users/user', form);
         Toast.show({
           type: 'success',
           text1: response.data.content,

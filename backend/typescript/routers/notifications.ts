@@ -1,9 +1,15 @@
-import express from 'express';
+import express, {Request, Response} from 'express';
 
-import { registerToken } from '../controllers/notifications';
+import {notificationController} from '../controllers';
 
 const router = express.Router();
 
-router.post('/', registerToken)
+router.post('/users', (req: Request, res: Response) => {
+  notificationController.registerToken(req, res);
+});
+
+router.get('/user', (req: Request, res: Response) => {
+  notificationController.getNotifications(req, res);
+});
 
 export default router;
