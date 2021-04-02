@@ -29,10 +29,16 @@ type NotiPageNavProp = CompositeNavigationProp<
 >;
 
 const mapStateToProps = (state: CombinedState) => ({
-  token: state.session.session.token,
+  token: state.session.token,
 });
+const mapDispatchToProps = {
+  setHasNotis: (state: boolean) => ({
+    type: 'CHANGE_NOTIFICATION_STATUS',
+    data: state,
+  }),
+};
 
-const connector = connect(mapStateToProps, {});
+const connector = connect(mapStateToProps, mapDispatchToProps);
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
@@ -78,6 +84,8 @@ class NotificationsPage extends React.Component<Props, State> {
         ...this.state,
         notifications: response.data.content,
       });
+      const bool: boolean = response.data.count > 0;
+      this.props.setHasNotis(bool);
     } catch (err) {
       console.error(err);
       toast.show({

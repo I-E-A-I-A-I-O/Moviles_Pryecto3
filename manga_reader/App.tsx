@@ -9,8 +9,7 @@
  */
 
 import 'react-native-gesture-handler';
-import React, {useEffect} from 'react';
-import messaging from '@react-native-firebase/messaging';
+import React from 'react';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {Provider} from 'react-redux';
 import {PersistGate} from 'redux-persist/es/integration/react';
@@ -19,37 +18,12 @@ import Axios from 'axios';
 import Toast from 'react-native-toast-message';
 import {enableScreens} from 'react-native-screens';
 import RootStackNav from './navigators/RootStackNavigator';
-import {Notifications} from 'react-native-notifications';
 
 enableScreens();
 
 Axios.defaults.baseURL = 'http://192.168.0.101:8000';
 
 const App = () => {
-  useEffect(() => {
-    const unsubscribe = messaging().onMessage(async remoteMessage => {
-      // @ts-ignore
-      Notifications.postLocalNotification({
-        title: remoteMessage.notification?.title ?? '',
-        body: remoteMessage.notification?.body ?? '',
-      });
-    });
-
-    return unsubscribe;
-  }, []);
-
-  useEffect(() => {
-    // Get the device token
-    messaging()
-      .getToken()
-      .then(token => {
-        console.info(`TOKEN:${token}`);
-      });
-    return messaging().onTokenRefresh(token => {
-      console.info(`TOKEN:${token}`);
-    });
-  }, []);
-
   return (
     <>
       <Provider store={store}>

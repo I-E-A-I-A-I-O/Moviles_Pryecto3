@@ -29,7 +29,7 @@ type DashboardScreenNavigationProp = CompositeNavigationProp<
 >;
 
 const mapStateToProps = (state: CombinedState) => ({
-  state: state.session.session,
+  state: state.session,
 });
 
 const mapDispatchToProps = {

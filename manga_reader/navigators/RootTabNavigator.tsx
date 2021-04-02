@@ -5,10 +5,21 @@ import Dashboard from '../pages/Dashboard';
 import NotificationsPage from '../pages/Notifications';
 import Post from '../pages/pageToPost';
 import {Icon} from 'react-native-elements';
+import {ConnectedProps, connect} from 'react-redux';
+
+import type {RootReducerType as CombinedState} from '../store/rootReducer';
+
+const mapStateToProps = (state: CombinedState) => ({
+  hasNotis: state.session.hasNotis,
+});
+const connector = connect(mapStateToProps, {});
+
+type PropsFromRedux = ConnectedProps<typeof connector>;
+type Props = PropsFromRedux;
 
 const Tab = createBottomTabNavigator<RootTabNavigatorParamList>();
 
-const RootTabNavigator = () => {
+const RootTabNavigator = (props: Props) => {
   return (
     <Tab.Navigator>
       <Tab.Screen
@@ -31,13 +42,13 @@ const RootTabNavigator = () => {
         name={'Notifications'}
         component={NotificationsPage}
         options={{
-          tabBarIcon: focused => (
+          tabBarIcon: () => (
             <Icon
               size={25}
-              type={'ion-icons'}
-              name={'notifications'}
-              color={'black'}
-              solid={focused.focused}
+              type={'font-awesome-5'}
+              name={'bell'}
+              color={props.hasNotis ? 'gold' : 'black'}
+              solid={props.hasNotis}
             />
           ),
           title: 'Notifications',
@@ -63,4 +74,4 @@ const RootTabNavigator = () => {
   );
 };
 
-export default RootTabNavigator;
+export default connector(RootTabNavigator);

@@ -28,7 +28,7 @@ import type {ProfileState} from '../custom_types/state_types';
 import type {Session} from '../store/session-store/types';
 
 const mapStateToProps = (state: CombinedState) => ({
-  state: state.session.session,
+  state: state.session,
 });
 
 const mapDispatchToProps = {

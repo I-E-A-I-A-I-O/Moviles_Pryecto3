@@ -25,8 +25,8 @@ const mapDispatchToProps = {
 };
 
 const mapStateToProps = (state: CombinedState) => ({
-  sessionActive: state.session.session.sessionActive,
-  token: state.session.session.token,
+  sessionActive: state.session.sessionActive,
+  token: state.session.token,
 });
 
 const connector = connect(mapStateToProps, mapDispatchToProps);
@@ -61,6 +61,7 @@ class LoginPage extends React.Component<Props, State> {
         name: response.data.content.name,
         sessionActive: true,
         token: response.data.content.token,
+        hasNotis: true,
       });
     } catch (err) {
       console.error(err);
