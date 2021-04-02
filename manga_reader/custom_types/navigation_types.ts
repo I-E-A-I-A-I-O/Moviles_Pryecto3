@@ -19,6 +19,7 @@ export type RootStackParamList = {
 
 export type ModalStackParamList = {
   TabNavigator: NavigatorScreenParams<RootTabNavigatorParamList>;
+  DrawerNavigator: NavigatorScreenParams<DrawerNavigatorParamList>;
   ProfileModal: {
     deviceUser: boolean;
     user_id: string | undefined;
@@ -91,4 +92,8 @@ export type RootTabNavigatorParamList = {
   Dashboard: undefined;
   Notifications: undefined;
   Post: undefined;
+};
+
+export type DrawerNavigatorParamList = {
+  CredentialsEdition: undefined;
 };

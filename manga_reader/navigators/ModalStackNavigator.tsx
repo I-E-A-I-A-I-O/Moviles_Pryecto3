@@ -9,6 +9,7 @@ import EditAward from '../pages/EditAward';
 import EditProject from '../pages/EditProject';
 import EditEducation from '../pages/EditEducation';
 import ProfileModal from '../pages/ProfileModal';
+import DrawerNavigator from './DrawerNavigator';
 
 const Stack = createStackNavigator<ModalStackParamList>();
 
@@ -19,6 +20,11 @@ const ModalStack = () => {
         name={'TabNavigator'}
         options={{headerShown: false}}
         component={RootTabNav}
+      />
+      <Stack.Screen
+        name={'DrawerNavigator'}
+        component={DrawerNavigator}
+        options={{headerShown: false}}
       />
       <Stack.Screen
         name={'ProfileModal'}
