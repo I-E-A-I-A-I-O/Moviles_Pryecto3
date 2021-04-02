@@ -198,6 +198,13 @@ export = {
   },
   /**Queries para leer informacion de usuarios */
   getUser: {
+    /**
+     * Retorna el nombre y apellido (si tiene) del usuario.
+     * Parametros:
+     * 1. ID del usuario
+     */
+    name:
+      'SELECT u.name, ud.last_name FROM users u LEFT JOIN user_description ud ON u.user_id = ud.user_id WHERE u.user_id = $1',
     /**Selecciona los credenciales de un usuario registrado
      * con el email indicado.
      * Parametros:
@@ -334,7 +341,7 @@ export = {
      * 1. String proveniente de la barra de busqueda
      */
     users:
-      "SELECT u.user_id AS id, u.name, ud.last_name AS description FROM users u LEFT JOIN user_description ud ON u.user_id = ud.user_id WHERE u.name ILIKE $1 || '%'",
+      "SELECT user_id AS id FROM users WHERE name ILIKE $1 || '%'",
     /**
      * Retorna una lista de usuarios cuyo nombre sea similar a la busqueda realizada
      * y pertenezca a la lista de usuarios conectados al request owner.
@@ -343,7 +350,7 @@ export = {
      * 2. ID del usuario que esta realizando el request
      */
     connectedUsers:
-      "SELECT u.name, u.user_id AS id, ud.last_name AS description FROM users u INNER JOIN connects c ON c.connected_id = u.user_id LEFT JOIN user_description ud ON ud.user_id = u.user_id WHERE u.name ILIKE $1 || '%' AND c.connector_id = $2;",
+      "SELECT user_id AS id FROM users u INNER JOIN connects c ON c.connected_id = u.user_id WHERE u.name ILIKE $1 || '%' AND c.connector_id = $2;",
   },
   /**Queries relacionados a los tokens de notificaciones */
   notification_tokens: {
@@ -383,9 +390,10 @@ export = {
      * Parametros:
      * 1. Tipo = 'POST' | 'REQUEST' (Deberia ser POST en este caso)
      * 2. ID del post
+     * 3. ID del usuario al que le llega la noitificacion
      */
     post_noti:
-      'INSERT INTO notifications(type, post_link, date) VALUES($1, $2, NOW()) RETURNING id',
+      'INSERT INTO notifications(type, post_link, date, user_id) VALUES($1, $2, NOW(), $3) RETURNING id',
     /**Borra una notificacion por ID.
      * Parametros:
      * 1. ID de la notificacion
@@ -395,9 +403,17 @@ export = {
      * Parametros:
      * 1. Tipo = 'POST' | 'REQUEST' (Deberia ser REQUEST en este caso)
      * 2. ID del connection request
+     * 3. ID del usuario al que le llega la notificacion
      */
     connect_noti:
-      'INSERT INTO notifications(type, request_link, date) VALUES($1, $2, NOW()) RETURNING id',
+      'INSERT INTO notifications(type, request_link, date, user_id) VALUES($1, $2, NOW(), $3) RETURNING id',
+    /**
+     * Retorna las notificaciones pendientes de un usuario.
+     * Parametros:
+     * 1. ID del usuario
+     */
+    getNotis:
+      'SELECT n.id, n.type, n.request_link AS rlink, n.post_link AS plink, p.user_id AS poster_profile, cr.request_owner AS profile_id, p.post_id FROM notifications n FULL JOIN connection_requests cr ON cr.id = n.request_link FULL JOIN posts p ON p.post_id = n.request_link WHERE n.user_id = $1',
   },
   /**Queries para el manejo de connects de usuarios */
   connects: {

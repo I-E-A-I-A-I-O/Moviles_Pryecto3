@@ -22,7 +22,6 @@ export type ModalStackParamList = {
   ProfileModal: {
     deviceUser: boolean;
     user_id: string | undefined;
-    name: string;
   };
   EditGeneral: {
     token: string;

@@ -29,6 +29,8 @@ export class NotificationController {
         } catch (err) {
           console.error(err);
           res.sendStatus(500);
+        } finally {
+          client.release(true);
         }
       }
     }
@@ -56,5 +58,29 @@ export class NotificationController {
       .catch(err => {
         console.error(err);
       });
+  }
+
+  public async getNotifications(req: Request, res: Response) {
+    const {authorization} = req.headers;
+    const payload = await jwt.getPayload(authorization ?? '');
+    if (payload) {
+      const client = await dbController.getClient();
+      try {
+        const response = await client.query(queries.notifications.getNotis, [
+          payload.user_id,
+        ]);
+        res.status(200).json({
+          count: response.rowCount,
+          content: response.rows,
+        });
+      } catch (err) {
+        console.error(err);
+        res.sendStatus(500);
+      } finally {
+        client.release(true);
+      }
+    } else {
+      res.sendStatus(403);
+    }
   }
 }

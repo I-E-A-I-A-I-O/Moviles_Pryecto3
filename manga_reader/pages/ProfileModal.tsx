@@ -71,7 +71,6 @@ class ProfileModal extends React.Component<Props, ProfileState> {
     super(props);
     this.state = {
       ...initialState,
-      name: this.props.route.params.name,
     };
   }
 
@@ -94,6 +93,7 @@ class ProfileModal extends React.Component<Props, ProfileState> {
       );
       this.setState({
         ...this.state,
+        name: response.data.name,
         abilities: response.data.abilities,
         awards: response.data.awards,
         description: response.data.description ?? initialState.description,
@@ -240,7 +240,6 @@ class ProfileModal extends React.Component<Props, ProfileState> {
                         this.props.navigation.navigate('ProfileModal', {
                           deviceUser: false,
                           user_id: this.props.state.id,
-                          name: this.state.name,
                         })
                       }>
                       <Icon type={'font-awesome-5'} name={'eye'} />
