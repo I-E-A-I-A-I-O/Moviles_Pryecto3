@@ -7,7 +7,16 @@ import multer from 'multer';
 import helmet from 'helmet';
 import notificationRoutes from './routers/notifications';
 
-import {userRouter, codeRouter, searchBarRouter, connectsRouter} from './routers';
+import {
+  userAuthRouter,
+  userCreateRouter,
+  userDeleteRouter,
+  userReadRouter,
+  userUpdateRouter,
+  codeRouter,
+  searchBarRouter,
+  connectsRouter,
+} from './routers';
 
 const serviceAccount: ServiceAccount = {
   projectId: process.env.project_id,
@@ -34,7 +43,11 @@ app.use(
 );
 
 app.use('/notifications', notificationRoutes);
-app.use('/users', userRouter);
+app.use('/users', userAuthRouter);
+app.use('/users', userCreateRouter);
+app.use('/users', userDeleteRouter);
+app.use('/users', userReadRouter)
+app.use('/users', userUpdateRouter);;
 app.use('/verification-codes', codeRouter);
 app.use('/list', searchBarRouter);
 app.use('/connects', connectsRouter);
