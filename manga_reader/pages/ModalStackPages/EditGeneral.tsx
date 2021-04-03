@@ -1,13 +1,12 @@
 import React, {useState} from 'react';
 import {TextStyle} from 'react-native';
 import {Text, Input} from 'react-native-elements';
-import {SubmitButton} from '../components';
+import {SubmitButton, dateFunctions} from '../../components';
 import {RouteProp} from '@react-navigation/native';
-import {ModalStackParamList} from '../custom_types/navigation_types';
+import {ModalStackParamList} from '../../custom_types/navigation_types';
 import {ScrollView} from 'react-native-gesture-handler';
 import Toast from 'react-native-toast-message';
 import axios from 'axios';
-import {dateFunctions} from '../components';
 
 type EditGeneralRouteProp = RouteProp<ModalStackParamList, 'EditGeneral'>;
 type Props = {

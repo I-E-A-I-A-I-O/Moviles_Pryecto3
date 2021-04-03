@@ -2,15 +2,17 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import React, {useEffect, useMemo, useState} from 'react';
 import {RootStackParamList} from '../custom_types/navigation_types';
-import Login from '../pages/Login';
-import Register_1 from '../pages/Registration_1';
-import Register_2 from '../pages/Registration_2';
-import Registration3 from '../pages/Registration_3';
+import Login from '../pages/AuthPages/Login';
+import Register_1 from '../pages/RegistrationPages/Registration_1';
+import Register_2 from '../pages/AuthPages/Registration_2';
+import Registration3 from '../pages/RegistrationPages/Registration_3';
 import ModalNav from '../navigators/ModalStackNavigator';
+import Recovery_1 from '../pages/RecoveryPages/EmailVerification';
 import {connect, ConnectedProps} from 'react-redux';
 import messaging from '@react-native-firebase/messaging';
 import axios from 'axios';
 import {Notifications} from 'react-native-notifications';
+import PasswordChange from '../pages/RecoveryPages/PasswordChange';
 
 import type {RootReducerType} from '../store/rootReducer';
 
@@ -98,7 +100,7 @@ const RootStackNav = (props: Props) => {
               component={Register_1}
             />
             <Stack.Screen
-              options={{title: 'Registration'}}
+              options={{title: 'Code verification'}}
               name={'Register_2'}
               component={Register_2}
               initialParams={{verification_id: ''}}
@@ -107,6 +109,16 @@ const RootStackNav = (props: Props) => {
               options={{title: 'Registration'}}
               name={'Register_3'}
               component={Registration3}
+            />
+            <Stack.Screen
+              options={{title: 'Verify email'}}
+              name={'Recovery_1'}
+              component={Recovery_1}
+            />
+            <Stack.Screen
+              options={{title: 'Update password'}}
+              name={'Recovery_2'}
+              component={PasswordChange}
             />
           </>
         ) : (

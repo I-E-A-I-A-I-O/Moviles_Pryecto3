@@ -4,21 +4,25 @@ export type RootStackParamList = {
   Register_1: undefined;
   Register_2: {
     verification_id: string;
-    name: string;
-    email: string;
-    phone: string;
+    name?: string;
+    email?: string;
+    phone?: string;
+    redirectTo: string;
   };
   Register_3: {
-    name: string;
-    email: string;
-    phone: string;
+    name?: string;
+    email?: string;
+    phone?: string;
   };
   Login: undefined;
+  Recovery_1: undefined;
+  Recovery_2: {
+    email?: string;
+  };
   ModalStack: NavigatorScreenParams<ModalStackParamList>;
 };
 
 export type ModalStackParamList = {
-  TabNavigator: NavigatorScreenParams<RootTabNavigatorParamList>;
   DrawerNavigator: NavigatorScreenParams<DrawerNavigatorParamList>;
   ProfileModal: {
     deviceUser: boolean;
@@ -95,5 +99,17 @@ export type RootTabNavigatorParamList = {
 };
 
 export type DrawerNavigatorParamList = {
-  CredentialsEdition: undefined;
+  TabNavigator: NavigatorScreenParams<RootTabNavigatorParamList>;
+  AccountOptions: undefined;
+};
+
+export type AccOptionsNavigatorParamList = {
+  Menu: undefined;
+  EditCrendentials: undefined;
+  PasswordVerification: {
+    redirectTo: 'email' | 'phone' | 'password';
+  };
+  UpdateEmail: undefined;
+  UpdatePhone: undefined;
+  UpdatePassword: undefined;
 };

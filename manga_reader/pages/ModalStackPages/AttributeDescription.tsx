@@ -4,9 +4,9 @@ import {Pressable, Text, TextStyle, View, ViewStyle} from 'react-native';
 import {RouteProp} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
 
-import type {ModalStackParamList} from '../custom_types/navigation_types';
-import type {DescriptionResponse} from '../custom_types/state_types';
-import {DescriptionSkeleton} from '../components';
+import type {ModalStackParamList} from '../../custom_types/navigation_types';
+import type {DescriptionResponse} from '../../custom_types/state_types';
+import {DescriptionSkeleton} from '../../components';
 import axios from 'axios';
 import Toast from 'react-native-toast-message';
 import {Icon} from 'react-native-elements';

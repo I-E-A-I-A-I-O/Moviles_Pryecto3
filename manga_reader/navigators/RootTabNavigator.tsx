@@ -1,9 +1,9 @@
 import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {RootTabNavigatorParamList} from '../custom_types/navigation_types';
-import Dashboard from '../pages/Dashboard';
-import NotificationsPage from '../pages/Notifications';
-import Post from '../pages/pageToPost';
+import Dashboard from '../pages/RootTabPages/Dashboard';
+import NotificationsPage from '../pages/RootTabPages/Notifications';
+import Post from '../pages/RootTabPages/pageToPost';
 import {Icon} from 'react-native-elements';
 import {ConnectedProps, connect} from 'react-redux';
 

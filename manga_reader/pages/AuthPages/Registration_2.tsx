@@ -2,11 +2,11 @@ import {StackNavigationProp} from '@react-navigation/stack';
 import React, {useState} from 'react';
 import {View, Pressable, TextStyle} from 'react-native';
 import {Input, Text} from 'react-native-elements';
-import {RootStackParamList} from '../custom_types/navigation_types';
+import {RootStackParamList} from '../../custom_types/navigation_types';
 import {RouteProp} from '@react-navigation/native';
 import Toast from 'react-native-toast-message';
 import axios from 'axios';
-import {SubmitButton} from '../components';
+import {SubmitButton} from '../../components';
 
 type RegisterPart2ScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -45,6 +45,8 @@ const Registration2 = (props: Props) => {
           name: props.route.params.name,
           email: props.route.params.email,
           phone: props.route.params.phone,
+          verification:
+            props.route.params.redirectTo === 'Register3' ? 'new' : 'recovery',
         });
         setVerificationId(response.data.content);
         Toast.show({
@@ -72,6 +74,20 @@ const Registration2 = (props: Props) => {
     }
   };
 
+  const redirect = () => {
+    if (props.route.params.redirectTo === 'Register3') {
+      props.navigation.navigate('Register_3', {
+        email: props.route.params.email,
+        name: props.route.params.name,
+        phone: props.route.params.phone,
+      });
+    } else {
+      props.navigation.navigate('Recovery_2', {
+        email: props.route.params.email,
+      });
+    }
+  };
+
   const submitCode = async () => {
     if (code.length !== 4) {
       Toast.show({
@@ -86,11 +102,7 @@ const Registration2 = (props: Props) => {
           verification_id: verificationId,
           code: code,
         });
-        props.navigation.navigate('Register_3', {
-          email: props.route.params.email,
-          name: props.route.params.name,
-          phone: props.route.params.phone,
-        });
+        redirect();
       } catch (err) {
         console.error(err);
         Toast.show({
