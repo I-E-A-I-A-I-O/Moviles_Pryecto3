@@ -3,11 +3,11 @@ import Toast from 'react-native-toast-message';
 import axios from 'axios';
 import {ScrollView} from 'react-native-gesture-handler';
 import {Input} from 'react-native-elements';
-import {SubmitButton, dateFunctions} from '../components';
+import {SubmitButton, dateFunctions} from '../../components';
 import {RouteProp} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
 
-import type {ModalStackParamList} from '../custom_types/navigation_types';
+import type {ModalStackParamList} from '../../custom_types/navigation_types';
 
 type EditExperienceRouteProp = RouteProp<
   ModalStackParamList,

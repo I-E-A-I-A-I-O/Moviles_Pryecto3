@@ -1,16 +1,16 @@
 import React from 'react';
-import {Pressable, TextStyle} from 'react-native';
+import {Pressable, TextStyle, View, ViewStyle} from 'react-native';
 import toast from 'react-native-toast-message';
 import {Text, Input} from 'react-native-elements';
 import {StackNavigationProp} from '@react-navigation/stack';
-import {RootStackParamList} from '../custom_types/navigation_types';
-import {SubmitButton} from '../components';
+import {RootStackParamList} from '../../custom_types/navigation_types';
+import {SubmitButton} from '../../components';
 import axios from 'axios';
 import {ScrollView} from 'react-native-gesture-handler';
 import {connect, ConnectedProps} from 'react-redux';
 
-import type {Session} from '../store/session-store/types';
-import type {RootReducerType as CombinedState} from '../store/rootReducer';
+import type {Session} from '../../store/session-store/types';
+import type {RootReducerType as CombinedState} from '../../store/rootReducer';
 
 type LoginPageScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -81,6 +81,9 @@ class LoginPage extends React.Component<Props, State> {
         <Input
           placeholder={'Email...'}
           label={'Email'}
+          keyboardType={'email-address'}
+          textContentType={'emailAddress'}
+          autoCompleteType={'email'}
           onChangeText={text =>
             this.setState({
               ...this.state,
@@ -100,13 +103,22 @@ class LoginPage extends React.Component<Props, State> {
           placeholder={'Password...'}
         />
         <SubmitButton title={'Login'} onPress={this.submitLogin} />
-        <Pressable
-          android_ripple={{
-            color: 'gray',
-          }}
-          onPress={() => this.props.navigation.navigate('Register_1')}>
-          <Text style={textStyles[0]}>Not registered?</Text>
-        </Pressable>
+        <View style={viewStyle}>
+          <Pressable
+            android_ripple={{
+              color: 'gray',
+            }}
+            onPress={() => this.props.navigation.navigate('Register_1')}>
+            <Text style={textStyles[0]}>Not registered?</Text>
+          </Pressable>
+          <Pressable
+            android_ripple={{
+              color: 'gray',
+            }}
+            onPress={() => this.props.navigation.navigate('Recovery_1')}>
+            <Text style={textStyles[2]}>Forgot password?</Text>
+          </Pressable>
+        </View>
       </ScrollView>
     );
   }
@@ -130,6 +142,19 @@ const textStyles: TextStyle[] = [
     paddingBottom: 50,
     fontWeight: 'bold',
   },
+  {
+    color: '#3282b8',
+    fontWeight: 'bold',
+    fontSize: 15,
+    textDecorationLine: 'underline',
+    paddingLeft: 10,
+    paddingTop: 15,
+  },
 ];
+
+const viewStyle: ViewStyle = {
+  display: 'flex',
+  flexDirection: 'row',
+};
 
 export default connector(LoginPage);

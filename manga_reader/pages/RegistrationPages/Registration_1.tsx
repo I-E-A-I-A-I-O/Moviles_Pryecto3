@@ -1,12 +1,15 @@
 import React, {useRef, useState} from 'react';
 import {TextStyle, View} from 'react-native';
 import {Input, Text} from 'react-native-elements';
-import PhoneInput from 'react-native-phone-input';
+import PhoneInput, {
+  TextStyle as PITextStyle,
+  ViewStyle as PIViewStyle,
+} from 'react-native-phone-input';
 import Toast from 'react-native-toast-message';
 import axios from 'axios';
-import {SubmitButton} from '../components';
+import {SubmitButton} from '../../components';
 import {StackNavigationProp} from '@react-navigation/stack';
-import {RootStackParamList} from '../custom_types/navigation_types';
+import {RootStackParamList} from '../../custom_types/navigation_types';
 
 type RegisterPart1ScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -49,6 +52,7 @@ const RegisterPage = (props: Props) => {
       form.append('name', name.toLocaleLowerCase());
       form.append('email', email.toLocaleLowerCase());
       form.append('phone', phoneNumber);
+      form.append('verification', 'new');
       try {
         const response = await axios.post('/verification-codes/code', form);
         props.navigation.navigate('Register_2', {
@@ -56,6 +60,7 @@ const RegisterPage = (props: Props) => {
           name: name.toLocaleLowerCase(),
           phone: phoneNumber,
           email: email.toLocaleLowerCase(),
+          redirectTo: 'Register3',
         });
       } catch (err) {
         console.error(err);
@@ -90,19 +95,16 @@ const RegisterPage = (props: Props) => {
       <Input
         label={'Email'}
         placeholder={'Your email'}
-        textContentType={'emailAddress'}
         keyboardType={'email-address'}
+        textContentType={'emailAddress'}
+        autoCompleteType={'email'}
         onChangeText={text => setEmail(text)}
       />
       <Text style={textStyles[1]}>Phone number</Text>
       <PhoneInput
         initialCountry={'us'}
-        textStyle={{
-          color: 'black',
-        }}
-        style={{
-          paddingBottom: 25,
-        }}
+        textStyle={phoneInputTextStyle}
+        style={phoneInputViewStyle}
         value={phoneNumber}
         onChangePhoneNumber={text => setPhoneNumber(text)}
         ref={phoneInput}
@@ -126,5 +128,13 @@ const textStyles: TextStyle[] = [
     paddingBottom: 5,
   },
 ];
+
+const phoneInputTextStyle: PITextStyle = {
+  color: 'black',
+};
+
+const phoneInputViewStyle: PIViewStyle = {
+  paddingBottom: 25,
+};
 
 export default RegisterPage;

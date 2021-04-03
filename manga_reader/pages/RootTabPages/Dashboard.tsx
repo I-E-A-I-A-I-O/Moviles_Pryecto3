@@ -13,13 +13,13 @@ import {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
 import {
   RootTabNavigatorParamList,
   ModalStackParamList,
-} from '../custom_types/navigation_types';
+} from '../../custom_types/navigation_types';
 import {CompositeNavigationProp} from '@react-navigation/native';
 import {connect, ConnectedProps} from 'react-redux';
-import {ModalDropdown, UserAvatar, UserBadge} from '../components';
+import {ModalDropdown, UserAvatar, UserBadge} from '../../components';
 
-import type {RootReducerType as CombinedState} from '../store/rootReducer';
-import type {SearchBarFilters} from '../custom_types/state_types';
+import type {RootReducerType as CombinedState} from '../../store/rootReducer';
+import type {SearchBarFilters} from '../../custom_types/state_types';
 import axios from 'axios';
 import Toast from 'react-native-toast-message';
 

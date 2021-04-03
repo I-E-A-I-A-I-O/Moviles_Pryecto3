@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import {Icon, Input, Text} from 'react-native-elements';
 import {RouteProp} from '@react-navigation/native';
-import {ModalStackParamList} from '../custom_types/navigation_types';
+import {ModalStackParamList} from '../../custom_types/navigation_types';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {connect, ConnectedProps} from 'react-redux';
 import {FlatList} from 'react-native-gesture-handler';
@@ -22,10 +22,10 @@ import {
   ProfileSkeleton,
   UserAvatar,
   ConnectButton,
-} from '../components';
-import type {RootReducerType as CombinedState} from '../store/rootReducer';
-import type {ProfileState} from '../custom_types/state_types';
-import type {Session} from '../store/session-store/types';
+} from '../../components';
+import type {RootReducerType as CombinedState} from '../../store/rootReducer';
+import type {ProfileState} from '../../custom_types/state_types';
+import type {Session} from '../../store/session-store/types';
 
 const mapStateToProps = (state: CombinedState) => ({
   state: state.session,

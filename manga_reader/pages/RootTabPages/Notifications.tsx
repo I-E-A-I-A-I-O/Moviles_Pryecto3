@@ -12,16 +12,16 @@ import {Text} from 'react-native-elements';
 import axios from 'axios';
 import toast from 'react-native-toast-message';
 import {connect, ConnectedProps} from 'react-redux';
-import {UserBadge} from '../components';
+import {UserBadge} from '../../components';
 import {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {CompositeNavigationProp} from '@react-navigation/native';
 
-import type {RootReducerType as CombinedState} from '../store/rootReducer';
+import type {RootReducerType as CombinedState} from '../../store/rootReducer';
 import type {
   ModalStackParamList,
   RootTabNavigatorParamList,
-} from '../custom_types/navigation_types';
+} from '../../custom_types/navigation_types';
 
 type NotiPageNavProp = CompositeNavigationProp<
   BottomTabNavigationProp<RootTabNavigatorParamList, 'Notifications'>,

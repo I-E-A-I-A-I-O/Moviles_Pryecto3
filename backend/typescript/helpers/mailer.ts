@@ -21,9 +21,13 @@ export class Mailer {
       await this.transporter.sendMail({
         from: `"Code sender" <${process.env.EMAIL_SENDER}>`,
         to: email,
-        subject: "Verification code",
-        text: `Hello, ${name}. Your verification code is ${code}`,
-        html: `<div><b>Email verification</b><p>Hello, ${name}. Your verification code is <b>${code}</b></p></div>`,
+        subject: 'Verification code',
+        text: `Hello, ${
+          name ?? "it's me again"
+        }. Your verification code is ${code}`,
+        html: `<div><b>Email verification</b><p>Hello, ${
+          name ?? "it's me again"
+        }. Your verification code is <b>${code}</b></p></div>`,
       });
     } catch (err) {
       console.error(err);

@@ -3,16 +3,16 @@ import Toast from 'react-native-toast-message';
 import axios from 'axios';
 import {ScrollView} from 'react-native-gesture-handler';
 import {Input} from 'react-native-elements';
-import {SubmitButton} from '../components';
+import {SubmitButton, dateFunctions} from '../../components';
 import {RouteProp} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
 
-import type {ModalStackParamList} from '../custom_types/navigation_types';
+import type {ModalStackParamList} from '../../custom_types/navigation_types';
 
-type EditAwardRouteProp = RouteProp<ModalStackParamList, 'ProjectEdition'>;
+type EditAwardRouteProp = RouteProp<ModalStackParamList, 'AwardEdition'>;
 type EditAwardNavProp = StackNavigationProp<
   ModalStackParamList,
-  'ProjectEdition'
+  'AwardEdition'
 >;
 
 type Props = {
@@ -20,12 +20,15 @@ type Props = {
   navigation: EditAwardNavProp;
 };
 
-const EditProject = (props: Props) => {
-  const [link, setLink] = useState<string | undefined>(
-    props.route.params.currentData?.link,
+const EditAward = (props: Props) => {
+  const [date, setDate] = useState<string | undefined>(
+    props.route.params.currentData?.date,
+  );
+  const [by, setBy] = useState<string>(
+    props.route.params.currentData?.by ?? '',
   );
   const [title, setTitle] = useState<string>(
-    props.route.params.currentData?.name ?? '',
+    props.route.params.currentData?.title ?? '',
   );
   const [description, setDescription] = useState<string | undefined>(
     props.route.params.currentData?.description ?? '',
@@ -33,8 +36,28 @@ const EditProject = (props: Props) => {
 
   const validate = async () => {
     try {
+      if (!by || by.length < 1) {
+        throw 'Organization name missing';
+      }
       if (!title || title.length < 1) {
         throw 'Title missing';
+      }
+      if (
+        !dateFunctions.isDateValid(
+          date ?? '',
+          new Date(Date.now()).getFullYear() - 50,
+          new Date(Date.now()).getFullYear(),
+        )
+      ) {
+        throw 'Invalid date!';
+      }
+      if (
+        !dateFunctions.isBeforeThan(
+          date ?? '',
+          new Date(Date.now()).toISOString().split('T')[0],
+        )
+      ) {
+        throw 'Invalid date!';
       }
       await saveChanges();
     } catch (err) {
@@ -49,17 +72,18 @@ const EditProject = (props: Props) => {
   const saveChanges = async () => {
     try {
       const reqBody = {
+        by: by,
         title: title,
         description: description,
-        link: link,
+        date: date,
       };
       const response = await axios.request({
         method: props.route.params.new ? 'POST' : 'PATCH',
         headers: {authorization: props.route.params.token},
         data: reqBody,
         url: props.route.params.new
-          ? '/users/user/projects/project'
-          : `/users/user/projects/project/${props.route.params.id}`,
+          ? '/users/user/awards/award'
+          : `/users/user/awards/award/${props.route.params.id}`,
       });
       Toast.show({
         type: 'success',
@@ -95,14 +119,21 @@ const EditProject = (props: Props) => {
         onChangeText={text => setDescription(text)}
       />
       <Input
-        label={'Link'}
-        value={link}
-        maxLength={100}
-        onChangeText={text => setLink(text)}
+        label={'Awarded by'}
+        value={by}
+        maxLength={25}
+        onChangeText={text => setBy(text)}
+      />
+      <Input
+        label={'Date'}
+        value={date}
+        placeholder={'YYYY-MM-DD'}
+        keyboardType={'phone-pad'}
+        onChangeText={setDate}
       />
       <SubmitButton title={'Save'} onPress={validate} />
     </ScrollView>
   );
 };
 
-export default EditProject;
+export default EditAward;

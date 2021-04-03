@@ -1,8 +1,9 @@
-import { Request, Response } from "express";
-import { dbController, queries, jwt } from "../helpers";
-import { BasicCRUD } from "./controllers_defs/CRUD";
-import fse from "fs-extra";
-import bcrypt from "bcrypt";
+import {Request, Response} from 'express';
+import {dbController, queries, jwt} from '../helpers';
+import {BasicCRUD} from './controllers_defs/CRUD';
+import fse from 'fs-extra';
+import bcrypt from 'bcrypt';
+import {PoolClient} from 'pg';
 
 export class UserController extends BasicCRUD {
   public async create(req: Request, res: Response) {
@@ -128,89 +129,6 @@ export class UserController extends BasicCRUD {
     }
   }
 
-  public async readJob(req: Request, res: Response) {
-    const {id} = req.params;
-    const client = await dbController.getClient();
-    try {
-      const response = await client.query(queries.getUser.job, [id]);
-      res.status(200).json({
-        title: 'Success',
-        content: {
-          ...response.rows[0],
-          start: response.rows[0].start.toISOString().split('T')[0],
-          end: response.rows[0].end.toISOString().split('T')[0],
-        },
-      });
-    } catch (err) {
-      console.error(err);
-      res.status(500).json({
-        title: 'error',
-        content: 'Error retrieving data',
-      });
-    }
-  }
-
-  public async readAward(req: Request, res: Response) {
-    const {id} = req.params;
-    const client = await dbController.getClient();
-    try {
-      const response = await client.query(queries.getUser.award, [id]);
-      res.status(200).json({
-        title: 'Success',
-        content: {
-          ...response.rows[0],
-          date: response.rows[0].date.toISOString().split('T')[0],
-        },
-      });
-    } catch (err) {
-      console.error(err);
-      res.status(500).json({
-        title: 'error',
-        content: 'Error retrieving data',
-      });
-    }
-  }
-
-  public async readProject(req: Request, res: Response) {
-    const {id} = req.params;
-    const client = await dbController.getClient();
-    try {
-      const response = await client.query(queries.getUser.project, [id]);
-      res.status(200).json({
-        title: 'Success',
-        content: response.rows[0],
-      });
-    } catch (err) {
-      console.error(err);
-      res.status(500).json({
-        title: 'error',
-        content: 'Error retrieving data',
-      });
-    }
-  }
-
-  public async readTitle(req: Request, res: Response) {
-    const {id} = req.params;
-    const client = await dbController.getClient();
-    try {
-      const response = await client.query(queries.getUser.title, [id]);
-      res.status(200).json({
-        title: 'Success',
-        content: {
-          ...response.rows[0],
-          start: response.rows[0].start.toISOString().split('T')[0],
-          graduation: response.rows[0].graduation.toISOString().split('T')[0],
-        },
-      });
-    } catch (err) {
-      console.error(err);
-      res.status(500).json({
-        title: 'error',
-        content: 'Error retrieving data',
-      });
-    }
-  }
-
   public read(req: Request, res: Response, target: string) {
     switch (target) {
       case 'avatar': {
@@ -221,22 +139,6 @@ export class UserController extends BasicCRUD {
         this.readProfile(req, res);
         break;
       }
-      case 'job': {
-        this.readJob(req, res);
-        break;
-      }
-      case 'award': {
-        this.readAward(req, res);
-        break;
-      }
-      case 'project': {
-        this.readProject(req, res);
-        break;
-      }
-      case 'title': {
-        this.readTitle(req, res);
-        break;
-      }
       default: {
         res.sendStatus(404);
         break;
@@ -244,203 +146,226 @@ export class UserController extends BasicCRUD {
     }
   }
 
-  private async updateGeneral(req: Request, res: Response, id: string) {
-    const {
-      last_name,
-      age,
-      gender,
-      description,
-      country,
-      address,
-      b_date,
-    } = req.body;
-    const client = await dbController.getClient();
-    try {
-      const results = await client.query(queries.setUser.description, [
-        description,
-        country,
-        age,
-        gender,
-        address,
-        last_name,
-        b_date,
-        id,
-      ]);
-      if (results.rowCount > 0) {
-        res.status(201).json({
-          title: 'success',
-          content: 'Profile updated',
-        });
-      } else {
-        await client.query(queries.insertUser.description, [
-          id,
-          last_name,
-          gender,
-          address,
-          country,
-          age,
-          description,
-          b_date,
-        ]);
+  public async updateAvatar(req: Request, res: Response) {
+    const {authorization} = req.headers;
+    const payload = await jwt.getPayload(authorization ?? '');
+    if (payload) {
+      try {
+        const files = req.files as {[fieldname: string]: Express.Multer.File[]};
+        const absolutePath = `media/avatars/${payload.user_id}/${files.avatar[0].originalname}`;
+        await fse.outputFile(absolutePath, files.avatar[0].buffer);
         res.status(200).json({
           title: 'success',
-          content: 'Profile updated',
+          content: 'Avatar updated!',
+        });
+      } catch (err) {
+        res.status(500).json({
+          title: 'error',
+          content: 'Could not update the avatar.',
         });
       }
+    } else {
+      res.sendStatus(403);
+    }
+  }
+
+  private async duplicateCredentials(
+    client: PoolClient,
+    type: 'phone' | 'email',
+    email?: string,
+    phone?: string
+  ): Promise<boolean> {
+    try {
+      let query: string;
+      let params: string[] = [];
+      if (type === 'phone') {
+        if (!phone) {
+          return true;
+        }
+        query = queries.getUser.phones;
+        params.push(phone);
+      } else {
+        if (!email) {
+          return true;
+        }
+        query = queries.getUser.emails;
+        params.push(email);
+      }
+      const response = await client.query(query, params);
+      return response.rowCount > 0;
+    } catch (err) {
+      console.error(err);
+      return false;
+    }
+  }
+
+  public async verifyPassword(req: Request, res: Response) {
+    const {authorization} = req.headers;
+    const payload = await jwt.getPayload(authorization ?? '');
+    if (payload) {
+      const client = await dbController.getClient();
+      const {password} = req.body;
+      try {
+        const response = await client.query(queries.getUser.password, [
+          payload.user_id,
+        ]);
+        const same = await bcrypt.compare(password, response.rows[0].password);
+        if (same) {
+          res.sendStatus(200);
+        } else {
+          res.status(403).json({
+            content: 'Wrong password.',
+          });
+        }
+      } catch (err) {
+        console.error(err);
+        res.status(500).json({
+          content: 'Error verifying the password. Try again later.',
+        });
+      } finally {
+        client.release(true);
+      }
+    } else {
+      res.sendStatus(403);
+    }
+  }
+
+  public async updatePhone(req: Request, res: Response) {
+    const {authorization} = req.headers;
+    const payload = await jwt.getPayload(authorization ?? '');
+    if (payload) {
+      const client = await dbController.getClient();
+      const {phone} = req.body;
+      try {
+        const duplicate = await this.duplicateCredentials(
+          client,
+          'phone',
+          undefined,
+          phone
+        );
+        if (duplicate) {
+          res.status(400).json({
+            content: 'Phone already registered.',
+          });
+        } else {
+          await client.query(queries.setUser.phone, [phone, payload.user_id]);
+          res.status(200).json({
+            content: 'Phone updated!',
+          });
+        }
+      } catch (err) {
+        console.error(err);
+        res.status(500).json({
+          content: 'Error updating the phone. Try again later.',
+        });
+      } finally {
+        client.release(true);
+      }
+    } else {
+      res.sendStatus(403);
+    }
+  }
+
+  public async updateEmail(req: Request, res: Response) {
+    const {authorization} = req.headers;
+    const payload = await jwt.getPayload(authorization ?? '');
+    if (payload) {
+      const client = await dbController.getClient();
+      const {email} = req.body;
+      try {
+        const duplicate = await this.duplicateCredentials(
+          client,
+          'email',
+          email
+        );
+        if (duplicate) {
+          res.status(400).json({
+            content: 'Email already registered.',
+          });
+        } else {
+          await client.query(queries.setUser.email, [email, payload.user_id]);
+          res.status(200).json({
+            content: 'Email updated!',
+          });
+        }
+      } catch (err) {
+        console.error(err);
+        res.status(500).json({
+          content: 'Error updating the email. Try again later.',
+        });
+      } finally {
+        client.release(true);
+      }
+    } else {
+      res.sendStatus(403);
+    }
+  }
+
+  public async updatePassword(req: Request, res: Response) {
+    const {authorization} = req.headers;
+    const payload = await jwt.getPayload(authorization ?? '');
+    if (payload) {
+      const {newPass} = req.body;
+      const client = await dbController.getClient();
+      try {
+        const salt = await bcrypt.genSalt();
+        const hash = await bcrypt.hash(newPass, salt);
+        await client.query(queries.setUser.passwordWithID, [
+          hash,
+          payload.user_id,
+        ]);
+        res.status(200).json({
+          content: 'Profile updated. Signing out.',
+        });
+      } catch (err) {
+        console.error(err);
+        res.status(500).json({
+          content: 'Error updating the account. Try again later.',
+        });
+      } finally {
+        client.release(true);
+      }
+    } else {
+      res.sendStatus(403);
+    }
+  }
+
+  public async passwordRecovery(req: Request, res: Response) {
+    const client = await dbController.getClient();
+    const {email, password} = req.body;
+    try {
+      const salt = await bcrypt.genSalt();
+      const hash = await bcrypt.hash(password, salt);
+      await client.query(queries.setUser.passwordWithEmail, [hash, email]);
+      res.status(200).json({
+        content: 'Password updated.',
+      });
     } catch (err) {
       console.error(err);
       res.status(500).json({
-        title: 'error',
-        content: 'Could not update general information.',
+        content: 'Error updating the password. Try again later.',
       });
     } finally {
       client.release(true);
     }
   }
 
-  private async updateAvatar(req: Request, res: Response, id: string) {
-    try {
-      const files = req.files as {[fieldname: string]: Express.Multer.File[]};
-      const absolutePath = `media/avatars/${id}/${files.avatar[0].originalname}`;
-      await fse.outputFile(absolutePath, files.avatar[0].buffer);
-      res.status(200).json({
-        title: 'success',
-        content: 'Avatar updated!',
-      });
-    } catch (err) {
-      res.status(500).json({
-        title: 'error',
-        content: 'Could not update the avatar.',
-      });
-    }
-  }
+  public update(req: Request, res: Response) {}
 
-  public async update(req: Request, res: Response, target: string) {
+  public async updateName(req: Request, res: Response) {
     const {authorization} = req.headers;
     if (authorization) {
       const payload = await jwt.getPayload(authorization);
       if (payload) {
-        let params: any[] = [];
-        let query: string;
-        switch (target) {
-          case 'general': {
-            this.updateGeneral(req, res, payload.user_id);
-            return;
-          }
-          case 'ability-add': {
-            query = queries.insertUser.ability;
-            params.push(payload.user_id, req.body.ability);
-            break;
-          }
-          case 'experience-add': {
-            params.push(
-              payload.user_id,
-              req.body.org_name,
-              req.body.description,
-              req.body.title,
-              req.body.startDate,
-              req.body.finishDate
-            );
-            query = queries.insertUser.experience;
-            break;
-          }
-          case 'job-edit': {
-            params.push(
-              req.body.org_name,
-              req.body.title,
-              req.body.description,
-              req.body.startDate,
-              req.body.finishDate,
-              req.params.id
-            );
-            query = queries.setUser.job;
-            break;
-          }
-          case 'award-add': {
-            params.push(
-              payload.user_id,
-              req.body.title,
-              req.body.description,
-              req.body.by,
-              req.body.date
-            );
-            query = queries.insertUser.award;
-            break;
-          }
-          case 'award-edit': {
-            params.push(
-              req.body.title,
-              req.body.description,
-              req.body.by,
-              req.body.date,
-              req.params.id
-            );
-            query = queries.setUser.award;
-            break;
-          }
-          case 'project-add': {
-            params.push(
-              payload.user_id,
-              req.body.title,
-              req.body.description,
-              req.body.link
-            );
-            query = queries.insertUser.project;
-            break;
-          }
-          case 'project-edit': {
-            params.push(
-              req.body.title,
-              req.body.description,
-              req.body.link,
-              req.params.id
-            );
-            query = queries.setUser.project;
-            break;
-          }
-          case 'title-add': {
-            params.push(
-              payload.user_id,
-              req.body.school,
-              req.body.title,
-              req.body.start,
-              req.body.graduation
-            );
-            query = queries.insertUser.education;
-            break;
-          }
-          case 'title-edit': {
-            params.push(
-              req.body.school,
-              req.body.title,
-              req.body.start,
-              req.body.graduation,
-              req.params.id
-            );
-            query = queries.setUser.education;
-            break;
-          }
-          case 'avatar': {
-            this.updateAvatar(req, res, payload.user_id);
-            return;
-          }
-          case 'name': {
-            params.push(req.body.name, payload.user_id);
-            query = queries.setUser.name;
-            break;
-          }
-          default: {
-            res.sendStatus(404);
-            return;
-          }
-        }
         const client = await dbController.getClient();
         try {
-          const results = await client.query(query, params);
+          await client.query(queries.setUser.name, [
+            req.body.name,
+            payload.user_id,
+          ]);
           res.status(201).json({
             title: 'success',
-            content:
-              target === 'ability-add' ? results.rows[0] : 'Profile updated!',
+            content: 'Profile updated!',
           });
         } catch (err) {
           console.error(err);
@@ -465,42 +390,14 @@ export class UserController extends BasicCRUD {
     }
   }
 
-  public async delete(req: Request, res: Response, target: string) {
+  public async delete(req: Request, res: Response) {
     const {authorization} = req.headers;
     if (authorization) {
       const payload = await jwt.getPayload(authorization);
       if (payload) {
-        let query: string;
-        switch (target) {
-          case 'ability-remove': {
-            query = queries.removeUser.ability;
-            break;
-          }
-          case 'experience-remove': {
-            query = queries.removeUser.experience;
-            break;
-          }
-          case 'award-remove': {
-            query = queries.removeUser.award;
-            break;
-          }
-          case 'project-remove': {
-            query = queries.removeUser.project;
-            break;
-          }
-          case 'title-remove': {
-            query = queries.removeUser.education;
-            break;
-          }
-          default: {
-            res.sendStatus(404);
-            return;
-          }
-        }
-        const {id} = req.params;
         const client = await dbController.getClient();
         try {
-          await client.query(query, [id]);
+          await client.query(queries.removeUser.account, [payload.user_id]);
           res.sendStatus(200);
         } catch (err) {
           console.error(err);
@@ -522,23 +419,6 @@ export class UserController extends BasicCRUD {
         title: 'error',
         content: 'missing token',
       });
-    }
-  }
-
-  public async readName(req: Request, res: Response) {
-    const {id} = req.params;
-    const client = await dbController.getClient();
-    try {
-      const response = await client.query(queries.getUser.name, [id]);
-      res.status(200).json({
-        name: response.rows[0].name,
-        last_name: response.rows[0].last_name,
-      });
-    } catch (err) {
-      console.error(err);
-      res.sendStatus(500);
-    } finally {
-      client.release(true);
     }
   }
 }

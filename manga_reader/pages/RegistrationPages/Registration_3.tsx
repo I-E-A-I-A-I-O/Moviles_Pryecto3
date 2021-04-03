@@ -1,10 +1,10 @@
 import React, {useState} from 'react';
 import {ScrollView, TextStyle} from 'react-native';
 import {Text, Input} from 'react-native-elements';
-import {SubmitButton, ImagePicker} from '../components';
+import {SubmitButton, ImagePicker} from '../../components';
 import {RouteProp} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
-import {RootStackParamList} from '../custom_types/navigation_types';
+import {RootStackParamList} from '../../custom_types/navigation_types';
 import Toast from 'react-native-toast-message';
 import axios from 'axios';
 
@@ -41,9 +41,9 @@ const Registration3 = (props: Props) => {
       });
     } else {
       let form = new FormData();
-      form.append('name', props.route.params.name);
-      form.append('email', props.route.params.email);
-      form.append('phone', props.route.params.phone);
+      form.append('name', props.route.params?.name);
+      form.append('email', props.route.params?.email);
+      form.append('phone', props.route.params?.phone);
       form.append('password', password);
       if (uri) {
         form.append('avatar', {
@@ -81,9 +81,13 @@ const Registration3 = (props: Props) => {
         onInput={_onPickerInput}
         initialImage={null}
       />
-      <Input label={'Name'} value={props.route.params.name} disabled />
-      <Input label={'Email'} value={props.route.params.email} disabled />
-      <Input label={'Phone number'} value={props.route.params.phone} disabled />
+      <Input label={'Name'} value={props.route.params?.name} disabled />
+      <Input label={'Email'} value={props.route.params?.email} disabled />
+      <Input
+        label={'Phone number'}
+        value={props.route.params?.phone}
+        disabled
+      />
       <Input
         label={'Password'}
         secureTextEntry

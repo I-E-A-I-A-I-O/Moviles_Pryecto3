@@ -119,6 +119,33 @@ export = {
   },
   /**Queries para editar informacion existente de usuarios */
   setUser: {
+    /**
+     * Actualiza el correo de un usuario por ID.
+     * Parametros:
+     * 1. Email
+     * 2. ID del usuario
+     */
+    email: 'UPDATE users SET email = $1 WHERE user_id = $2',
+    /**
+     * Actualiza el numero de telefono de un usuario por ID.
+     * Parametros:
+     * 1. Numero de telefono
+     * 2. ID del usuario
+     */
+    phone: 'UPDATE users SET phone = $1 WHERE user_id = $2',
+    /**
+     * Cambia la contraseña de un usuario por email.
+     * Parametros:
+     * 1. Contraseña
+     * 2. Email
+     */
+    passwordWithEmail: 'UPDATE users SET password = $1 WHERE email = $2',
+    /**
+     * Cambia la contraseña de un usuario por ID.
+     * 1. Contraseña
+     * 2. ID del usuario
+     */
+    passwordWithID: 'UPDATE users SET password = $1 WHERE user_id = $2',
     /**Se actualiza el campo avatar del usuario con la ID indicada.
      * Parametros:
      * 1. Path hacia la imagen
@@ -199,6 +226,11 @@ export = {
   /**Queries para leer informacion de usuarios */
   getUser: {
     /**
+     * Retorna la contraseña de un usuario por ID.
+     * 1. ID del usuario
+     */
+    password: 'SELECT password FROM users WHERE user_id = $1',
+    /**
      * Retorna el nombre y apellido (si tiene) del usuario.
      * Parametros:
      * 1. ID del usuario
@@ -218,6 +250,18 @@ export = {
      * 2. Numero de telefono
      */
     areCredentialsNew: 'SELECT * FROM users WHERE email = $1 OR phone = $2',
+    /**
+     * Selecciona los emails que sean iguales al parametro.
+     * Parametros:
+     * 1. Email a comparar
+     */
+    emails: 'SELECT email FROM users WHERE email = $1',
+    /**
+     * Selecciona el numero de telefono que sea igual al parametro.
+     * Parametros:
+     * 1. Numero telefonico a comparar
+     */
+    phones: 'SELECT phone FROM users WHERE phone = $1',
     /**Selecciona el avatar del usuario registrado con la ID indicada.
      * Parametros:
      * 1. ID del usuario
@@ -333,6 +377,12 @@ export = {
      * 1. ID del titulo
      */
     education: 'DELETE FROM user_education WHERE education_id = $1',
+    /**
+     * Borra la cuenta de un usuario por ID.
+     * Parametros:
+     * 1. La ID del usuario
+     */
+    account: 'DELETE FROM users WHERE user_id = $1',
   },
   /**Queries relacionados a la barra de busqueda */
   search: {
@@ -340,8 +390,7 @@ export = {
      * Parametros:
      * 1. String proveniente de la barra de busqueda
      */
-    users:
-      "SELECT user_id AS id FROM users WHERE name ILIKE $1 || '%'",
+    users: "SELECT user_id AS id FROM users WHERE name ILIKE $1 || '%'",
     /**
      * Retorna una lista de usuarios cuyo nombre sea similar a la busqueda realizada
      * y pertenezca a la lista de usuarios conectados al request owner.
