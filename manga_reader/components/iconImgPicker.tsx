@@ -10,7 +10,7 @@ import {
 
 const cameraVideoOptions: CameraOptions = {
   mediaType: 'video',
-  videoQuality: 'low',
+  videoQuality: 'high',
   durationLimit: 120,
 };
 const cameraPhotoOptions: CameraOptions = {
@@ -29,7 +29,7 @@ const libraryVideoOptions: ImageLibraryOptions = {
 type Props = {
   iconStyle?: ViewStyle;
   type: 'image' | 'video' | 'file-video' | 'file-image';
-  onInput: (type: 'video' | 'photo', uri?: string, name?: string) => void;
+  onInput: (type: 'video' | 'photo', uri?: string, mime?: string) => void;
   disabled?: boolean;
 };
 
@@ -42,7 +42,8 @@ const IconImgPicker = (props: Props) => {
       case 'file-image': {
         launchImageLibrary(libraryPhotoOptions, response => {
           if (!response.didCancel) {
-            props.onInput('photo', response.uri, response.fileName);
+            const mime = `image/${response.fileName?.split('.')[1]}`;
+            props.onInput('photo', response.uri, mime);
           }
         });
         break;
@@ -50,7 +51,8 @@ const IconImgPicker = (props: Props) => {
       case 'file-video': {
         launchImageLibrary(libraryVideoOptions, response => {
           if (!response.didCancel) {
-            props.onInput('video', response.uri, response.fileName);
+            const mime = `video/${response.fileName?.split('.')[1]}`;
+            props.onInput('video', response.uri, mime);
           }
         });
         break;
@@ -58,7 +60,8 @@ const IconImgPicker = (props: Props) => {
       case 'image': {
         launchCamera(cameraPhotoOptions, response => {
           if (!response.didCancel) {
-            props.onInput('photo', response.uri, response.fileName);
+            const mime = `image/${response.fileName?.split('.')[1]}`;
+            props.onInput('photo', response.uri, mime);
           }
         });
         break;
@@ -66,7 +69,8 @@ const IconImgPicker = (props: Props) => {
       case 'video': {
         launchCamera(cameraVideoOptions, response => {
           if (!response.didCancel) {
-            props.onInput('video', response.uri, response.fileName);
+            const mime = `video/${response.fileName?.split('.')[1]}`;
+            props.onInput('video', response.uri, mime);
           }
         });
         break;

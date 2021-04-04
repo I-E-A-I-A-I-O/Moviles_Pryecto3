@@ -1,10 +1,19 @@
 import React, {useState} from 'react';
-import {View, ImageStyle, ViewStyle, TextStyle, Pressable} from 'react-native';
-import {Input, Icon, Card, Image, Badge, Avatar} from 'react-native-elements';
-import {SubmitButton, urlExtractor, IconImgPicker} from '../components';
+import {
+  View,
+  ImageStyle,
+  ViewStyle,
+  TextStyle,
+  Pressable,
+  ActivityIndicator,
+} from 'react-native';
+import {Input, Icon, Image} from 'react-native-elements';
+import {urlExtractor, IconImgPicker} from '../components';
 import {connect, ConnectedProps} from 'react-redux';
 import {ScrollView} from 'react-native-gesture-handler';
 import axios from 'axios';
+import Video from 'react-native-video';
+import Toast from 'react-native-toast-message';
 
 import type {RootReducerType as CombinedState} from '../store/rootReducer';
 
@@ -23,10 +32,12 @@ const PostMaker = (props: Props) => {
   const [textInput, setTextInput] = useState('');
   const [fileSysInput, setFileSysInput] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [mediaType, setMediaType] = useState<'video' | 'photo'>('photo');
+  const [fileMime, setFileMime] = useState<string | undefined>();
 
   const setURLImg = () => {
-    if (!fileSysInput) {
-      const url = urlExtractor.getFirstURL(text);
+    if (!fileSysInput && !loading) {
+      const url = urlExtractor.getFirstURL(textInput);
       if (url && url !== uriInput) {
         setUriInput(url);
       } else if (!url) {
@@ -43,20 +54,59 @@ const PostMaker = (props: Props) => {
   const onFileInput = (
     type: 'video' | 'photo',
     uri?: string,
-    name?: string,
+    mime?: string,
   ) => {
     setLoading(true);
     setTimeout(() => {
       setFileSysInput(true);
+      setMediaType(type);
+      setFileMime(mime);
       setUriInput(uri);
       setLoading(false);
     }, 2500);
   };
 
   const onPressDelete = () => {
-    setUriInput(undefined);
-    setFileSysInput(false);
-    setURLImg();
+    if (!loading) {
+      setUriInput(undefined);
+      setFileSysInput(false);
+      setMediaType('photo');
+      setURLImg();
+    }
+  };
+
+  const onSubmit = async () => {
+    if (!uriInput && textInput.length === 0) {
+      return;
+    }
+    setLoading(true);
+    const form = new FormData();
+    form.append('text', textInput);
+    if (uriInput) {
+      form.append('postMedia', {
+        type: fileMime,
+        name: `media.${fileMime?.split('/')[1]}`,
+        uri: uriInput,
+      });
+    }
+    try {
+      await axios.post('/posts/post', form, {
+        headers: {authorization: props.token},
+      });
+      setFileMime(undefined);
+      setFileSysInput(false);
+      setUriInput(undefined);
+      setMediaType('photo');
+      setTextInput('');
+    } catch (err) {
+      Toast.show({
+        text1: 'Error creating the post. Try again later',
+        type: 'error',
+        position: 'bottom',
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -64,8 +114,22 @@ const PostMaker = (props: Props) => {
       <Input
         multiline
         maxLength={150}
+        value={textInput}
         onChangeText={_onChangeText}
         placeholder={'Post something'}
+        rightIcon={
+          <>
+            {loading ? (
+              <ActivityIndicator color={'lime'} />
+            ) : (
+              <Pressable
+                onPress={onSubmit}
+                android_ripple={{color: 'gray', borderless: true}}>
+                <Icon type={'font-awesome-5'} name={'paper-plane'} />
+              </Pressable>
+            )}
+          </>
+        }
       />
       <View style={iconContainer}>
         <IconImgPicker
@@ -96,12 +160,16 @@ const PostMaker = (props: Props) => {
           </Pressable>
         ) : null}
       </View>
-      <Image
-        style={imageStyle}
-        source={{
-          uri: uriInput,
-        }}
-      />
+      {mediaType === 'photo' ? (
+        <Image
+          style={imageStyle}
+          source={{
+            uri: uriInput,
+          }}
+        />
+      ) : (
+        <Video source={{uri: uriInput}} controls style={videoStyle} />
+      )}
     </ScrollView>
   );
 };
@@ -121,6 +189,19 @@ const iconContainer: ViewStyle = {
 };
 const iconStyle: TextStyle = {
   paddingLeft: 10,
+};
+const videoStyle: ViewStyle = {
+  alignItems: 'center',
+  alignContent: 'center',
+  justifyContent: 'center',
+  width: '100%',
+  height: 300,
+  borderRadius: 15,
+  backgroundColor: 'gray',
+  display: 'flex',
+  flex: 1,
+  marginTop: 25,
+  marginBottom: 25,
 };
 
 export default connector(PostMaker);

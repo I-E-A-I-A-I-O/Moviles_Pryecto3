@@ -435,6 +435,15 @@ export = {
   },
   /**Queries relacionados a las notificaciones de usuarios */
   notifications: {
+    /**
+     * Crea una notificacion de post (Query para ser completado de forma dinamica).
+     * Parametros:
+     * 1. Tipo = 'POST' | 'REQUEST' (Deberia ser POST en este caso)
+     * 2. ID del post
+     * 3. ID del usuario al que le llega la noitificacion
+     */
+    dinamic_post:
+      'INSERT INTO notifications(type, post_link, date, user_id) VALUES',
     /**Crea una notificacion de post.
      * Parametros:
      * 1. Tipo = 'POST' | 'REQUEST' (Deberia ser POST en este caso)
@@ -466,6 +475,13 @@ export = {
   },
   /**Queries para el manejo de connects de usuarios */
   connects: {
+    /**
+     * Retorna los connects de un usuario.
+     * Parametros:
+     * 1. ID del usuario
+     */
+    get:
+      'SELECT c.connected_id AS user_id, nt.token, u.name FROM connects c LEFT JOIN notification_tokens nt ON nt.user_id = c.connected_id RIGHT JOIN users u ON u.user_id = c.connected_id WHERE connector_id = $1',
     /**Verifica si dos usuarios estan conectados.
      * Parametros:
      * 1. ID del usuario A
@@ -512,5 +528,22 @@ export = {
      */
     requestPending:
       'SELECT id FROM connection_requests WHERE request_owner = $1 AND request_receiver = $2',
+  },
+  /**Querias para el manejo de publicaciones */
+  post: {
+    /**Crea una publicacion.
+     * Parametros:
+     * 1. ID del usuario
+     * 2. Texto del post (opcional)
+     */
+    createPost:
+      'INSERT INTO posts(user_id, content, date) VALUES($1, $2, NOW()) RETURNING post_id',
+    /**
+     * Añade una imagen a una publicacion.
+     * Parametros:
+     * 1. ID del post
+     * 2. Path del archivo
+     */
+    setMedia: 'UPDATE posts SET media = $1 WHERE post_id = $2',
   },
 };
