@@ -1,8 +1,9 @@
 import React, {useState} from 'react';
-import {View, Image, ImageStyle, ViewStyle} from 'react-native';
-import {Input, Icon, Card} from 'react-native-elements';
-import {SubmitButton} from '../components';
+import {View, ImageStyle, ViewStyle, TextStyle, Pressable} from 'react-native';
+import {Input, Icon, Card, Image, Badge, Avatar} from 'react-native-elements';
+import {SubmitButton, urlExtractor, IconImgPicker} from '../components';
 import {connect, ConnectedProps} from 'react-redux';
+import {ScrollView} from 'react-native-gesture-handler';
 import axios from 'axios';
 
 import type {RootReducerType as CombinedState} from '../store/rootReducer';
@@ -18,28 +19,108 @@ type Props = PropsFromRedux & {
 };
 
 const PostMaker = (props: Props) => {
-  const [uri, setUri] = useState<string | undefined>();
+  const [uriInput, setUriInput] = useState<string | undefined>();
+  const [textInput, setTextInput] = useState('');
+  const [fileSysInput, setFileSysInput] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const setURLImg = () => {
+    if (!fileSysInput) {
+      const url = urlExtractor.getFirstURL(text);
+      if (url && url !== uriInput) {
+        setUriInput(url);
+      } else if (!url) {
+        setUriInput(undefined);
+      }
+    }
+  };
+
+  const _onChangeText = (text: string) => {
+    setTextInput(text);
+    setURLImg();
+  };
+
+  const onFileInput = (
+    type: 'video' | 'photo',
+    uri?: string,
+    name?: string,
+  ) => {
+    setLoading(true);
+    setTimeout(() => {
+      setFileSysInput(true);
+      setUriInput(uri);
+      setLoading(false);
+    }, 2500);
+  };
+
+  const onPressDelete = () => {
+    setUriInput(undefined);
+    setFileSysInput(false);
+    setURLImg();
+  };
+
   return (
-    <View style={props.style}>
+    <ScrollView>
+      <Input
+        multiline
+        maxLength={150}
+        onChangeText={_onChangeText}
+        placeholder={'Post something'}
+      />
+      <View style={iconContainer}>
+        <IconImgPicker
+          disabled={loading}
+          type={'file-image'}
+          iconStyle={iconStyle}
+          onInput={onFileInput}
+        />
+        <IconImgPicker
+          disabled={loading}
+          type={'image'}
+          iconStyle={iconStyle}
+          onInput={onFileInput}
+        />
+        <IconImgPicker
+          disabled={loading}
+          type={'video'}
+          iconStyle={iconStyle}
+          onInput={onFileInput}
+        />
+        {fileSysInput ? (
+          <Pressable android_ripple={{color: 'gray'}} onPress={onPressDelete}>
+            <Icon
+              type={'font-awesome-5'}
+              style={iconStyle}
+              name={'times-circle'}
+            />
+          </Pressable>
+        ) : null}
+      </View>
       <Image
         style={imageStyle}
         source={{
-          uri: 'https://miro.medium.com/max/2004/1*nLPOzPkUMPraMD6Q6QfBxw.jpeg',
+          uri: uriInput,
         }}
       />
-      <Input multiline maxLength={150} placeholder={'Post something'} />
-      <Icon type={'font-awesome-5'} name={'image'} />
-      <Card.Divider />
-    </View>
+    </ScrollView>
   );
 };
 
 const imageStyle: ImageStyle = {
   alignSelf: 'center',
   width: '100%',
-  height: '50%',
+  height: 500,
   borderRadius: 15,
   resizeMode: 'contain',
-  paddingBottom: 0,
+  marginTop: 25,
 };
+const iconContainer: ViewStyle = {
+  display: 'flex',
+  flex: 1,
+  flexDirection: 'row',
+};
+const iconStyle: TextStyle = {
+  paddingLeft: 10,
+};
+
 export default connector(PostMaker);

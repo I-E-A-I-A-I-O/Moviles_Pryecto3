@@ -13,8 +13,11 @@ import UserBadge from './userBadge';
 import ConnectButton from './connectButton';
 import NotificationsSkeleton from './NotificationsSkeleton';
 import PostMaker from './postMaker';
+import URLExtractor from './URLExtractor';
+import IconImgPicker from './iconImgPicker';
 
 const dateFunctions = new DateFunctions();
+const urlExtractor = new URLExtractor();
 
 export {
   UserAvatar,
@@ -31,5 +34,7 @@ export {
   ModalDropdown,
   UserBadge,
   ConnectButton,
+  urlExtractor,
   NotificationsSkeleton,
+  IconImgPicker,
 };
