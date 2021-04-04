@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import { View, TextInput} from 'react-native';
+import { View, TextInput, Alert} from 'react-native';
 import {Text, Card, Icon} from 'react-native-elements';
 import {UserAvatar, SubmitButton, AvatarImgPicker} from '../components';
 import {StackNavigationProp} from '@react-navigation/stack';
@@ -70,17 +70,24 @@ function pageToPost (props: Props) {
       });
     }else{
       let form = new FormData();
-      form.append('text', text);
-      form.append('id', props.state.id);
+      form.append('content', text);
+      form.append('date', new Date(Date.now()).toISOString().split('T')[0]);
       if (uri) {
         form.append('file', {
           type: `image/${type}`,
-          name: `avatar.${type}`,
+          name: `file.${type}`,
           uri: uri,
         });
       }
       try{
-      let request = await axios.post('/post/dataPost',form)   
+       await axios.post('/post/dataPost',
+          form, 
+          {
+            headers: { 
+              'content-type': 'application/x-www-form-urlencoded' ,
+              'Content-type':'application/json'
+            }
+          })   
        Toast.show({
         type: 'success',
         text1: 'text sent correctly',
@@ -98,7 +105,7 @@ function pageToPost (props: Props) {
       }
     }
   }
-  
+
     return (
         <View>
             <UserAvatar
