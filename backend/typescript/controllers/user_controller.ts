@@ -99,7 +99,7 @@ export class UserController extends BasicCRUD {
             experience: experience.rows,
             projects: projects.rows,
             recommendations: recommendations.rows,
-            description: description.rows[0] ?? undefined,
+            description: description.rows[0],
             education: titles.rows,
           };
           res.status(200).json(resBody);
