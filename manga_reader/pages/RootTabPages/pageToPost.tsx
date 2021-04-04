@@ -1,11 +1,13 @@
 import React from 'react';
 import {View} from 'react-native';
 import {Text} from 'react-native-elements';
+import {PostMaker} from '../../components';
 
 const pageToPost = () => {
   return (
-    <View style={{alignItems: 'center', top: '50%'}}>
-      <Text style={{fontSize: 40}}> Publicaciones </Text>
+    <View>
+      <PostMaker />
+      <Text>asdasd</Text>
     </View>
   );
 };

@@ -12,6 +12,7 @@ import ModalDropdown from './ModalDropdown';
 import UserBadge from './userBadge';
 import ConnectButton from './connectButton';
 import NotificationsSkeleton from './NotificationsSkeleton';
+import PostMaker from './postMaker';
 
 const dateFunctions = new DateFunctions();
 
@@ -24,6 +25,7 @@ export {
   SubmitButton,
   ListWDescription,
   dateFunctions,
+  PostMaker,
   DescriptionSkeleton,
   AvatarImgPicker,
   ModalDropdown,
