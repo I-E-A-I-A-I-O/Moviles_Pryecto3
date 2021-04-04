@@ -180,4 +180,18 @@ export = {
     deleteRequest: '',
     /**Verifica si hay un request de conexiones entre dos usuarios */
     requestPending: '',
+  },
+  /**Queries para el manejo de los post */
+  post: {
+    /**Insertar datos del post creado */
+    createPost:'INSERT INTO posts(content,date) VALUES($1,NOW()) RETURNING post_id',
+    /**Actulizar posts ya creados */
+    updatePost:'UPDATE posts SET content=$1, media=$2, date=$3 WHERE post_id=$4 RETURNING post_id',
+    /**Actulizacion de archivos */
+    updateMedia:'UPDATE posts SET media=$1 WHERE post_id=$2 RETURNING post_id',
+    /**Seleccionar post */
+    readerPost:'SELECT content, media, date FROM posts WHERE post_id=$1',
+    /**Borrar Post */
+    deletePost:'DELETE FROM posts WHERE post_id=$1'
+  }
 };
