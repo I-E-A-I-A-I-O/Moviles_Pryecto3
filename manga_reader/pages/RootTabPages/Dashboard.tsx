@@ -90,7 +90,7 @@ class Dashboard extends React.Component<Props, State> {
         this.state.searchOption === 'organization')
     ) {
       Toast.show({
-        text1: 'Search bar is empty!',
+        text1: 'Searchbar is empty!',
         type: 'error',
         position: 'bottom',
       });

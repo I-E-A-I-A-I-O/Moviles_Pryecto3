@@ -4,6 +4,7 @@ import {Icon} from 'react-native-elements';
 import {connect, ConnectedProps} from 'react-redux';
 import axios from 'axios';
 import Toast from 'react-native-toast-message';
+import {InteractionCounter} from '../components';
 
 import type {RootReducerType as CombinedState} from '../store/rootReducer';
 
@@ -32,6 +33,7 @@ type State = {
 };
 
 class InteractionBar extends React.Component<Props, State> {
+  private counterRef = React.createRef<InteractionCounter>();
   constructor(props: Props) {
     super(props);
     this.state = {loading: false, interaction: {dislike: 'ADD', like: 'ADD'}};
@@ -110,6 +112,7 @@ class InteractionBar extends React.Component<Props, State> {
         ...this.state,
         interaction: response.data,
       });
+      this.counterRef.current?.fetchCount();
     } catch (err) {
     } finally {
       this.setState({
@@ -125,66 +128,73 @@ class InteractionBar extends React.Component<Props, State> {
 
   render() {
     return (
-      <View style={viewStyle}>
-        {this.props.ownerButtons ? (
-          <>
-            <Pressable
-              android_ripple={{color: 'gray', borderless: true}}
-              onPress={this.deletePost}>
-              <Icon
-                style={iconStyle}
-                color={this.state.loading ? 'gray' : 'red'}
-                name={'trash'}
-                type={'font-awesome-5'}
-              />
-            </Pressable>
-            <Pressable
-              android_ripple={{color: 'gray', borderless: true}}
-              onPress={this.props.onEditPress}>
-              <Icon style={iconStyle} name={'pen'} type={'font-awesome-5'} />
-            </Pressable>
-          </>
-        ) : null}
-        <Pressable
-          android_ripple={{color: 'gray', borderless: true}}
-          onPress={this.props.onCommentPress}>
-          <Icon style={iconStyle} name={'comment'} type={'font-awesome-5'} />
-        </Pressable>
-        <Pressable
-          android_ripple={{color: 'gray', borderless: true}}
-          onPress={() => this.interact('dislike')}>
-          <Icon
-            style={iconStyle}
-            name={'thumbs-down'}
-            type={'font-awesome-5'}
-            color={
-              this.state.loading
-                ? 'gray'
-                : this.state.interaction.dislike === 'ADD'
-                ? 'black'
-                : 'red'
-            }
-            solid={this.state.interaction.dislike === 'REMOVE'}
-          />
-        </Pressable>
-        <Pressable
-          android_ripple={{color: 'gray', borderless: true}}
-          onPress={() => this.interact('like')}>
-          <Icon
-            style={iconStyle}
-            name={'thumbs-up'}
-            type={'font-awesome-5'}
-            color={
-              this.state.loading
-                ? 'gray'
-                : this.state.interaction.like === 'ADD'
-                ? 'black'
-                : 'lime'
-            }
-            solid={this.state.interaction.like === 'REMOVE'}
-          />
-        </Pressable>
-      </View>
+      <>
+        <InteractionCounter
+          token={this.props.token}
+          post_id={this.props.post_id}
+          ref={this.counterRef}
+        />
+        <View style={viewStyle}>
+          {this.props.ownerButtons ? (
+            <>
+              <Pressable
+                android_ripple={{color: 'gray', borderless: true}}
+                onPress={this.deletePost}>
+                <Icon
+                  style={iconStyle}
+                  color={this.state.loading ? 'gray' : 'red'}
+                  name={'trash'}
+                  type={'font-awesome-5'}
+                />
+              </Pressable>
+              <Pressable
+                android_ripple={{color: 'gray', borderless: true}}
+                onPress={this.props.onEditPress}>
+                <Icon style={iconStyle} name={'pen'} type={'font-awesome-5'} />
+              </Pressable>
+            </>
+          ) : null}
+          <Pressable
+            android_ripple={{color: 'gray', borderless: true}}
+            onPress={this.props.onCommentPress}>
+            <Icon style={iconStyle} name={'comment'} type={'font-awesome-5'} />
+          </Pressable>
+          <Pressable
+            android_ripple={{color: 'gray', borderless: true}}
+            onPress={() => this.interact('dislike')}>
+            <Icon
+              style={iconStyle}
+              name={'thumbs-down'}
+              type={'font-awesome-5'}
+              color={
+                this.state.loading
+                  ? 'gray'
+                  : this.state.interaction.dislike === 'ADD'
+                  ? 'black'
+                  : 'red'
+              }
+              solid={this.state.interaction.dislike === 'REMOVE'}
+            />
+          </Pressable>
+          <Pressable
+            android_ripple={{color: 'gray', borderless: true}}
+            onPress={() => this.interact('like')}>
+            <Icon
+              style={iconStyle}
+              name={'thumbs-up'}
+              type={'font-awesome-5'}
+              color={
+                this.state.loading
+                  ? 'gray'
+                  : this.state.interaction.like === 'ADD'
+                  ? 'black'
+                  : 'lime'
+              }
+              solid={this.state.interaction.like === 'REMOVE'}
+            />
+          </Pressable>
+        </View>
+      </>
     );
   }
 }

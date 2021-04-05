@@ -74,4 +74,24 @@ export class ReadPost {
       client.release(true);
     }
   }
+
+  public async interactionCount(req: Request, res: Response) {
+    const {id} = req.params;
+    const client = await dbController.getClient();
+    try {
+      const likes = await client.query(queries.interactions.likes, [id]);
+      const dislikes = await client.query(queries.interactions.dislikes, [id]);
+      const comments = await client.query(queries.interactions.comments, [id]);
+      res.status(200).json({
+        likes: likes.rows[0].count,
+        dislikes: dislikes.rows[0].count,
+        comments: comments.rows[0].count,
+      });
+    } catch (err) {
+      console.error(err);
+      res.sendStatus(500);
+    } finally {
+      client.release(true);
+    }
+  }
 }

@@ -45,3 +45,7 @@ router.put('/post/:id/like', (req: Request, res: Response) => {
 router.put('/post/:id/dislike', (req: Request, res: Response) => {
   postInteractions.dislike(req, res);
 });
+
+router.get('/post/:id/interactions/count', (req: Request, res: Response) => {
+  readPost.interactionCount(req, res);
+});

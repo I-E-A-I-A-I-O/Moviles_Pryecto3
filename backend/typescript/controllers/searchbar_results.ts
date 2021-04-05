@@ -36,9 +36,7 @@ export class SearchBarResults {
         });
       } catch (err) {
         console.error(err);
-        res.status(500).json({
-          content: [],
-        });
+        res.sendStatus(500);
       } finally {
         client.release(true);
       }
@@ -46,45 +44,40 @@ export class SearchBarResults {
   }
 
   public async searchPosts(req: Request, res: Response) {
-    const payload = req.headers.authorization
-      ? await jwt.getPayload(req.headers.authorization)
-      : null;
+    const {authorization} = req.headers;
+    const payload = await jwt.getPayload(authorization ?? '');
     if (!payload) {
-      res.status(400).json({
+      res.status(403).json({
         title: 'error',
         content: 'Token missing',
       });
       return;
+    }
+    let query: string;
+    let params: string[] = [];
+    const {scope} = req.params;
+    if (scope === 'global') {
+      query = queries.search.postsAll;
+      params.push(payload.user_id);
+    } else if (scope === 'connections') {
+      query = queries.search.postsConnected;
+      params.push(payload.user_id);
     } else {
-      let query: string;
-      let params: string[] = [];
-      const {scope} = req.params;
-      if (scope === 'global') {
-        query = queries.search.postsAll;
-        params.push(payload.user_id);
-      } else if (scope === 'connections') {
-        query = queries.search.postsConnected;
-        params.push(payload.user_id);
-      } else {
-        res.sendStatus(404);
-        return;
-      }
-      const client = await dbController.getClient();
-      try {
-        const response = await client.query(query, params);
-        console.log(JSON.stringify(response));
-        res.status(200).json({
-          title: 'success',
-          content: response.rows,
-        });
-      } catch (err) {
-        console.error(err);
-        res.status(500).json({
-          content: [],
-        });
-      } finally {
-        client.release(true);
-      }
+      res.sendStatus(404);
+      return;
+    }
+    const client = await dbController.getClient();
+    try {
+      const response = await client.query(query, params);
+      res.status(200).json({
+        title: 'success',
+        content: response.rows,
+      });
+    } catch (err) {
+      console.error(err);
+      res.sendStatus(500);
+    } finally {
+      client.release(true);
     }
   }
 
@@ -122,9 +115,7 @@ export class SearchBarResults {
         });
       } catch (err) {
         console.error(err);
-        res.status(500).json({
-          content: [],
-        });
+        res.sendStatus(500);
       } finally {
         client.release(true);
       }

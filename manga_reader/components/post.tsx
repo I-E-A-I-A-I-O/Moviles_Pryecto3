@@ -53,6 +53,10 @@ class Post extends React.Component<Props, State> {
       edit: false,
       deleted: false,
     };
+    this.onCloseModal.bind(this);
+    this.onCommentPress.bind(this);
+    this.onDeleted.bind(this);
+    this.onEditPress.bind(this);
   }
 
   componentDidMount() {
@@ -72,7 +76,7 @@ class Post extends React.Component<Props, State> {
       .catch(() => {});
   }
 
-  private onCommentPress = () => {
+  private async onCommentPress() {
     if (!this.state.loading) {
       this.setState({
         ...this.state,
@@ -80,14 +84,14 @@ class Post extends React.Component<Props, State> {
         modalVisible: true,
       });
     }
-  };
-  private onCloseModal = () => {
+  }
+  private async onCloseModal() {
     this.setState({
       ...this.state,
       modalVisible: false,
     });
-  };
-  private onEditPress = () => {
+  }
+  private async onEditPress() {
     if (!this.state.loading) {
       this.setState({
         ...this.state,
@@ -95,13 +99,13 @@ class Post extends React.Component<Props, State> {
         modalVisible: true,
       });
     }
-  };
-  private onDeleted = () => {
+  }
+  private async onDeleted() {
     this.setState({
       ...this.state,
       deleted: true,
     });
-  };
+  }
 
   render() {
     return (
@@ -137,11 +141,11 @@ class Post extends React.Component<Props, State> {
               ) : null}
             </View>
             <InteractionBar
-              onCommentPress={this.onCommentPress}
+              onCommentPress={this.onCommentPress.bind(this)}
               post_id={this.props.id}
-              onEditPress={this.onEditPress}
+              onEditPress={this.onEditPress.bind(this)}
               ownerButtons={this.state.owner === this.props.session_id}
-              onDeleted={this.onDeleted}
+              onDeleted={this.onDeleted.bind(this)}
             />
             <Card.Divider />
           </View>
@@ -149,7 +153,7 @@ class Post extends React.Component<Props, State> {
         <ModalPostMaker
           post_id={this.props.id}
           visible={this.state.modalVisible}
-          onRequestClose={this.onCloseModal}
+          onRequestClose={this.onCloseModal.bind(this)}
           mediaType={this.state.mediaType}
           name={this.state.name}
           owner={this.state.owner}

@@ -18,6 +18,7 @@ import IconImgPicker from './iconImgPicker';
 import Post from './post';
 import InteractionBar from './interactionBar';
 import ModalPostMaker from './modalPostMaker';
+import InteractionCounter from './post_count';
 
 const dateFunctions = new DateFunctions();
 const urlExtractor = new URLExtractor();
@@ -43,4 +44,5 @@ export {
   Post,
   InteractionBar,
   ModalPostMaker,
+  InteractionCounter,
 };

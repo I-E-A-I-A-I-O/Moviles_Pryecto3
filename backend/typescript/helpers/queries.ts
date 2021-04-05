@@ -673,5 +673,12 @@ export = {
      * 1. ID del post
      */
     dislikes: 'SELECT count(dislike_id) FROM post_dislikes WHERE post_id = $1',
+    /**
+     * Retorna la cantidad de comentarios de un post.
+     * Parametros:
+     * 1. ID del post
+     */
+    comments:
+      'SELECT count(comment_id) FROM post_comments WHERE comment_to = $1',
   },
 };
