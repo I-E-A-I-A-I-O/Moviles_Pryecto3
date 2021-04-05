@@ -27,15 +27,27 @@ type Props = PropsFromRedux & {
   style?: ViewStyle;
   comment?: boolean;
   post_id?: string;
+  text?: string;
+  uri?: string;
+  mediaType?: 'video' | 'photo';
+  edit?: boolean;
 };
 
 const PostMaker = (props: Props) => {
-  const [uriInput, setUriInput] = useState<string | undefined>();
-  const [textInput, setTextInput] = useState('');
-  const [fileSysInput, setFileSysInput] = useState(false);
+  const [uriInput, setUriInput] = useState<string | undefined>(props.uri);
+  const [textInput, setTextInput] = useState(props.text ? props.text : '');
+  const [fileSysInput, setFileSysInput] = useState(props.uri ? true : false);
   const [loading, setLoading] = useState(false);
-  const [mediaType, setMediaType] = useState<'video' | 'photo'>('photo');
-  const [fileMime, setFileMime] = useState<string | undefined>();
+  const [mediaType, setMediaType] = useState<'video' | 'photo'>(
+    props.mediaType ? props.mediaType : 'photo',
+  );
+  const [fileMime, setFileMime] = useState<string | undefined>(
+    props.uri
+      ? props.mediaType === 'photo'
+        ? 'image/jpeg'
+        : 'video/mp4'
+      : undefined,
+  );
 
   const setURLImg = () => {
     if (!fileSysInput && !loading) {
@@ -86,8 +98,8 @@ const PostMaker = (props: Props) => {
     form.append('text', textInput);
     if (uriInput) {
       form.append('postMedia', {
-        type: fileMime,
-        name: `media.${fileMime?.split('/')[1]}`,
+        type: fileMime ? fileMime : 'image/jpeg',
+        name: `media.${fileMime ? fileMime?.split('/')[1] : 'jpeg'}`,
         uri: uriInput,
       });
     }

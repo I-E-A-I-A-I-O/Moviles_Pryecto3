@@ -16,3 +16,7 @@ router.get('/post/:id', (req: Request, res: Response) => {
 router.post('/post/:id/comment', (req: Request, res: Response) => {
   postCreation.comment(req, res);
 });
+
+router.get('/post/:id/comments', (req: Request, res: Response) => {
+  readPost.comments(req, res);
+});

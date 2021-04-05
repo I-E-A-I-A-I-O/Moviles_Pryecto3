@@ -11,6 +11,19 @@ type ResBody = {
 };
 
 export class ReadPost {
+  private getType(extension: string): 'video' | 'image' {
+    if (
+      extension === 'jpg' ||
+      extension === 'jpeg' ||
+      extension === 'png' ||
+      extension === 'gif'
+    ) {
+      return 'image';
+    } else {
+      return 'video';
+    }
+  }
+
   public async read(req: Request, res: Response) {
     const {id} = req.params;
     const client = await dbController.getClient();
@@ -48,16 +61,17 @@ export class ReadPost {
     }
   }
 
-  private getType(extension: string): 'video' | 'image' {
-    if (
-      extension === 'jpg' ||
-      extension === 'jpeg' ||
-      extension === 'png' ||
-      extension === 'gif'
-    ) {
-      return 'image';
-    } else {
-      return 'video';
+  public async comments(req: Request, res: Response) {
+    const {id} = req.params;
+    const client = await dbController.getClient();
+    try {
+      const response = await client.query(queries.post.getComments, [id]);
+      res.status(200).json({content: response.rows});
+    } catch (err) {
+      console.error(err);
+      res.sendStatus(500);
+    } finally {
+      client.release(true);
     }
   }
 }

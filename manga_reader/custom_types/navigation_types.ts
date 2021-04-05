@@ -90,6 +90,9 @@ export type ModalStackParamList = {
     deviceUser: boolean;
     token: string;
   };
+  PostThread: {
+    post_id: string;
+  };
 };
 
 export type RootTabNavigatorParamList = {

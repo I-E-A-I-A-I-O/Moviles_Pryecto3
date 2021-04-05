@@ -15,6 +15,8 @@ type PropsFromRedux = ConnectedProps<typeof connector>;
 type Props = PropsFromRedux & {
   post_id: string;
   onCommentPress: () => void;
+  onEditPress: () => void;
+  ownerButtons?: boolean;
 };
 type State = {
   loading: boolean;
@@ -29,6 +31,23 @@ class InteractionBar extends React.Component<Props, State> {
   render() {
     return (
       <View style={viewStyle}>
+        {this.props.ownerButtons ? (
+          <>
+            <Pressable android_ripple={{color: 'gray', borderless: true}}>
+              <Icon
+                style={iconStyle}
+                color={'red'}
+                name={'trash'}
+                type={'font-awesome-5'}
+              />
+            </Pressable>
+            <Pressable
+              android_ripple={{color: 'gray', borderless: true}}
+              onPress={this.props.onEditPress}>
+              <Icon style={iconStyle} name={'pen'} type={'font-awesome-5'} />
+            </Pressable>
+          </>
+        ) : null}
         <Pressable
           android_ripple={{color: 'gray', borderless: true}}
           onPress={this.props.onCommentPress}>

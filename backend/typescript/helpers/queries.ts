@@ -559,6 +559,13 @@ export = {
   /**Querias para el manejo de publicaciones */
   post: {
     /**
+     * Retorna los comentarios de un post.
+     * Parametros:
+     * 1. ID del post
+     */
+    getComments:
+      'SELECT reference_post AS id FROM post_comments WHERE comment_to = $1',
+    /**
      * Retorna la ID del usuario que creo el post.
      * Parametros:
      * 1. ID del post

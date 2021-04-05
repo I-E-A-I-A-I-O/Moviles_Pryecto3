@@ -4,14 +4,12 @@ import {
   ImageStyle,
   ViewStyle,
   TextStyle,
-  Pressable,
   ActivityIndicator,
 } from 'react-native';
 import {Image, Text, Card} from 'react-native-elements';
 import {connect, ConnectedProps} from 'react-redux';
 import axios from 'axios';
 import Video from 'react-native-video';
-import Toast from 'react-native-toast-message';
 import {UserAvatar, InteractionBar, ModalPostMaker} from '../components';
 
 import type {RootReducerType as CombinedState} from '../store/rootReducer';
@@ -27,6 +25,7 @@ type Props = PropsFromRedux & {
   style?: ViewStyle;
   id: string;
   onPress?: () => void;
+  label?: string;
 };
 type State = {
   loading: boolean;
@@ -36,6 +35,7 @@ type State = {
   mediaType: 'image' | 'video' | undefined;
   owner: string;
   modalVisible: boolean;
+  edit: boolean;
 };
 
 class Post extends React.Component<Props, State> {
@@ -49,6 +49,7 @@ class Post extends React.Component<Props, State> {
       mediaType: 'image',
       name: '',
       modalVisible: false,
+      edit: false,
     };
   }
 
@@ -74,6 +75,7 @@ class Post extends React.Component<Props, State> {
     if (!this.state.loading) {
       this.setState({
         ...this.state,
+        edit: false,
         modalVisible: true,
       });
     }
@@ -83,6 +85,15 @@ class Post extends React.Component<Props, State> {
       ...this.state,
       modalVisible: false,
     });
+  };
+  private onEditPress = () => {
+    if (!this.state.loading) {
+      this.setState({
+        ...this.state,
+        edit: true,
+        modalVisible: true,
+      });
+    }
   };
 
   render() {
@@ -96,6 +107,9 @@ class Post extends React.Component<Props, State> {
               <UserAvatar user_id={this.state.owner} />
             )}
             <Text style={nameStyle}>{this.state.name}</Text>
+            <Text style={labelStyle}>
+              {this.props.label ? `~${this.props.label}` : ''}
+            </Text>
           </View>
           <View style={bodyStyle}>
             <Text style={textStyle}>{this.state.text}</Text>
@@ -117,6 +131,8 @@ class Post extends React.Component<Props, State> {
           <InteractionBar
             onCommentPress={this.onCommentPress}
             post_id={this.props.id}
+            onEditPress={this.onEditPress}
+            ownerButtons={this.state.owner === this.props.session_id}
           />
           <Card.Divider />
         </View>
@@ -127,7 +143,9 @@ class Post extends React.Component<Props, State> {
           mediaType={this.state.mediaType}
           name={this.state.name}
           owner={this.state.owner}
+          edit={this.state.edit}
           text={this.state.text}
+          uri={this.state.uri}
         />
       </>
     );
@@ -159,17 +177,17 @@ const imageStyle: ImageStyle = {
   resizeMode: 'contain',
 };
 const videoStyle: ViewStyle = {
-  alignItems: 'center',
-  alignContent: 'center',
-  justifyContent: 'center',
   width: '100%',
   height: 300,
   borderRadius: 15,
   backgroundColor: 'gray',
-  display: 'flex',
-  flex: 1,
   marginTop: 25,
   marginBottom: 25,
+};
+const labelStyle: TextStyle = {
+  color: 'gray',
+  fontStyle: 'italic',
+  marginTop: 15,
 };
 
 export default connector(Post);
