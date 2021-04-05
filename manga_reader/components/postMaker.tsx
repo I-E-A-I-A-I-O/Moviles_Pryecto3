@@ -125,7 +125,6 @@ const PostMaker = (props: Props) => {
         reqURL = '/posts/post';
         method = 'POST';
       }
-      console.log(form);
       await axios.request({
         url: reqURL,
         method: method,
