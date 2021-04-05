@@ -10,6 +10,8 @@ import {UserAuthentication} from './user/user_auth_controller';
 import {DeleteUserDescription} from './user/user_delete_controller';
 import {PostCreation} from './posts/create';
 import {ReadPost} from './posts/read';
+import {PostEdition} from './posts/edit';
+import {PostInteractions} from './posts/interact';
 
 const codeController = new CodeController();
 const userSession = new UserSession();
@@ -23,6 +25,8 @@ const userAuth = new UserAuthentication();
 const deleteUser = new DeleteUserDescription();
 const postCreation = new PostCreation();
 const readPost = new ReadPost();
+const editPost = new PostEdition();
+const postInteractions = new PostInteractions();
 
 export {
   codeController,
@@ -37,4 +41,6 @@ export {
   deleteUser,
   postCreation,
   readPost,
+  editPost,
+  postInteractions,
 };

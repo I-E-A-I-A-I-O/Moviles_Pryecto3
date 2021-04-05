@@ -36,6 +36,7 @@ type State = {
   owner: string;
   modalVisible: boolean;
   edit: boolean;
+  deleted: boolean;
 };
 
 class Post extends React.Component<Props, State> {
@@ -50,6 +51,7 @@ class Post extends React.Component<Props, State> {
       name: '',
       modalVisible: false,
       edit: false,
+      deleted: false,
     };
   }
 
@@ -57,7 +59,6 @@ class Post extends React.Component<Props, State> {
     axios
       .get(`/posts/post/${this.props.id}`)
       .then(response => {
-        console.log(response.data.mediaType);
         this.setState({
           ...this.state,
           owner: response.data.owner,
@@ -95,47 +96,56 @@ class Post extends React.Component<Props, State> {
       });
     }
   };
+  private onDeleted = () => {
+    this.setState({
+      ...this.state,
+      deleted: true,
+    });
+  };
 
   render() {
     return (
       <>
-        <View>
-          <View style={headerStyle}>
-            {this.state.loading ? (
-              <ActivityIndicator color={'lime'} />
-            ) : (
-              <UserAvatar user_id={this.state.owner} />
-            )}
-            <Text style={nameStyle}>{this.state.name}</Text>
-            <Text style={labelStyle}>
-              {this.props.label ? `~${this.props.label}` : ''}
-            </Text>
+        {!this.state.deleted ? (
+          <View>
+            <View style={headerStyle}>
+              {this.state.loading ? (
+                <ActivityIndicator color={'lime'} />
+              ) : (
+                <UserAvatar user_id={this.state.owner} />
+              )}
+              <Text style={nameStyle}>{this.state.name}</Text>
+              <Text style={labelStyle}>
+                {this.props.label ? `~${this.props.label}` : ''}
+              </Text>
+            </View>
+            <View style={bodyStyle}>
+              <Text style={textStyle}>{this.state.text}</Text>
+              {this.state.mediaType === 'image' ? (
+                <Image
+                  style={imageStyle}
+                  source={{
+                    uri: this.state.uri,
+                  }}
+                />
+              ) : this.state.mediaType === 'video' ? (
+                <Video
+                  source={{uri: this.state.uri}}
+                  controls
+                  style={videoStyle}
+                />
+              ) : null}
+            </View>
+            <InteractionBar
+              onCommentPress={this.onCommentPress}
+              post_id={this.props.id}
+              onEditPress={this.onEditPress}
+              ownerButtons={this.state.owner === this.props.session_id}
+              onDeleted={this.onDeleted}
+            />
+            <Card.Divider />
           </View>
-          <View style={bodyStyle}>
-            <Text style={textStyle}>{this.state.text}</Text>
-            {this.state.mediaType === 'image' ? (
-              <Image
-                style={imageStyle}
-                source={{
-                  uri: this.state.uri,
-                }}
-              />
-            ) : this.state.mediaType === 'video' ? (
-              <Video
-                source={{uri: this.state.uri}}
-                controls
-                style={videoStyle}
-              />
-            ) : null}
-          </View>
-          <InteractionBar
-            onCommentPress={this.onCommentPress}
-            post_id={this.props.id}
-            onEditPress={this.onEditPress}
-            ownerButtons={this.state.owner === this.props.session_id}
-          />
-          <Card.Divider />
-        </View>
+        ) : null}
         <ModalPostMaker
           post_id={this.props.id}
           visible={this.state.modalVisible}

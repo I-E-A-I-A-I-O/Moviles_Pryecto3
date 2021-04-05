@@ -465,7 +465,7 @@ export = {
     /**
      * Crea una notificacion de post (Query para ser completado de forma dinamica).
      * Parametros:
-     * 1. Tipo = 'POST' | 'REQUEST' (Deberia ser POST en este caso)
+     * 1. Tipo = 'POST' | 'LIKE' | 'DISLIKE' (Deberia ser POST en este caso)
      * 2. ID del post
      * 3. ID del usuario al que le llega la noitificacion
      */
@@ -473,9 +473,9 @@ export = {
       'INSERT INTO notifications(type, post_link, date, user_id) VALUES',
     /**Crea una notificacion de post.
      * Parametros:
-     * 1. Tipo = 'POST' | 'REQUEST' (Deberia ser POST en este caso)
+     * 1. Tipo = 'POST' | 'LIKE' | 'DISLIKE' (Deberia ser POST en este caso)
      * 2. ID del post
-     * 3. ID del usuario al que le llega la noitificacion
+     * 3. ID del usuario al que le llega la notificacion
      */
     post_noti:
       'INSERT INTO notifications(type, post_link, date, user_id) VALUES($1, $2, NOW(), $3) RETURNING id',
@@ -486,7 +486,7 @@ export = {
     delete: 'DELETE FROM notifications WHERE id = $1',
     /**Crea una notificacion de connect request.
      * Parametros:
-     * 1. Tipo = 'POST' | 'REQUEST' (Deberia ser REQUEST en este caso)
+     * 1. Tipo = 'REQUEST' (Deberia ser REQUEST en este caso)
      * 2. ID del connection request
      * 3. ID del usuario al que le llega la notificacion
      */
@@ -559,6 +559,19 @@ export = {
   /**Querias para el manejo de publicaciones */
   post: {
     /**
+     * Borra un post por ID.
+     * Parametros:
+     * 1. ID del post
+     */
+    delete: 'DELETE FROM posts WHERE post_id = $1',
+    /**
+     * Edita un post.
+     * Parametros:
+     * 1. Texto del post
+     * 2. ID del post
+     */
+    set: 'UPDATE posts SET content = $1 WHERE post_id = $2',
+    /**
      * Retorna los comentarios de un post.
      * Parametros:
      * 1. ID del post
@@ -600,5 +613,65 @@ export = {
      */
     get:
       'SELECT u.name, d.last_name, p.content AS text, p.media, p.date, p.user_id AS owner FROM posts p RIGHT JOIN users u USING(user_id) LEFT JOIN user_description d USING(user_id) WHERE post_id = $1',
+  },
+  /**
+   * Queries relacionados a las interacciones de publicaciones
+   */
+  interactions: {
+    /**
+     * Verifica si un usuario le dio like a cierto post.
+     * Parametros:
+     * 1. ID del post
+     * 2. ID del usuario
+     */
+    liked: 'SELECT like_id FROM post_likes WHERE post_id = $1 AND user_id = $2',
+    /**
+     * Verifica si un usuario le dio dislike a cierto post.
+     * Parametros:
+     * 1. ID del post
+     * 2. ID del usuario
+     */
+    disliked:
+      'SELECT dislike_id FROM post_dislikes WHERE post_id = $1 AND user_id = $2',
+    /**
+     * Añade un like a un post.
+     * Parametros:
+     * 1. ID del usuario
+     * 2. ID del post
+     */
+    like:
+      'INSERT INTO post_likes(user_id, post_id, date) VALUES($1, $2, NOW()) RETURNING like_id',
+    /**
+     * Borra un like de un post.
+     * Parametros:
+     * 1. ID del like
+     */
+    removeLike: 'DELETE FROM post_likes WHERE like_id = $1',
+    /**
+     * Añade un dislike a un post.
+     * Parametros:
+     * 1. ID del usuario
+     * 2. ID del post
+     */
+    dislike:
+      'INSERT INTO post_dislikes(user_id, post_id, date) VALUES($1, $2, NOW()) returning dislike_id',
+    /**
+     * Borra un dislike de un post.
+     * Parametros:
+     * 1. ID del dislike
+     */
+    removeDislike: 'DELETE FROM post_dislikes WHERE dislike_id = $1',
+    /**
+     * Retorna la cantidad de likes de un post.
+     * Parametros:
+     * 1. ID del post
+     */
+    likes: 'SELECT count(like_id) FROM post_likes WHERE post_id = $1',
+    /**
+     * Retorna la cantidad de dislikes de un post.
+     * Parametros:
+     * 1. ID del post
+     */
+    dislikes: 'SELECT count(dislike_id) FROM post_dislikes WHERE post_id = $1',
   },
 };

@@ -11,7 +11,7 @@ import {Input, Icon, Image} from 'react-native-elements';
 import {urlExtractor, IconImgPicker} from '../components';
 import {connect, ConnectedProps} from 'react-redux';
 import {ScrollView} from 'react-native-gesture-handler';
-import axios from 'axios';
+import axios, {Method} from 'axios';
 import Video from 'react-native-video';
 import Toast from 'react-native-toast-message';
 
@@ -34,18 +34,26 @@ type Props = PropsFromRedux & {
 };
 
 const PostMaker = (props: Props) => {
-  const [uriInput, setUriInput] = useState<string | undefined>(props.uri);
-  const [textInput, setTextInput] = useState(props.text ? props.text : '');
-  const [fileSysInput, setFileSysInput] = useState(props.uri ? true : false);
+  const [uriInput, setUriInput] = useState<string | undefined>(
+    props.edit ? props.uri : undefined,
+  );
+  const [textInput, setTextInput] = useState(
+    props.edit ? (props.text ? props.text : '') : '',
+  );
+  const [fileSysInput, setFileSysInput] = useState(
+    props.edit ? (props.uri ? true : false) : false,
+  );
   const [loading, setLoading] = useState(false);
   const [mediaType, setMediaType] = useState<'video' | 'photo'>(
-    props.mediaType ? props.mediaType : 'photo',
+    props.edit ? (props.mediaType ? props.mediaType : 'photo') : 'photo',
   );
   const [fileMime, setFileMime] = useState<string | undefined>(
-    props.uri
-      ? props.mediaType === 'photo'
-        ? 'image/jpeg'
-        : 'video/mp4'
+    props.edit
+      ? props.uri
+        ? props.mediaType === 'photo'
+          ? 'image/jpeg'
+          : 'video/mp4'
+        : undefined
       : undefined,
   );
 
@@ -95,29 +103,45 @@ const PostMaker = (props: Props) => {
     }
     setLoading(true);
     const form = new FormData();
-    form.append('text', textInput);
-    if (uriInput) {
-      form.append('postMedia', {
-        type: fileMime ? fileMime : 'image/jpeg',
-        name: `media.${fileMime ? fileMime?.split('/')[1] : 'jpeg'}`,
-        uri: uriInput,
-      });
-    }
     try {
+      form.append('text', textInput);
+      if (uriInput) {
+        form.append('postMedia', {
+          type: fileMime ? fileMime : 'image/jpeg',
+          name: `media.${fileMime ? fileMime?.split('/')[1] : 'jpeg'}`,
+          uri: uriInput,
+        });
+      }
       let reqURL: string;
+      let method: Method;
       if (props.comment) {
         reqURL = `/posts/post/${props.post_id}/comment`;
+        method = 'POST';
+      } else if (props.edit) {
+        reqURL = `/posts/post/${props.post_id}`;
+        method = 'PUT';
+        form.append('post_id', props.post_id);
       } else {
         reqURL = '/posts/post';
+        method = 'POST';
       }
-      await axios.post(reqURL, form, {
+      console.log(form);
+      await axios.request({
+        url: reqURL,
+        method: method,
         headers: {authorization: props.token},
+        data: form,
       });
       setFileMime(undefined);
       setFileSysInput(false);
       setUriInput(undefined);
       setMediaType('photo');
       setTextInput('');
+      Toast.show({
+        type: 'success',
+        text1: props.edit ? 'Post edited!' : 'Post created!',
+        position: 'bottom',
+      });
     } catch (err) {
       Toast.show({
         text1: 'Error creating the post. Try again later',

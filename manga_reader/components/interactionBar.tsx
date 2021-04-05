@@ -3,6 +3,7 @@ import {View, ViewStyle, TextStyle, Pressable} from 'react-native';
 import {Icon} from 'react-native-elements';
 import {connect, ConnectedProps} from 'react-redux';
 import axios from 'axios';
+import Toast from 'react-native-toast-message';
 
 import type {RootReducerType as CombinedState} from '../store/rootReducer';
 
@@ -17,15 +18,109 @@ type Props = PropsFromRedux & {
   onCommentPress: () => void;
   onEditPress: () => void;
   ownerButtons?: boolean;
+  onDeleted: () => void;
+};
+type InteractionState = {
+  like: 'REMOVE' | 'ADD';
+  dislike: 'REMOVE' | 'ADD';
+  like_id?: string;
+  dislike_id?: string;
 };
 type State = {
   loading: boolean;
+  interaction: InteractionState;
 };
 
 class InteractionBar extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    this.state = {loading: false};
+    this.state = {loading: false, interaction: {dislike: 'ADD', like: 'ADD'}};
+  }
+
+  private deletePost = async () => {
+    if (this.state.loading) {
+      return;
+    }
+    try {
+      this.setState({
+        ...this.state,
+        loading: true,
+      });
+      await axios.delete(`/posts/post/${this.props.post_id}`, {
+        headers: {authorization: this.props.token},
+      });
+      Toast.show({
+        text1: 'Post deleted',
+        type: 'info',
+        position: 'bottom',
+      });
+      this.props.onDeleted();
+    } catch (err) {
+      Toast.show({
+        type: 'error',
+        text1: 'Could not delete the post. Try again later',
+        position: 'bottom',
+      });
+      this.setState({
+        ...this.state,
+        loading: false,
+      });
+    }
+  };
+
+  private getState = async () => {
+    this.setState({
+      ...this.state,
+      loading: true,
+    });
+    try {
+      const response = await axios.get(
+        `/posts/post/${this.props.post_id}/interaction/state`,
+        {
+          headers: {authorization: this.props.token},
+        },
+      );
+      this.setState({
+        ...this.state,
+        interaction: response.data,
+      });
+    } catch (err) {
+    } finally {
+      this.setState({
+        ...this.state,
+        loading: false,
+      });
+    }
+  };
+
+  private interact = async (action: 'like' | 'dislike') => {
+    this.setState({
+      ...this.state,
+      loading: true,
+    });
+    try {
+      const response = await axios.put(
+        `/posts/post/${this.props.post_id}/${action}`,
+        this.state.interaction,
+        {
+          headers: {authorization: this.props.token},
+        },
+      );
+      this.setState({
+        ...this.state,
+        interaction: response.data,
+      });
+    } catch (err) {
+    } finally {
+      this.setState({
+        ...this.state,
+        loading: false,
+      });
+    }
+  };
+
+  componentDidMount() {
+    this.getState();
   }
 
   render() {
@@ -33,10 +128,12 @@ class InteractionBar extends React.Component<Props, State> {
       <View style={viewStyle}>
         {this.props.ownerButtons ? (
           <>
-            <Pressable android_ripple={{color: 'gray', borderless: true}}>
+            <Pressable
+              android_ripple={{color: 'gray', borderless: true}}
+              onPress={this.deletePost}>
               <Icon
                 style={iconStyle}
-                color={'red'}
+                color={this.state.loading ? 'gray' : 'red'}
                 name={'trash'}
                 type={'font-awesome-5'}
               />
@@ -53,15 +150,39 @@ class InteractionBar extends React.Component<Props, State> {
           onPress={this.props.onCommentPress}>
           <Icon style={iconStyle} name={'comment'} type={'font-awesome-5'} />
         </Pressable>
-        <Pressable android_ripple={{color: 'gray', borderless: true}}>
+        <Pressable
+          android_ripple={{color: 'gray', borderless: true}}
+          onPress={() => this.interact('dislike')}>
           <Icon
             style={iconStyle}
             name={'thumbs-down'}
             type={'font-awesome-5'}
+            color={
+              this.state.loading
+                ? 'gray'
+                : this.state.interaction.dislike === 'ADD'
+                ? 'black'
+                : 'red'
+            }
+            solid={this.state.interaction.dislike === 'REMOVE'}
           />
         </Pressable>
-        <Pressable android_ripple={{color: 'gray', borderless: true}}>
-          <Icon style={iconStyle} name={'thumbs-up'} type={'font-awesome-5'} />
+        <Pressable
+          android_ripple={{color: 'gray', borderless: true}}
+          onPress={() => this.interact('like')}>
+          <Icon
+            style={iconStyle}
+            name={'thumbs-up'}
+            type={'font-awesome-5'}
+            color={
+              this.state.loading
+                ? 'gray'
+                : this.state.interaction.like === 'ADD'
+                ? 'black'
+                : 'lime'
+            }
+            solid={this.state.interaction.like === 'REMOVE'}
+          />
         </Pressable>
       </View>
     );
