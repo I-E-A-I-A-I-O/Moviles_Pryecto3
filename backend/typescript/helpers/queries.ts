@@ -386,6 +386,33 @@ export = {
   },
   /**Queries relacionados a la barra de busqueda */
   search: {
+    /**
+     * Retorna todos los posts del usuario.
+     * Parametros:
+     * 1. ID del usuario
+     */
+    postsAll: 'SELECT post_id AS id FROM posts WHERE user_id = $1',
+    /**
+     * Retorna posts por coincidencia de caracteres.
+     * Parametros:
+     * 1. Busqueda
+     */
+    postsMatch: "SELECT post_id AS id FROM posts WHERE content ILIKE $1 || '%'",
+    /**
+     * Retorna posts de usuarios conectados.
+     * Parametros:
+     * 1. ID del usuario
+     */
+    postsConnected:
+      'SELECT p.post_id AS id FROM posts p RIGHT JOIN connects c ON c.connected_id = p.user_id WHERE c.connector_id = $1',
+    /**
+     * Retorna psots de usuarios conectados por coincidencia de caracteres.
+     * Parametros:
+     * 1. ID del usuario
+     * 2. Busqueda
+     */
+    postsConnectedMatch:
+      "SELECT p.post_id AS id FROM posts p RIGHT JOIN connects c ON c.connected_id = p.user_id WHERE c.connector_id = $1 AND p.content ILIKE $2 || '%'",
     /**Retorna una lista de usuarios cuyo nombre sea similar a la busqueda realizada.
      * Parametros:
      * 1. String proveniente de la barra de busqueda
@@ -471,7 +498,7 @@ export = {
      * 1. ID del usuario
      */
     getNotis:
-      'SELECT n.id, n.type, n.request_link AS rlink, n.post_link AS plink, p.user_id AS poster_profile, cr.request_owner AS profile_id, p.post_id FROM notifications n FULL JOIN connection_requests cr ON cr.id = n.request_link FULL JOIN posts p ON p.post_id = n.request_link WHERE n.user_id = $1',
+      'SELECT n.id, n.type, n.request_link AS rlink, n.post_link AS plink, p.user_id AS poster_profile, cr.request_owner AS profile_id, p.post_id FROM notifications n FULL JOIN connection_requests cr ON cr.id = n.request_link FULL JOIN posts p ON p.post_id = n.post_link WHERE n.user_id = $1',
   },
   /**Queries para el manejo de connects de usuarios */
   connects: {
@@ -531,6 +558,20 @@ export = {
   },
   /**Querias para el manejo de publicaciones */
   post: {
+    /**
+     * Retorna la ID del usuario que creo el post.
+     * Parametros:
+     * 1. ID del post
+     */
+    owner: 'SELECT user_id AS id FROM posts WHERE post_id = $1',
+    /**
+     * Crea un nuevo comentario.
+     * Parametros:
+     * 1. La ID del post que conforma el comentario
+     * 2. La ID del post que se esta comentando
+     */
+    createComment:
+      'INSERT INTO post_comments(reference_post, comment_to) VALUES($1, $2)',
     /**Crea una publicacion.
      * Parametros:
      * 1. ID del usuario
@@ -545,5 +586,12 @@ export = {
      * 2. Path del archivo
      */
     setMedia: 'UPDATE posts SET media = $1 WHERE post_id = $2',
+    /**
+     * Retorna la data de un post por ID.
+     * Parametros:
+     * 1. ID del post
+     */
+    get:
+      'SELECT u.name, d.last_name, p.content AS text, p.media, p.date, p.user_id AS owner FROM posts p RIGHT JOIN users u USING(user_id) LEFT JOIN user_description d USING(user_id) WHERE post_id = $1',
   },
 };

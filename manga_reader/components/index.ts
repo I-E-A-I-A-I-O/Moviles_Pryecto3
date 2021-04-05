@@ -15,6 +15,9 @@ import NotificationsSkeleton from './NotificationsSkeleton';
 import PostMaker from './postMaker';
 import URLExtractor from './URLExtractor';
 import IconImgPicker from './iconImgPicker';
+import Post from './post';
+import InteractionBar from './interactionBar';
+import ModalPostMaker from './modalPostMaker';
 
 const dateFunctions = new DateFunctions();
 const urlExtractor = new URLExtractor();
@@ -37,4 +40,7 @@ export {
   urlExtractor,
   NotificationsSkeleton,
   IconImgPicker,
+  Post,
+  InteractionBar,
+  ModalPostMaker,
 };

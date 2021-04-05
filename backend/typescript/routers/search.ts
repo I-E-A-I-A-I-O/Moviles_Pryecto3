@@ -7,5 +7,13 @@ export const router = express.Router({
 });
 
 router.get('/people/:scope/:search', (req: Request, res: Response) => {
-  searchResults.search(req, res, 'people');
+  searchResults.searchPeople(req, res);
+});
+
+router.get('/posts/:scope/', (req: Request, res: Response) => {
+  searchResults.searchPosts(req, res);
+});
+
+router.get('/posts/:scope/:search', (req: Request, res: Response) => {
+  searchResults.searchPostsMatch(req, res);
 });

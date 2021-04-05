@@ -16,7 +16,7 @@ import {
 } from '../../custom_types/navigation_types';
 import {CompositeNavigationProp} from '@react-navigation/native';
 import {connect, ConnectedProps} from 'react-redux';
-import {ModalDropdown, UserAvatar, UserBadge} from '../../components';
+import {ModalDropdown, Post, UserAvatar, UserBadge} from '../../components';
 
 import type {RootReducerType as CombinedState} from '../../store/rootReducer';
 import type {SearchBarFilters} from '../../custom_types/state_types';
@@ -80,6 +80,9 @@ class Dashboard extends React.Component<Props, State> {
   }
 
   private search = async () => {
+    if (this.state.search.length === 0 && this.state.searchOption !== 'posts') {
+      return;
+    }
     try {
       const response = await axios.get(
         `/list/${this.state.searchOption}/${this.state.scope}/${this.state.search}`,
@@ -119,6 +122,9 @@ class Dashboard extends React.Component<Props, State> {
             }
           />
         );
+      }
+      case 'posts': {
+        return <Post id={item.item.id} />;
       }
       default: {
         return <></>;

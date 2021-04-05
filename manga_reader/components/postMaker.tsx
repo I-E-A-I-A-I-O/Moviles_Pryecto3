@@ -25,6 +25,8 @@ const connector = connect(mapStateToProps, {});
 type PropsFromRedux = ConnectedProps<typeof connector>;
 type Props = PropsFromRedux & {
   style?: ViewStyle;
+  comment?: boolean;
+  post_id?: string;
 };
 
 const PostMaker = (props: Props) => {
@@ -90,7 +92,13 @@ const PostMaker = (props: Props) => {
       });
     }
     try {
-      await axios.post('/posts/post', form, {
+      let reqURL: string;
+      if (props.comment) {
+        reqURL = `/posts/post/${props.post_id}/comment`;
+      } else {
+        reqURL = '/posts/post';
+      }
+      await axios.post(reqURL, form, {
         headers: {authorization: props.token},
       });
       setFileMime(undefined);
