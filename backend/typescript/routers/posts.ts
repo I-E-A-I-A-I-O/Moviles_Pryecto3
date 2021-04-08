@@ -49,3 +49,7 @@ router.put('/post/:id/dislike', (req: Request, res: Response) => {
 router.get('/post/:id/interactions/count', (req: Request, res: Response) => {
   readPost.interactionCount(req, res);
 });
+
+router.get('/post/:id/media', (req: Request, res: Response) => {
+  readPost.postMedia(req, res);
+});

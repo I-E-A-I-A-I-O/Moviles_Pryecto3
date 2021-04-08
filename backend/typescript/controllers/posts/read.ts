@@ -33,26 +33,11 @@ export class ReadPost {
         res.sendStatus(404);
         return;
       }
-      let resBody: ResBody = {
-        owner: '',
-        text: '',
-        name: '',
-      };
-      resBody.text = results.rows[0].text;
-      resBody.owner = results.rows[0].owner;
-      resBody.name = `${results.rows[0].name} ${
-        results.rows[0].last_name ?? ''
-      }`;
-      if (results.rows[0].media) {
-        const path: string = results.rows[0].media;
-        const base64String = await fse.readFile(path, {encoding: 'base64'});
-        const extension = path.split('.')[1];
-        const mimeType = `${this.getType(extension)}/${extension}`;
-        const data = `data:${mimeType};base64,${base64String}`;
-        resBody.mediaType = this.getType(extension);
-        resBody.uri = data;
-      }
-      res.status(206).json(resBody);
+      res.status(200).json({
+        text: results.rows[0].text,
+        owner: results.rows[0].owner,
+        name: `${results.rows[0].name} ${results.rows[0].last_name ?? ''}`,
+      });
     } catch (err) {
       console.error(err);
       res.sendStatus(500);
@@ -67,6 +52,60 @@ export class ReadPost {
     try {
       const response = await client.query(queries.post.getComments, [id]);
       res.status(200).json({content: response.rows});
+    } catch (err) {
+      console.error(err);
+      res.sendStatus(500);
+    } finally {
+      client.release(true);
+    }
+  }
+
+  public async postMedia(req: Request, res: Response) {
+    const {id} = req.params;
+    const client = await dbController.getClient();
+    try {
+      const results = await client.query(queries.post.getMedia, [id]);
+      if (results.rowCount === 0) {
+        return res.sendStatus(404);
+      }
+      const path: string = results.rows[0].media;
+      const extension = path.split('.')[1];
+      const mimeType = `${this.getType(extension)}/${extension}`;
+      fse.stat(path, (err, stats) => {
+        if (err) {
+          if (err.code === 'ENOENT') {
+            return res.sendStatus(404);
+          }
+          return res.sendStatus(500);
+        }
+        let range = req.headers.range;
+        if (!range) {
+          return res.sendStatus(416);
+        }
+        let positions = range.replace(/bytes=/, '').split('-');
+        let start = parseInt(positions[0], 10);
+        let file_size = stats.size;
+        let end = positions[1] ? parseInt(positions[1], 10) : file_size - 1;
+        let chunk_size = start - end + 1;
+        if (start > end) {
+          return res.sendStatus(416);
+        }
+        let head = {
+          'Content-Range': `bytes ${start}-${end}/${file_size}`,
+          'Accept-Ranges': 'bytes',
+          'Content-Length': chunk_size,
+          'Content-Type': mimeType,
+        };
+        res.writeHead(206, undefined, head);
+        let stream = fse.createReadStream(path, {start: start, end: end});
+        stream.on('open', () => {
+          stream.pipe(res);
+        });
+        stream.on('error', error => {
+          console.error(error);
+          return res.sendStatus(500);
+        });
+      });
     } catch (err) {
       console.error(err);
       res.sendStatus(500);

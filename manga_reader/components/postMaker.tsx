@@ -28,34 +28,18 @@ type Props = PropsFromRedux & {
   comment?: boolean;
   post_id?: string;
   text?: string;
-  uri?: string;
-  mediaType?: 'video' | 'photo';
   edit?: boolean;
 };
 
 const PostMaker = (props: Props) => {
-  const [uriInput, setUriInput] = useState<string | undefined>(
-    props.edit ? props.uri : undefined,
-  );
+  const [uriInput, setUriInput] = useState<string | undefined>();
   const [textInput, setTextInput] = useState(
     props.edit ? (props.text ? props.text : '') : '',
   );
-  const [fileSysInput, setFileSysInput] = useState(
-    props.edit ? (props.uri ? true : false) : false,
-  );
+  const [fileSysInput, setFileSysInput] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [mediaType, setMediaType] = useState<'video' | 'photo'>(
-    props.edit ? (props.mediaType ? props.mediaType : 'photo') : 'photo',
-  );
-  const [fileMime, setFileMime] = useState<string | undefined>(
-    props.edit
-      ? props.uri
-        ? props.mediaType === 'photo'
-          ? 'image/jpeg'
-          : 'video/mp4'
-        : undefined
-      : undefined,
-  );
+  const [mediaType, setMediaType] = useState<'video' | 'photo'>('photo');
+  const [fileMime, setFileMime] = useState<string | undefined>();
 
   const setURLImg = () => {
     if (!fileSysInput && !loading) {
@@ -208,10 +192,15 @@ const PostMaker = (props: Props) => {
           style={imageStyle}
           source={{
             uri: uriInput,
+            headers: {Range: 'bytes=0-'},
           }}
         />
       ) : (
-        <Video source={{uri: uriInput}} controls style={videoStyle} />
+        <Video
+          source={{uri: uriInput, headers: {Range: 'bytes=0-'}}}
+          controls
+          style={videoStyle}
+        />
       )}
     </ScrollView>
   );

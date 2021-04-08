@@ -612,7 +612,13 @@ export = {
      * 1. ID del post
      */
     get:
-      'SELECT u.name, d.last_name, p.content AS text, p.media, p.date, p.user_id AS owner FROM posts p RIGHT JOIN users u USING(user_id) LEFT JOIN user_description d USING(user_id) WHERE post_id = $1',
+      'SELECT u.name, d.last_name, p.content AS text, p.date, p.user_id AS owner FROM posts p RIGHT JOIN users u USING(user_id) LEFT JOIN user_description d USING(user_id) WHERE post_id = $1',
+    /**
+     * Selecciona el path al archivo multimedia vinculado al post.
+     * Parametros:
+     * 1. ID del post
+     */
+    getMedia: 'SELECT media FROM posts WHERE post_id = $1',
   },
   /**
    * Queries relacionados a las interacciones de publicaciones

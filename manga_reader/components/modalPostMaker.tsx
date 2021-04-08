@@ -19,9 +19,7 @@ type Props = PropsFromRedux & {
   name?: string;
   owner?: string;
   text?: string;
-  mediaType?: 'video' | 'image';
   edit?: boolean;
-  uri?: string;
   onRequestClose: () => void;
 };
 type State = {};
@@ -39,11 +37,9 @@ class ModalPostMaker extends React.Component<Props, State> {
         animationType={'slide'}>
         {!this.props.edit ? (
           <>
-            <Text style={textStyle}>{`Comment in ${this.props.name}'s ${
-              this.props.text?.length === 0
-                ? this.props.mediaType ?? 'post'
-                : 'post'
-            }`}</Text>
+            <Text style={textStyle}>{`Comment in ${
+              this.props.name
+            }'s ${'post'}`}</Text>
             {this.props.owner ? (
               <View style={headerStyle}>
                 <UserAvatar user_id={this.props.owner} />
@@ -59,14 +55,7 @@ class ModalPostMaker extends React.Component<Props, State> {
           comment={!this.props.edit}
           post_id={this.props.post_id}
           text={this.props.text}
-          uri={this.props.uri}
-          mediaType={
-            this.props.mediaType
-              ? this.props.mediaType === 'video'
-                ? this.props.mediaType
-                : 'photo'
-              : undefined
-          }
+          uri={`http://192.168.0.101:8000/posts/post/${this.props.post_id}/media`}
         />
       </Modal>
     );

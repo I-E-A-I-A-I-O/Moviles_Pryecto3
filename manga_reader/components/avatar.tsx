@@ -1,4 +1,3 @@
-import axios from 'axios';
 import React from 'react';
 import {ViewStyle} from 'react-native';
 import {Avatar} from 'react-native-elements';
@@ -9,39 +8,17 @@ type Props = {
   size?: 'small' | 'large' | 'medium' | 'xlarge';
 };
 
-type State = {
-  imgUri: string;
-};
-
-class UserAvatar extends React.Component<Props, State> {
+class UserAvatar extends React.Component<Props> {
   constructor(props: Props) {
     super(props);
-    this.state = {
-      imgUri:
-        'https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png',
-    };
-  }
-
-  async componentDidMount() {
-    try {
-      await axios
-        .get(`/users/user/${this.props.user_id}/avatar`)
-        .then(response => {
-          this.setState({
-            ...this.state,
-            imgUri: response.data,
-          });
-        });
-    } catch (err) {
-      console.log(err);
-    }
   }
 
   render() {
     return (
       <Avatar
         source={{
-          uri: this.state.imgUri,
+          uri: `http://192.168.0.101:8000/users/user/${this.props.user_id}/avatar`,
+          headers: {Range: 'bytes=0-'},
         }}
         rounded
         size={this.props.size ?? 'medium'}

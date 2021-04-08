@@ -5,11 +5,13 @@ import {
   ViewStyle,
   TextStyle,
   ActivityIndicator,
+  NativeSyntheticEvent,
+  ImageErrorEventData,
 } from 'react-native';
 import {Image, Text, Card} from 'react-native-elements';
 import {connect, ConnectedProps} from 'react-redux';
 import axios from 'axios';
-import Video from 'react-native-video';
+import Video, {LoadError} from 'react-native-video';
 import {UserAvatar, InteractionBar, ModalPostMaker} from '../components';
 
 import type {RootReducerType as CombinedState} from '../store/rootReducer';
@@ -31,12 +33,12 @@ type State = {
   loading: boolean;
   text: string;
   name: string;
-  uri: string | undefined;
-  mediaType: 'image' | 'video' | undefined;
   owner: string;
   modalVisible: boolean;
   edit: boolean;
   deleted: boolean;
+  image: boolean;
+  video: boolean;
 };
 
 class Post extends React.Component<Props, State> {
@@ -45,13 +47,13 @@ class Post extends React.Component<Props, State> {
     this.state = {
       loading: true,
       text: '',
-      uri: undefined,
       owner: '',
-      mediaType: 'image',
       name: '',
       modalVisible: false,
       edit: false,
       deleted: false,
+      image: true,
+      video: false,
     };
     this.onCloseModal.bind(this);
     this.onCommentPress.bind(this);
@@ -67,8 +69,6 @@ class Post extends React.Component<Props, State> {
           ...this.state,
           owner: response.data.owner,
           text: response.data.text,
-          mediaType: response.data.mediaType,
-          uri: response.data.uri,
           name: response.data.name,
           loading: false,
         });
@@ -106,6 +106,21 @@ class Post extends React.Component<Props, State> {
       deleted: true,
     });
   }
+  private async onImageErr(err: NativeSyntheticEvent<ImageErrorEventData>) {
+    err.stopPropagation();
+    this.setState({
+      ...this.state,
+      image: false,
+      video: true,
+    });
+  }
+  private async onVideoErr(err: LoadError) {
+    console.error(err.error.errorString);
+    this.setState({
+      ...this.state,
+      video: false,
+    });
+  }
 
   render() {
     return (
@@ -125,16 +140,23 @@ class Post extends React.Component<Props, State> {
             </View>
             <View style={bodyStyle}>
               <Text style={textStyle}>{this.state.text}</Text>
-              {this.state.mediaType === 'image' ? (
+              {this.state.image ? (
                 <Image
+                  onError={this.onImageErr.bind(this)}
                   style={imageStyle}
                   source={{
-                    uri: this.state.uri,
+                    uri: `http://192.168.0.101:8000/posts/post/${this.props.id}/media`,
+                    headers: {Range: 'bytes=0-'},
                   }}
                 />
-              ) : this.state.mediaType === 'video' ? (
+              ) : null}
+              {this.state.video ? (
                 <Video
-                  source={{uri: this.state.uri}}
+                  onError={this.onVideoErr.bind(this)}
+                  source={{
+                    uri: `http://192.168.0.101:8000/posts/post/${this.props.id}/media`,
+                    headers: {Range: 'bytes=0-'},
+                  }}
                   controls
                   style={videoStyle}
                 />
@@ -154,12 +176,10 @@ class Post extends React.Component<Props, State> {
           post_id={this.props.id}
           visible={this.state.modalVisible}
           onRequestClose={this.onCloseModal.bind(this)}
-          mediaType={this.state.mediaType}
           name={this.state.name}
           owner={this.state.owner}
           edit={this.state.edit}
           text={this.state.text}
-          uri={this.state.uri}
         />
       </>
     );
