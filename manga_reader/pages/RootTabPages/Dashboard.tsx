@@ -6,6 +6,8 @@ import {
   ViewStyle,
   VirtualizedList,
   ListRenderItemInfo,
+  RefreshControl,
+  ActivityIndicator,
 } from 'react-native';
 import {Input, Icon, Card} from 'react-native-elements';
 import {StackNavigationProp} from '@react-navigation/stack';
@@ -16,7 +18,7 @@ import {
 } from '../../custom_types/navigation_types';
 import {CompositeNavigationProp} from '@react-navigation/native';
 import {connect, ConnectedProps} from 'react-redux';
-import {ModalDropdown, UserAvatar, UserBadge} from '../../components';
+import {ModalDropdown, Post, UserAvatar, UserBadge} from '../../components';
 
 import type {RootReducerType as CombinedState} from '../../store/rootReducer';
 import type {SearchBarFilters} from '../../custom_types/state_types';
@@ -46,14 +48,14 @@ type Props = PropsFromRedux & {
 
 const options: SearchBarFilters = {
   searchOptions: [
+    {label: 'Posts', value: 'posts'},
     {label: 'People', value: 'people'},
     {label: 'Jobs', value: 'jobs'},
-    {label: 'Posts', value: 'posts'},
     {label: 'Organizations', value: 'organizations'},
   ],
   scope: [
-    {label: 'Global', value: 'global'},
     {label: 'Connections', value: 'connections'},
+    {label: 'Global', value: 'global'},
   ],
 };
 
@@ -66,21 +68,39 @@ type State = {
   scope: string;
   data: ListData[];
   search: string;
+  loading: boolean;
 };
 
 class Dashboard extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      scope: 'global',
-      searchOption: 'people',
+      scope: 'connections',
+      searchOption: 'posts',
       data: [],
       search: '',
+      loading: false,
     };
   }
 
   private search = async () => {
+    if (
+      this.state.search.length === 0 &&
+      (this.state.searchOption === 'people' ||
+        this.state.searchOption === 'organization')
+    ) {
+      Toast.show({
+        text1: 'Searchbar is empty!',
+        type: 'error',
+        position: 'bottom',
+      });
+      return;
+    }
     try {
+      this.setState({
+        ...this.state,
+        loading: true,
+      });
       const response = await axios.get(
         `/list/${this.state.searchOption}/${this.state.scope}/${this.state.search}`,
         {
@@ -97,6 +117,11 @@ class Dashboard extends React.Component<Props, State> {
         type: 'error',
         text1: err.response.data.content,
         position: 'bottom',
+      });
+    } finally {
+      this.setState({
+        ...this.state,
+        loading: false,
       });
     }
   };
@@ -120,21 +145,22 @@ class Dashboard extends React.Component<Props, State> {
           />
         );
       }
+      case 'posts': {
+        return (
+          <Pressable
+            android_ripple={{color: 'gray'}}
+            onPress={() =>
+              this.props.navigation.navigate('PostThread', {
+                post_id: item.item.id,
+              })
+            }>
+            <Post id={item.item.id} />
+          </Pressable>
+        );
+      }
       default: {
         return <></>;
       }
-    }
-  };
-
-  private closeSession = async () => {
-    try {
-      await axios.delete('/users/user/auth', {
-        headers: {authorization: this.props.state.token},
-      });
-    } catch (err) {
-      console.error(err);
-    } finally {
-      this.props.reduxLogout();
     }
   };
 
@@ -145,6 +171,12 @@ class Dashboard extends React.Component<Props, State> {
         getItem={(data, index) => this.state.data[index]}
         getItemCount={() => this.state.data.length}
         renderItem={this.renderItem}
+        refreshControl={
+          <RefreshControl
+            refreshing={this.state.loading}
+            onRefresh={this.search}
+          />
+        }
         ListHeaderComponent={
           <View>
             <Input
@@ -164,8 +196,7 @@ class Dashboard extends React.Component<Props, State> {
                       deviceUser: true,
                       user_id: this.props.state.id,
                     })
-                  }
-                  onLongPress={this.closeSession}>
+                  }>
                   <UserAvatar
                     size={'medium'}
                     user_id={this.props.state.id}
@@ -174,14 +205,20 @@ class Dashboard extends React.Component<Props, State> {
                 </Pressable>
               }
               rightIcon={
-                <Pressable
-                  android_ripple={{
-                    color: 'gray',
-                    borderless: true,
-                  }}
-                  onPress={this.search}>
-                  <Icon type={'font-awesome-5'} name={'search'} />
-                </Pressable>
+                <>
+                  {this.state.loading ? (
+                    <ActivityIndicator color={'lime'} />
+                  ) : (
+                    <Pressable
+                      android_ripple={{
+                        color: 'gray',
+                        borderless: true,
+                      }}
+                      onPress={this.search}>
+                      <Icon type={'font-awesome-5'} name={'search'} />
+                    </Pressable>
+                  )}
+                </>
               }
             />
             <View style={buttonStyle[1]}>

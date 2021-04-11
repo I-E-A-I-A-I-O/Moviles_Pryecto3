@@ -9,6 +9,7 @@ import EditProject from '../pages/ModalStackPages/EditProject';
 import EditEducation from '../pages/ModalStackPages/EditEducation';
 import ProfileModal from '../pages/ModalStackPages/ProfileModal';
 import DrawerNavigator from './DrawerNavigator';
+import PostThread from '../pages/ModalStackPages/PostThread';
 
 const Stack = createStackNavigator<ModalStackParamList>();
 
@@ -58,6 +59,11 @@ const ModalStack = () => {
         name={'EducationEdition'}
         options={{title: 'Education'}}
         component={EditEducation}
+      />
+      <Stack.Screen
+        name={'PostThread'}
+        options={{title: 'Comments'}}
+        component={PostThread}
       />
     </Stack.Navigator>
   );

@@ -48,7 +48,7 @@ type Props = PropsFromRedux & {
 
 type Notification = {
   id: string;
-  type: string;
+  type: 'REQUEST' | 'POST' | 'LIKE' | 'DISLIKE';
   rlink?: string;
   plink?: string;
   profile_id?: string;
@@ -131,7 +131,18 @@ class NotificationsPage extends React.Component<Props, State> {
       ) : (
         <UserBadge
           id={item.item.poster_profile ?? ''}
-          description={'Made a new post. Go check it out!'}
+          description={
+            item.item.type === 'POST'
+              ? 'Made a new post. Go check it out!'
+              : item.item.type === 'LIKE'
+              ? 'You get a like on your post!'
+              : 'You got a dislike on your post :('
+          }
+          onPress={() =>
+            this.props.navigation.navigate('PostThread', {
+              post_id: item.item.plink ?? '',
+            })
+          }
         />
       )}
     </>

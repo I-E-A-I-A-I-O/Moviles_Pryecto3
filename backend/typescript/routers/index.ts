@@ -6,6 +6,7 @@ import {router as userAuthRouter} from './user/user_auth';
 import {router as userDeleteRouter} from './user/user_delete';
 import {router as userReadRouter} from './user/user_read';
 import {router as userUpdateRouter} from './user/user_update';
+import {router as postsRouter} from './posts';
 
 export {
   codeRouter,
@@ -16,4 +17,5 @@ export {
   userDeleteRouter,
   userReadRouter,
   userUpdateRouter,
+  postsRouter,
 };

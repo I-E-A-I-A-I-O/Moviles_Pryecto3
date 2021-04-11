@@ -21,6 +21,7 @@
     "@react-navigation/native": "^5.9.3",
     "@react-navigation/stack": "^5.14.3",
     "axios": "^0.21.1",
+    "get-urls": "^10.0.0",
     "react": "17.0.1",
     "react-native": "0.64.0",
     "react-native-action-sheet": "^2.2.0",
@@ -36,9 +37,11 @@
     "react-native-skeleton-placeholder": "^3.0.4",
     "react-native-toast-message": "^1.4.9",
     "react-native-vector-icons": "^8.1.0",
+    "react-native-video": "^5.1.1",
     "react-redux": "^7.2.3",
     "redux": "^4.0.5",
-    "redux-persist": "^6.0.0"
+    "redux-persist": "^6.0.0",
+    "url-regex": "^5.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
@@ -49,6 +52,7 @@
     "@types/react-native": "^0.63.51",
     "@types/react-native-phone-input": "^0.2.1",
     "@types/react-native-share": "^3.3.1",
+    "@types/react-native-video": "^5.0.4",
     "@types/react-test-renderer": "^16.9.2",
     "babel-jest": "^26.6.3",
     "eslint": "^7.14.0",

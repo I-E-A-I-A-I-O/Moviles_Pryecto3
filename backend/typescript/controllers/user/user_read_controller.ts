@@ -110,11 +110,44 @@ export class ReadUserDescription {
       const results = await client.query(queries.getUser.avatar, [id]);
       if (results.rowCount > 0) {
         const path: string = results.rows[0].avatar;
-        const base64String = await fse.readFile(path, {encoding: 'base64'});
         const type = path.split('.')[1];
         const mimeType = `image/${type}`;
-        const data = `data:${mimeType};base64,${base64String}`;
-        res.status(200).send(data);
+        fse.stat(path, (err, stats) => {
+          if (err) {
+            if (err.code === 'ENOENT') {
+              return res.sendStatus(404);
+            }
+            return res.sendStatus(500);
+          }
+          let range = req.headers.range;
+          if (!range) {
+            return res.sendStatus(416);
+          }
+          let positions = range.replace(/bytes=/, '').split('-');
+          let start = parseInt(positions[0], 10);
+          let file_size = stats.size;
+          let end = positions[1] ? parseInt(positions[1], 10) : file_size - 1;
+          let chunk_size = start - end + 1;
+          let head = {
+            'Content-Range': `bytes ${start}-${end}/${file_size}`,
+            'Accept-Ranges': 'bytes',
+            'Content-Length': chunk_size,
+            'Content-Type': mimeType,
+          };
+          res.writeHead(206, undefined, head);
+          let stream_position = {
+            start: start,
+            end: end,
+          };
+          let stream = fse.createReadStream(path, stream_position);
+          stream.on('open', () => {
+            stream.pipe(res);
+          });
+          stream.on('error', error => {
+            console.log(error);
+            return res.sendStatus(500);
+          });
+        });
       } else {
         res.sendStatus(404);
       }

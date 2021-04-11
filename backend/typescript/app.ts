@@ -16,6 +16,7 @@ import {
   codeRouter,
   searchBarRouter,
   connectsRouter,
+  postsRouter,
 } from './routers';
 
 const serviceAccount: ServiceAccount = {
@@ -38,7 +39,7 @@ app.use(express.json());
 app.use(
   form.fields([
     {name: 'avatar', maxCount: 1},
-    {name: 'post_media', maxCount: 1},
+    {name: 'postMedia', maxCount: 1},
   ])
 );
 
@@ -46,11 +47,12 @@ app.use('/notifications', notificationRoutes);
 app.use('/users', userAuthRouter);
 app.use('/users', userCreateRouter);
 app.use('/users', userDeleteRouter);
-app.use('/users', userReadRouter)
-app.use('/users', userUpdateRouter);;
+app.use('/users', userReadRouter);
+app.use('/users', userUpdateRouter);
 app.use('/verification-codes', codeRouter);
 app.use('/list', searchBarRouter);
 app.use('/connects', connectsRouter);
+app.use('/posts', postsRouter);
 
 app.listen(port, () => {
   console.info(`Server running at port ${port}`);
