@@ -17,7 +17,7 @@ class UserAvatar extends React.Component<Props> {
     return (
       <Avatar
         source={{
-          uri: `http://192.168.0.101:8000/users/user/${this.props.user_id}/avatar`,
+          uri: `https://mobile-comic-reader.herokuapp.com/users/user/${this.props.user_id}/avatar`,
           headers: {Range: 'bytes=0-'},
         }}
         rounded

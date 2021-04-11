@@ -145,7 +145,7 @@ class Post extends React.Component<Props, State> {
                   onError={this.onImageErr.bind(this)}
                   style={imageStyle}
                   source={{
-                    uri: `http://192.168.0.101:8000/posts/post/${this.props.id}/media`,
+                    uri: `https://mobile-comic-reader.herokuapp.com/posts/post/${this.props.id}/media`,
                     headers: {Range: 'bytes=0-'},
                   }}
                 />
@@ -154,7 +154,7 @@ class Post extends React.Component<Props, State> {
                 <Video
                   onError={this.onVideoErr.bind(this)}
                   source={{
-                    uri: `http://192.168.0.101:8000/posts/post/${this.props.id}/media`,
+                    uri: `https://mobile-comic-reader.herokuapp.com/posts/post/${this.props.id}/media`,
                     headers: {Range: 'bytes=0-'},
                   }}
                   controls

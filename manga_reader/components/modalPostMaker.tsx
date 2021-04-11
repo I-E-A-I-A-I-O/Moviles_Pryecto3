@@ -55,7 +55,7 @@ class ModalPostMaker extends React.Component<Props, State> {
           comment={!this.props.edit}
           post_id={this.props.post_id}
           text={this.props.text}
-          uri={`http://192.168.0.101:8000/posts/post/${this.props.post_id}/media`}
+          uri={`https://mobile-comic-reader.herokuapp.com/posts/post/${this.props.post_id}/media`}
         />
       </Modal>
     );

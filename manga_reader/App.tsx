@@ -21,7 +21,7 @@ import RootStackNav from './navigators/RootStackNavigator';
 
 enableScreens();
 
-Axios.defaults.baseURL = 'http://192.168.0.101:8000';
+Axios.defaults.baseURL = 'https://mobile-comic-reader.herokuapp.com';
 
 const App = () => {
   return (
