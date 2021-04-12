@@ -19,9 +19,9 @@ const pageToPost = (props: Props) => {
         <UserAvatar 
           user_id={props.state.id}
           size={'large'}
-          style={{left: 25, top: 30}}
+          style={{left: 17, top: 30}}
         />
-        <Text style={{fontSize: 30, top: -28 ,left: 130}} >{props.state.name}</Text>
+        <Text style={{fontSize: 30, top: -28 ,left: 110}} >{props.state.name}</Text>
       </View>
       <View style={style}>
         <PostMaker />
