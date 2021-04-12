@@ -9,6 +9,7 @@ import type {RootReducerType as CombinedState} from '../store/rootReducer';
 const mapStateToProps = (state: CombinedState) => ({
   token: state.session.token,
   session_id: state.session.id,
+  state: state.session
 });
 const connector = connect(mapStateToProps, {});
 
@@ -50,6 +51,14 @@ class ModalPostMaker extends React.Component<Props, State> {
             </View>
           </>
         ) : null}
+        <View>
+        <UserAvatar 
+          user_id={this.props.state.id}
+          size={'large'}
+          style={{left: 17, top: 30}}
+        />
+        <Text style={{fontSize: 30, top: -28 ,left: 110}} >{this.props.state.name}</Text>
+      </View>
         <PostMaker
           edit={this.props.edit}
           comment={!this.props.edit}
