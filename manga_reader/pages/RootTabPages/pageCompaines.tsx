@@ -1,8 +1,9 @@
-import React, {useState} from 'react';
-import {ScrollView,Pressable, View,TextStyle, ViewStyle, Alert} from 'react-native'
+import React from 'react';
+import {ScrollView,TextStyle, ViewStyle} from 'react-native'
 import {Text, Input, Button, Card} from 'react-native-elements';
 import type {RootReducerType as CombinedState} from '../../store/rootReducer';
 import {connect, ConnectedProps} from 'react-redux';
+import {SubmitButton} from '../../components'
 import toast from 'react-native-toast-message';
 import axios from 'axios';
 
@@ -41,6 +42,7 @@ class companies extends React.Component<Props,State>{
 
     private submitData = async ()=>{
         let form = new FormData();
+        form.append('id', this.props.state.id)
         form.append('name', this.state.name)
         form.append('email', this.state.email.toLowerCase());
         form.append('direccion',this.state.direccion);
@@ -99,7 +101,7 @@ class companies extends React.Component<Props,State>{
                     placeholder={'Tipo de empresa............'}
                     onChangeText={text => this.setState({...this.state, tipo: text})}
                     />
-                    <Button title={'CREATE'} onPress={this.submitData} />
+                    <SubmitButton title={'CREATE'} onPress={this.submitData} />
                 </Card>  
             </ScrollView>  
         )   
@@ -138,4 +140,4 @@ const textStyles: TextStyle[] = [
     display: 'flex',
     flexDirection: 'row',
   };
-export default companies;
+export default connector(companies);
