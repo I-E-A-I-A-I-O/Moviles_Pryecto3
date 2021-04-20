@@ -4,6 +4,7 @@ import {RootTabNavigatorParamList} from '../custom_types/navigation_types';
 import Dashboard from '../pages/RootTabPages/Dashboard';
 import NotificationsPage from '../pages/RootTabPages/Notifications';
 import Post from '../pages/RootTabPages/pageToPost';
+import Compaines from '../pages/RootTabPages/pageCompaines'
 import {Icon} from 'react-native-elements';
 import {ConnectedProps, connect} from 'react-redux';
 
@@ -68,6 +69,22 @@ const RootTabNavigator = (props: Props) => {
             />
           ),
           title: 'Post',
+        }}
+      />
+        <Tab.Screen
+        name={'Compaines'}
+        component={Compaines}
+        options={{
+          tabBarIcon: focused => (
+            <Icon
+              size={25}
+              type={'font-awesome-5'}
+              name={'building'}
+              color={'black'}
+              solid={focused.focused}
+            />
+          ),
+          title: 'Compaines',
         }}
       />
     </Tab.Navigator>
