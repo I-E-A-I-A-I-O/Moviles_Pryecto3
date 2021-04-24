@@ -687,4 +687,17 @@ export = {
     comments:
       'SELECT count(comment_id) FROM post_comments WHERE comment_to = $1',
   },
+
+  /**Queries para insertar nueva informacion de usuarios/Empresas */
+  companies:{
+    /**Inserta un nuevo usuario/Empresa a la tabla y retorna la nueva ID.
+     * Paramentros:
+     * 1. Nombre De La Empresa
+     * 2. Email De La Empresa
+     * 3. Numero de telefono
+     */
+    newCompaines: 'INSERT INTO users(name, email, phone, password, creation_date) VALUES($1, $2, $3, $4, NOW()) RETURNING user_id',
+
+    logo: 'UPDATE users SET avatar = $1 WHERE user_id = $2',
+  }
 };
