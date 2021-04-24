@@ -16,13 +16,9 @@ const connector = connect(mapStateToProps, {});
 type Props = ConnectedProps<typeof connector>;
 
 type State ={
-    loading: boolean;
     name:string;
     email:string;
-    direccion:string;
-    telfFijo:string;
     telfCelular:string;
-    tipo:string;
 }
 
 class companies extends React.Component<Props,State>{
@@ -30,25 +26,17 @@ class companies extends React.Component<Props,State>{
     constructor(props: Props){
         super(props);
         this.state ={
-            loading: false,
             name:'',
             email:'',
-            direccion:'',
-            telfFijo: '',
             telfCelular:'',
-            tipo:''
         }
     }
 
     private submitData = async ()=>{
         let form = new FormData();
-        form.append('id', this.props.state.id)
         form.append('name', this.state.name)
         form.append('email', this.state.email.toLowerCase());
-        form.append('direccion',this.state.direccion);
-        form.append('telfFijo', this.state.telfFijo);
         form.append('telfCelular', this.state.telfCelular);
-        form.append('tipo', this.state.tipo);
         try {
           const response = await axios.post('/users/user/auth/verify', form);
         } catch (err) {
@@ -82,24 +70,9 @@ class companies extends React.Component<Props,State>{
                     onChangeText={text => this.setState({...this.state, email: text})} 
                     />
                     <Input
-                    placeholder={'Direccion.........'}
-                    label={'Direccion'}
-                    onChangeText={text => this.setState({...this.state, direccion: text})}
-                    />
-                    <Input
-                    label={'Telefono Fijo'}
-                    placeholder={'Telefono fijo............'}
-                    onChangeText={text => this.setState({...this.state, telfFijo: text})}
-                    />
-                    <Input
                     label={'Telefono Celular'}
                     placeholder={'Telefono Celular............'} 
                     onChangeText={text => this.setState({...this.state, telfCelular: text})}
-                    />
-                    <Input
-                    label={'Tipo de empresa'}
-                    placeholder={'Tipo de empresa............'}
-                    onChangeText={text => this.setState({...this.state, tipo: text})}
                     />
                     <SubmitButton title={'CREATE'} onPress={this.submitData} />
                 </Card>  
@@ -136,8 +109,4 @@ const textStyles: TextStyle[] = [
     },
   ];
   
-  const viewStyle: ViewStyle = {
-    display: 'flex',
-    flexDirection: 'row',
-  };
 export default connector(companies);
