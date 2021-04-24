@@ -5,9 +5,9 @@ import Dashboard from '../pages/RootTabPages/Dashboard';
 import NotificationsPage from '../pages/RootTabPages/Notifications';
 import Post from '../pages/RootTabPages/pageToPost';
 import Compaines from '../pages/RootTabPages/pageCompaines'
+import Jobs from '../pages/RootTabPages/pageJobs'
 import {Icon} from 'react-native-elements';
 import {ConnectedProps, connect} from 'react-redux';
-
 import type {RootReducerType as CombinedState} from '../store/rootReducer';
 
 const mapStateToProps = (state: CombinedState) => ({
@@ -71,7 +71,7 @@ const RootTabNavigator = (props: Props) => {
           title: 'Post',
         }}
       />
-        <Tab.Screen
+      <Tab.Screen
         name={'Compaines'}
         component={Compaines}
         options={{
@@ -85,6 +85,22 @@ const RootTabNavigator = (props: Props) => {
             />
           ),
           title: 'Compaines',
+        }}
+      />
+      <Tab.Screen
+        name={'Jobs'}
+        component={Jobs}
+        options={{
+          tabBarIcon: focused => (
+            <Icon
+              size={25}
+              type={'font-awesome-5'}
+              name={'briefcase'}
+              color={'black'}
+              solid={focused.focused}
+            />
+          ),
+          title: 'Jobs',
         }}
       />
     </Tab.Navigator>
