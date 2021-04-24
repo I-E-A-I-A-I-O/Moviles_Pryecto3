@@ -1,5 +1,6 @@
 import {
   SAVE_SESSION_DATA,
+  SAVE_COMPANIES_DATA,
   DELETE_SESSION_DATA,
   CHANGE_NOTIFICATION_STATUS,
   Session,
@@ -10,6 +11,13 @@ export function SaveSessionData(data: Session): SessionActions {
   return {
     type: SAVE_SESSION_DATA,
     data: data,
+  };
+}
+
+export function SaveDataCompanies(data: Session): SessionActions{
+  return{
+    type: SAVE_COMPANIES_DATA,
+    data:data,
   };
 }
 

@@ -1,5 +1,6 @@
 import {
   DELETE_SESSION_DATA,
+  SAVE_COMPANIES_DATA,
   SAVE_SESSION_DATA,
   SessionActions,
   Session,
@@ -9,6 +10,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const initialState: Session = {
   id: '',
   name: '',
+  nameCompanies: '',
   token: '',
   sessionActive: false,
   hasNotis: false,
@@ -39,6 +41,11 @@ export function sessionReducer(
         token: initialState.token,
       };
     }
+    case SAVE_COMPANIES_DATA:
+      return{
+        ...state,
+        nameCompanies: initialState.nameCompanies,
+      }
     case 'CHANGE_NOTIFICATION_STATUS':
       return {
         ...state,
@@ -48,3 +55,5 @@ export function sessionReducer(
       return state;
   }
 }
+
+
